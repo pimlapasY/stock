@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Login</title>
     <?php include('header.php') ?>
     <!-- SweetAlert JS -->
 </head>
@@ -60,7 +60,8 @@
                                     </div>
 
                                     <br>
-                                    <p class="small mb-5 pb-lg-2"><a class="text-dark-50" href="#!">Forgot password?</a>
+                                    <p class="small mb-5 pb-lg-2"><a class="text-dark-50" href="forget_pass.php">Forgot
+                                            password?</a>
                                     </p>
 
                                     <button data-mdb-button-init data-mdb-ripple-init class="btn btn-dark btn-lg px-5"

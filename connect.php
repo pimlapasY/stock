@@ -1,8 +1,10 @@
 <?php
-session_start();
-
+session_start();    
 error_reporting(E_ALL & ~E_NOTICE);
-ini_set('display_errors', 1); 
+ini_set('display_errors', 0);
+// Disable warnings
+if (isset($_SESSION['role'])) {
+
 
 $dbHost = "192.168.100.122";
 $dbUser = "samt";
@@ -24,5 +26,11 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
+}else{
+     // Ensure script execution stops after redirection
+      // Redirect to login page if role is not set
+      header('Location: login.php');
+      exit(); // Ensure script execution stops after redirection
+}
 
 ?>

@@ -9,11 +9,11 @@
     <?php include('connect.php') ?>
     <link rel="stylesheet" href="index.css">
 </head>
-<?php 
-?>
 
 <body>
+
     <?php include('./navbar.php') ?>
+
     <div class="container">
         <div class="d-flex justify-content-between m-3" style="align-items: center;">
             <div class="d-flex justify-content-start w-50" style="gap: 10px;">
