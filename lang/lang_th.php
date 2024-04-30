@@ -20,3 +20,4 @@ $GOODS_RECEIVED_BY = 'ผู้รับของ';
 $department = 'แผนก';
 $mat_goods = 'ใบขอวัสดุ/สินค้า';
 $target = 'วัตถุประสงค์';
+$reset = 'รีเซ็ต';

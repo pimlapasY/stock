@@ -7,7 +7,6 @@
     <title>ACANA STOCK</title>
     <?php include('header.php') ?>
     <?php include('connect.php') ?>
-    <link rel="stylesheet" href="index.css">
 </head>
 
 <body>
@@ -19,12 +18,12 @@
             <div class="d-flex justify-content-start w-50" style="gap: 10px;">
                 <button type="button" id="all-stock" class="btn btn-primary btn-rounded" data-mdb-ripple-init>ALL
                     STOCK</button>
-                <button type="button" id="normal" class="btn btn-success btn-rounded"
-                    data-mdb-ripple-init><?php echo $nomal ?></button>
+                <!-- <button type="button" id="normal" class="btn btn-success btn-rounded"
+                    data-mdb-ripple-init><?php echo $nomal ?></button> -->
                 <button type="button" id="out-of-stock" class="btn btn-danger btn-rounded"
                     data-mdb-ripple-init><?php echo $soldOut ?></button>
-                <button type="button" id="near-end" class="btn btn-warning btn-rounded"
-                    data-mdb-ripple-init><?php echo $lessStock ?></button>
+                <!-- <button type="button" id="near-end" class="btn btn-warning btn-rounded"
+                    data-mdb-ripple-init><?php echo $lessStock ?></button> -->
             </div>
             <div class="d-flex justify-content-end w-100">
                 <div class="input-group p-3">

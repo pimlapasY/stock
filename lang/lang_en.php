@@ -20,3 +20,4 @@ $GOODS_RECEIVED_BY = 'GOODS RECEIVED BY';
 $department = 'Section';
 $mat_goods = 'Material/Goods Requistision';
 $target = 'Target';
+$reset = 'Reset';

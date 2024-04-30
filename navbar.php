@@ -41,13 +41,42 @@
 // Set the current page based on the PHP_SELF server variable
 $currentPage = basename($_SERVER['PHP_SELF']);
 
-session_start();
+include('connect.php');
 
 if ($_SESSION["lang"] == "en" || !isset($_SESSION["lang"])) {
     include("lang/lang_en.php");
 } else {
     include("lang/lang_th.php");
 }
+
+// Check if 'id' key is set in the session
+if(isset($_SESSION['id'])) {
+    $userId = $_SESSION['id']; // Retrieve the value of 'id' key
+    //echo "User ID: " . $userId . "<br>";
+
+    try {
+        // Step 3: Write SQL Query
+        $sql = "SELECT * FROM user WHERE u_userid = :id";
+        
+        // Step 4: Prepare the statement
+        $stmt = $pdo->prepare($sql);
+        
+        // Step 5: Bind parameters
+        $stmt->bindParam(':id', $userId, PDO::PARAM_INT);
+        
+        // Step 6: Execute the Query
+        $stmt->execute();
+        
+        
+        // Step 7: Fetch Data
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        
+    }catch(PDOException $e){
+        echo "Error: " . $e->getMessage();
+    }
+}else {
+        echo "Session ID not set.";
+    }
 ?>
 
 <!-- Navbar -->
@@ -84,18 +113,16 @@ if ($_SESSION["lang"] == "en" || !isset($_SESSION["lang"])) {
         <!-- Right elements -->
         <div class="d-flex align-items-center">
             <div class="p-2">
-                <a class="link link-primary link-opacity-25-hover" id="jp"
-                    href="lang/change_lang.php?lang=TH">TH</a>&emsp;<label>|</label>&emsp;
-                <a class="link link-primary link-opacity-25-hover" id="en" href="lang/change_lang.php?lang=en">EN</a>
+                <button type="button" class="btn btn-tertiary" data-mdb-ripple-init data-mdb-ripple-color="light">
+                    <a class="link link-primary link-opacity-25-hover" id="jp"
+                        href="lang/change_lang.php?lang=TH">TH</a>&emsp;<label>|</label>&emsp;
+                    <a class="link link-primary link-opacity-25-hover" id="en"
+                        href="lang/change_lang.php?lang=en">EN</a>
+                </button>
             </div>
             <!-- Avatar -->
-            <div class="dropdown m-2">
-                <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
-                    id="navbarDropdownMenuAvatar" role="button" aria-expanded="false">
-                    <i class="fa-solid fa-user-gear fa-2x" style="color: white;"></i>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-start position-left" id="userDropdown"
-                    aria-labelledby="navbarDropdownMenuAvatar">
+            <div class="dropdown p-3">
+                <ul class="dropdown-menu" id="userDropdown" aria-labelledby="navbarDropdownMenuAvatar">
                     <li>
                         <a class="dropdown-item" href="#">My profile</a>
                     </li>
@@ -107,13 +134,23 @@ if ($_SESSION["lang"] == "en" || !isset($_SESSION["lang"])) {
                     </li>
                 </ul>
             </div>
-            <button id="logoutBtn" type="button" class="btn btn-secondary" data-mdb-ripple-init
-                data-mdb-ripple-color="dark" style="width: 150px;">
+            <a href="#" data-mdb-dropdown-init class="btn btn-light  dropdown-toggle" data-mdb-ripple-init>
+                <!-- <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
+                        role="button"> -->
+                <i class="fa-solid fa-user-gear"></i>&nbsp;<?php echo $row['u_username'] ?>
+            </a>
+            &nbsp;
+            <a href="#!" class="btn btn-danger" id="logoutBtn" type="button" data-mdb-ripple-init>
+                <!-- <button id="logoutBtn" type="button" class="btn btn-danger" data-mdb-ripple-init
+                        data-mdb-ripple-color="dark" style="width: 150px;"> --><i
+                    class="fa-solid fa-right-from-bracket"></i>
                 Logout
-            </button>
+            </a>
+            <!-- </button> -->
         </div>
+    </div>
 
-        <!-- Right elements -->
+    <!-- Right elements -->
     </div>
     <!-- Container wrapper -->
 </nav>
@@ -211,4 +248,56 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
 });
+
+// Add event listener to the submit button
+$(document).ready(function() {
+    $('button[type="submit"]').click(function(e) {
+        e.preventDefault(); // Prevent default form submission
+
+        // Show SweetAlert confirmation dialog
+        swal({
+                title: "Are you sure?",
+                text: "Once submitted, you will not be able to edit this request!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+            })
+            .then((willSubmit) => {
+                if (willSubmit) {
+                    // If user confirms, proceed with form submission
+                    submitForm();
+                } else {
+                    // If user cancels, do nothing
+                }
+            });
+    });
+});
+
+// Function to submit the form
+function submitForm() {
+    // Here you can submit the form using AJAX or any other method
+    // Example AJAX submission:
+    $.ajax({
+        url: "submit_form.php", // Replace "submit_form.php" with your actual form submission URL
+        method: "POST",
+        data: {
+            // Include your form data here
+            r_department: "<?php echo $row['u_department']; ?>",
+            r_product_code: "<?php echo $_POST['p_name' . $i]; ?>",
+            r_qty: "<?php echo $_POST['qtyValue' . $i]; ?>",
+            r_unit: "<?php echo $_POST['unit' . $i]; ?>",
+            r_rec_date: "<?php echo date("Y-m-d"); ?>",
+            r_rec_username: "<?php echo $row['u_username']; ?>"
+        },
+        success: function(response) {
+            // Handle successful form submission
+            // You can show a success message or redirect the user
+            console.log("Form submitted successfully!");
+        },
+        error: function(xhr, status, error) {
+            // Handle errors
+            console.error("Error submitting form:", error);
+        }
+    });
+}
 </script>
