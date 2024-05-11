@@ -4,8 +4,6 @@ error_reporting(E_ALL & ~E_NOTICE);
 ini_set('display_errors', 1);
 // Disable warnings
 if (isset($_SESSION['role'])) {
-
-
 $dbHost = "192.168.100.122";
 $dbUser = "samt";
 $dbPass = "samtadmin12";
@@ -18,7 +16,7 @@ try {
 
     // Set PDO to throw exceptions on error
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-
+    // Count rows in stockout table where MG_CODE matches the pattern
     // Set character encoding to UTF-8
     $pdo->exec("set names utf8");
 } catch (PDOException $e) {
@@ -26,11 +24,9 @@ try {
     die("Database connection failed: " . $e->getMessage());
 }
 
-}else{
-     // Ensure script execution stops after redirection
-      // Redirect to login page if role is not set
-      header('Location: login.php');
-      exit(); // Ensure script execution stops after redirection
+}else{ 
+    header('Location: login.php');
+    exit;
 }
 
 ?>

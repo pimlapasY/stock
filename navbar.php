@@ -1,17 +1,18 @@
-<style>
-.nav-color {
-    background: #03045e;
-    /* fallback for old browsers */
-    background: -webkit-linear-gradient(to right,
-            #48cae4,
-            /* #5b86e5, */
-            /* #36d1dc */
-            #0892fd,
-            #03045e);
-    /* Chrome 10-25, Safari 5.1-6 */
-    background: linear-gradient(to right, #03045e, #0892fd, #48cae4);
-    /* background: linear-gradient(to right, #5b86e5, #36d1dc); */
+<?php 
+include('header.php'); 
+?>
 
+<style>
+.dropdown-item {
+    text-transform: capitalize;
+}
+
+.navbar-nav .dropdown:hover .dropdown-menu {
+    display: block;
+}
+
+.nav-color {
+    background: linear-gradient(to right, #cdcdd6, #e4e4ee, #e7e7f0);
 }
 
 .position-left {
@@ -21,18 +22,28 @@
 
 
 .navbar-nav .nav-link {
-    color: white;
+    text-transform: capitalize;
+    /* color: white; */
 }
 
-.navbar-nav .nav-item .nav-link.active {
-    color: white;
+.font-bold {
     font-weight: bold;
-    border-bottom: 2px solid white;
+}
+
+
+.navbar-nav .nav-item .nav-link.active {
+    /*  color: antiquewhite; */
+    font-weight: bold;
+    border-bottom: 2px solid;
     /* Add this line to add underline */
 }
 
+.nav-link:hover {
+    border-bottom: 1px solid;
+}
+
 .navbar-nav .nav-item {
-    color: white;
+    /* color: white; */
     /* กำหนดสีข้อความเป็นสีขาว */
 }
 </style>
@@ -78,111 +89,189 @@ if(isset($_SESSION['id'])) {
         echo "Session ID not set.";
     }
 ?>
-
+<div class="collapse" id="navbarToggleExternalContent">
+    <div class="bg-dark p-4">
+        <h5 class="text-white h4">Collapsed content</h5>
+        <span class="text-muted">Toggleable via the navbar brand.</span>
+    </div>
+</div>
 <!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-body-tertiary nav-color">
+<nav data-mdb-navbar-init class="navbar navbar-expand-lg navbar-light fixed-top nav-color">
     <!-- Container wrapper -->
     <div class="container-fluid">
-
         <!-- Collapsible wrapper -->
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <!-- Navbar brand -->
-            <a class="navbar-brand mt-2 mt-lg-0" href="#">
-                <!-- <img src="https://mdbcdn.b-cdn.net/img/logo/mdb-transaprent-noshadows.webp" height="15" alt="MDB Logo"
-                    loading="lazy" /> -->
+            <a class="navbar-brand" href="index.php">
+                <img src="img/icon-stock6.png" alt="Logo" style="width: 50px;" class="d-inline-block align-text-top">
+                HOME
             </a>
-            <!-- Left links -->
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link <?php echo ($currentPage == 'index.php' || $currentPage == '') ? 'active' : ''; ?>"
-                        href="./"><?php echo $stockList ?></a>
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'stock_list.php' || $currentPage == 'stock_samt.php' || $currentPage == 'stock_sakaba.php') ? 'active' : ''; ?>"
+                        href="#" id="navbar1" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-box"></i> <?php echo $stockList ?>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbar1">
+                        <li><a class="dropdown-item <?php echo ($currentPage == 'stock_list.php') ? 'active' : ''; ?>"
+                                href="stock_list.php">All</a></li>
+                        <li><a class="dropdown-item <?php echo ($currentPage == 'stock_samt.php') ? 'active' : ''; ?>"
+                                href="stock_samt.php">SAMT</a></li>
+                        <li><a class="dropdown-item <?php echo ($currentPage == 'stock_sakaba.php') ? 'active' : ''; ?>"
+                                href="stock_sakaba.php">SAKABA</a></li>
+                    </ul>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link <?php echo ($currentPage == 'good_request.php') ? 'active' : ''; ?>"
-                        href="good_request.php"><?php echo $request ?></a>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'current_taken.php') ? 'active' : ''; ?>"
+                        href="#" id="navbar2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-database"></i> <?php echo 'Current Taken' ?>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbar1">
+                        <li><a class="dropdown-item" href="#">All</a></li>
+                        <li><a class="dropdown-item" href="#">SAMT</a></li>
+                        <li><a class="dropdown-item" href="#">SAKABA</a></li>
+                    </ul>
                 </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'his_all.php' || $currentPage =='his_samt.php' || $currentPage == 'his_sakaba.php') ? 'active' : ''; ?>"
+                        href="#" id="navbar3" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-clock-rotate-left"></i> <?php echo $history ?>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbar3">
+                        <li><a class="dropdown-item  <?php echo ($currentPage == 'his_all.php') ? 'active' : ''; ?>"
+                                href="his_all.php">All</a></li>
+                        <li><a class="dropdown-item  <?php echo ($currentPage =='his_samt.php') ? 'active' : ''; ?>"
+                                href="his_samt.php">SAMT</a></li>
+                        <li><a class="dropdown-item  <?php echo ($currentPage == 'his_sakaba.php') ? 'active' : ''; ?>"
+                                href="his_sakaba.php">SAKABA</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'pr_create.php' || $currentPage == 'pr_management.php') ? 'active' : ''; ?>"
+                        href="#" id="navbar4" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-clipboard-list"></i>
+                        <?php echo 'PR' ?>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbar4">
+                        <li><a class="dropdown-item <?php echo ($currentPage == 'pr_create.php') ? 'active' : ''; ?>"
+                                href="pr_create.php"><?php echo $pr_add ?></a></li>
+                        <li><a class="dropdown-item <?php echo ($currentPage == 'pr_management.php') ? 'active' : ''; ?>"
+                                href="pr_management.php"><?php echo $pr_manage ?></a></li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'good_request.php' || $currentPage == 'g_history.php') ? 'active' : ''; ?>"
+                        href="#" id="navbar5" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <i class="fa-solid fa-check-to-slot"></i>
+                        <?php echo $request ?>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbar5">
+                        <li><a class="dropdown-item <?php echo ($currentPage == 'good_request.php') ? 'active' : ''; ?>"
+                                href="good_request.php"><?php echo $request ?></a></li>
+                        <li><a class="dropdown-item <?php echo ($currentPage == 'g_history.php') ? 'active' : ''; ?>"
+                                id="dropdownItem2" href="g_history.php"><?php echo $history ?></a>
+                        </li>
+                    </ul>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link <?php echo ($currentPage == 'history.php') ? 'active' : ''; ?>"
-                        href="history.php"><?php echo $history ?></a>
+                    <a class="nav-link <?php echo ($currentPage == 'stock_in.php') ? 'active' : ''; ?>"
+                        href="stock_in.php" id="nav6">
+                        <i class="fa-solid fa-inbox"></i> <?php echo $stock_in ?>
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($currentPage == 'stock_out.php') ? 'active' : ''; ?>"
+                        href="stock_out.php" id="nav7">
+                        <i class="fa-solid fa-arrow-right-from-bracket"></i> <?php echo $stock_out ?>
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($currentPage == 'register.php') ? 'active' : ''; ?>"
+                        href="register.php" id="navbar8" role="button">
+                        <i class="fa-solid fa-circle-plus"></i>
+                        <?php echo $register ?>
+                    </a>
+                </li>
+            </ul>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link <?php echo ($currentPage == 'list.php') ? 'active' : ''; ?>" href="list.php"
+                        id="navbar9" role="button">
+                        <i class="fa-solid fa-list"></i>
+                        <?php echo $list ?>
+                    </a>
                 </li>
             </ul>
             <!-- Left links -->
         </div>
+        <!-- Left links -->
+
         <!-- Collapsible wrapper -->
 
         <!-- Right elements -->
-        <div class="d-flex align-items-center">
+        <div class="d-flex justify-content-end align-items-center">
             <div class="p-2">
                 <button type="button" class="btn btn-tertiary" data-mdb-ripple-init data-mdb-ripple-color="light">
-                    <a class="link link-primary link-opacity-25-hover" id="jp"
-                        href="lang/change_lang.php?lang=TH">TH</a>&emsp;<label>|</label>&emsp;
-                    <a class="link link-primary link-opacity-25-hover" id="en"
-                        href="lang/change_lang.php?lang=en">EN</a>
+                    <a class="link link-primary link-opacity-25-hover" id="jp" href="lang/change_lang.php?lang=TH">
+                        <i class="flag flag-th"></i>TH
+                    </a>
+                    &emsp;<label>|</label>&emsp;
+                    <a class="link link-primary link-opacity-25-hover" id="en" href="lang/change_lang.php?lang=en">
+                        <i class="flag flag-us"></i>EN
+                    </a>
                 </button>
             </div>
-            <!-- Avatar -->
-            <div class="dropdown p-3">
-                <ul class="dropdown-menu" id="userDropdown" aria-labelledby="navbarDropdownMenuAvatar">
-                    <li>
-                        <a class="dropdown-item" href="#">My profile</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">Settings</a>
-                    </li>
-                    <li>
-                        <a class="dropdown-item" href="#">Logout</a>
+            <div class="p-2">
+                <ul class="navbar-nav">
+                    <li class="nav-item dropdown">
+                        <a href="#" data-mdb-dropdown-init class="nav-link dropdown-toggle" id=" navbar_user"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fa-solid fa-user-gear"></i>&nbsp;<?php echo $row['u_username'] ?>
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbar_user">
+                            <li>
+                                <a class="dropdown-item" href="#">My profile</a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="#">Settings</a>
+                            </li>
+                        </ul>
                     </li>
                 </ul>
             </div>
-            <a href="#" data-mdb-dropdown-init class="btn btn-light  dropdown-toggle" data-mdb-ripple-init>
-                <!-- <a data-mdb-dropdown-init class="dropdown-toggle d-flex align-items-center hidden-arrow" href="#"
-                        role="button"> -->
-                <i class="fa-solid fa-user-gear"></i>&nbsp;<?php echo $row['u_username'] ?>
-            </a>
-            &nbsp;
-            <a href="#!" class="btn btn-danger" id="logoutBtn" type="button" data-mdb-ripple-init>
-                <!-- <button id="logoutBtn" type="button" class="btn btn-danger" data-mdb-ripple-init
+            <div class="p-2">
+                <!-- Avatar -->
+                <a href="#!" class="btn btn-danger" id="logoutBtn" type="button" data-mdb-ripple-init>
+                    <!-- <button id="logoutBtn" type="button" class="btn btn-danger" data-mdb-ripple-init
                         data-mdb-ripple-color="dark" style="width: 150px;"> --><i
-                    class="fa-solid fa-right-from-bracket"></i>
-                Logout
-            </a>
+                        class="fa-solid fa-right-from-bracket"></i>
+                    Logout
+                </a>
+                &nbsp;
+            </div>
             <!-- </button> -->
         </div>
     </div>
-
+    </div>
     <!-- Right elements -->
     </div>
     <!-- Container wrapper -->
 </nav>
 <!-- Navbar -->
 <script>
-document.addEventListener("DOMContentLoaded", function() {
-    // Select the user icon
-    var userIcon = document.querySelector('.dropdown-toggle');
-
-    // Select the dropdown menu
-    var userDropdown = document.getElementById('userDropdown');
-
-    // Add click event listener to the user icon
-    userIcon.addEventListener('click', function(event) {
-        event.preventDefault(); // Prevent default action
-
-        // Toggle the dropdown menu's visibility
-        if (userDropdown.style.display === 'block') {
-            userDropdown.style.display = 'none';
-        } else {
-            userDropdown.style.display = 'block';
-        }
-    });
-
-    // Close dropdown menu when clicking outside of it
-    document.addEventListener('click', function(event) {
-        if (!userDropdown.contains(event.target) && !userIcon.contains(event.target)) {
-            userDropdown.style.display = 'none';
-        }
-    });
-});
-
 document.addEventListener('DOMContentLoaded', function() {
 
     // Logout button click event
@@ -196,7 +285,7 @@ document.addEventListener('DOMContentLoaded', function() {
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
+            cancelButtonColor: 'gray',
             confirmButtonText: 'Yes, logout!',
             cancelButtonText: 'Cancel'
         }).then((result) => {
@@ -300,4 +389,16 @@ function submitForm() {
         }
     });
 }
+
+// JavaScript to show dropdown menu on hover
+$(document).ready(function() {
+    $('.nav-item.dropdown').hover(function() {
+        $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeIn(500);
+    }, function() {
+        $(this).find('.dropdown-menu').stop(true, true).delay(200).fadeOut(500);
+    });
+    $('.dropdown-toggle').click(function() {
+        $(this).toggleClass('font-bold'); // Toggle class to make font bold
+    });
+});
 </script>

@@ -1,7 +1,3 @@
-<?php
-include('header.php');
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,6 +31,10 @@ input {
 
 .valid-input-red {
     border-color: red !important;
+}
+
+.bg-input-red {
+    background: #ffdbd9 !important;
 }
 
 /* Chrome, Safari, Edge, Opera */
@@ -83,8 +83,8 @@ function validateInput(input) {
     $productNames_hands = $stmt_hands->fetchAll(PDO::FETCH_COLUMN);   
     
 ?>
-    <div class="container">
-        <div class="card  border border-secondary text-center m-5">
+    <div class="container" style="margin-top: 150px;">
+        <div class="card border border-secondary text-center m-5">
             <div class="card-header ">
                 <table class="table table-borderless">
                     <tr>
@@ -97,7 +97,7 @@ function validateInput(input) {
                         </th>
                     </tr>
                     <tr>
-                        <th colspan="3">
+                        <th class="text-start" colspan="3">
                             <h5><?php echo $mat_goods ?></h5>
                         </th>
                         <th class="text-end" colspan="3">
@@ -105,7 +105,7 @@ function validateInput(input) {
                         </th>
                     </tr>
                     <tr>
-                        <th colspan="6">
+                        <th class="text-start" colspan="6">
                             <button type="button" class="btn btn-secondary btn-rounded btn-lg" data-mdb-ripple-init>
                                 <?php echo $department. ' : '. $row['u_department'] ?>
                             </button>
@@ -116,13 +116,13 @@ function validateInput(input) {
             <div class="card-body">
                 <table class="table">
                     <thead>
-                        <tr class="text-center table-primary">
+                        <tr class="table-primary uppercase" style="text-align:center; white-space: nowrap;">
                             <th>No.</th>
                             <th><?php echo $product_code ?></th>
-                            <th><?php echo $product_name?></th>
+                            <th><?php echo $description ?></th>
                             <th><?php echo $qty ?></th>
                             <th><?php echo $unit ?></th>
-                            <th><?php echo $target  ?></th>
+                            <th><?php echo $purpose  ?></th>
                             <th><?php echo $reset  ?></th>
                         </tr>
                     </thead>
@@ -143,8 +143,10 @@ function validateInput(input) {
                                 </datalist>
                             </td>
                             <!-- Replace the input field with a readonly input -->
-                            <td><input type="text" class="form-control product-name-input" id="p_name<?php echo $i; ?>"
-                                    style="background:#fff8e4;" readonly></td>
+                            <td>
+                                <input type="text" class="form-control product-name-input" id="p_name<?php echo $i; ?>"
+                                    <?php if ($value == '') { ?> style="background:#fff8e4;" <?php } ?> readonly>
+                            </td>
                             <td>
                                 <div class="input-group">
                                     <button type="button" class="btn btn-outline-secondary decrement-btn"
@@ -155,7 +157,8 @@ function validateInput(input) {
                                         onclick="incrementQty(<?php echo $i; ?>)">+</button>
                                 </div>
                             </td>
-                            <td><input type="text" class="form-control unit-input" id="unit<?php echo $i; ?>"
+                            <td>
+                                <input type="text" class="form-control unit-input" id="unit<?php echo $i; ?>"
                                     style="background:#fff8e4;" readonly>
                             </td>
                             <td>
@@ -167,7 +170,7 @@ function validateInput(input) {
                             </td>
                         </tr>
                         <?php endfor; ?>
-                        <tr>
+                        <!-- <tr>
                             <td colspan="10" class="text-center">
                                 <button type="button" class="btn btn-primary" id="addRowBtn"><i
                                         class="fa-solid fa-plus"></i> Add Row</button>
@@ -175,11 +178,9 @@ function validateInput(input) {
                                 <button type="submit" class="btn btn-danger"><i class="fa-solid fa-minus"></i> Delete
                                     Row</button>
                             </td>
-                        </tr>
+                        </tr> -->
 
                     </tbody>
-
-
 
                     <!-- <th colspan="8">ได้ตรวจสอบจำนวน และรายละเอียดต่างๆเรียบร้อยแล้ว</th> -->
                 </table>
@@ -194,37 +195,55 @@ function validateInput(input) {
                                     </span>
                                 </div>
                             </td>
+                        </tr>
+                        <tr>
+                            <th colspan="3">
+                                <div class="input-group mb-3">
+                                    <button class="btn btn-outline-secondary" type="button" id="rq_name"
+                                        data-mdb-ripple-init data-mdb-ripple-color="dark">
+                                        <?php echo $REQUEST_NAME ?>
+                                        :</button>
+                                    <input value="<?php echo $row['u_username'] ?>" class="form-control" name="rq_name"
+                                        aria-describedby="rq_name" required />
+                                    <div class="invalid-feedback">
+                                        ** <?php echo $require ?>
+                                    </div>
+                                </div>
+                            </th>
+                            <th class="text-end">
+                                <div class="input-group mb-3">
+                                    <button class="btn btn-outline-secondary" type="button" id="ap_by"
+                                        data-mdb-ripple-init data-mdb-ripple-color="dark">
+                                        <?php echo $APPROVED_BY ?>
+                                        :</button>
+                                    <input class="form-control" name="ap_by" value="@everyone" aria-describedby="ap_by"
+                                        disabled />
+                                </div>
                             </th>
                         </tr>
                         <tr>
                             <th colspan="3">
                                 <div class="input-group mb-3">
-                                    <button class="btn btn-secondary btn-lg" type="button"><?php echo $REQUEST_NAME ?>
+                                    <button class="btn btn-outline-secondary" type="button" id="st_keeper"
+                                        data-mdb-ripple-init data-mdb-ripple-color="dark">
+                                        <?php echo $STORE_KEEPER ?>
                                         :</button>
-                                    <input class="form-control" name="rq_name">
+                                    <input class="form-control" name="st_keeper" aria-describedby="st_keeper"
+                                        required />
+                                    <div class="invalid-feedback">
+                                        ** <?php echo $require ?>
+                                    </div>
                                 </div>
                             </th>
                             <th class="text-end">
                                 <div class="input-group mb-3">
-                                    <button class="btn btn-secondary btn-lg" type="button"><?php echo $APPROVED_BY ?>
-                                        :</button>
-                                    <input class="form-control" name="ap_by" disabled>
-                                </div>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th colspan="3">
-                                <div class="input-group mb-3">
-                                    <button class="btn btn-secondary btn-lg" type="button"><?php echo $STORE_KEEPER ?>
-                                        :</button>
-                                    <input class="form-control" name="st_keeper">
-                                </div>
-                            </th>
-                            <th class="text-end">
-                                <div class="input-group mb-3">
-                                    <button class="btn btn-secondary btn-lg"
-                                        type="button"><?php echo $GOODS_RECEIVED_BY ?> :</button>
-                                    <input class="form-control" name="gr_by">
+                                    <button class="btn btn-outline-secondary" type="button" id="gr_by"
+                                        data-mdb-ripple-init data-mdb-ripple-color="dark">
+                                        <?php echo $GOODS_RECEIVED_BY ?> :</button>
+                                    <input class="form-control" name="gr_by" aria-describedby="gr_by" required />
+                                    <div class="invalid-feedback">
+                                        ** <?php echo $require ?>
+                                    </div>
                                 </div>
                             </th>
                         </tr>
@@ -239,8 +258,6 @@ function validateInput(input) {
 </body>
 
 </html>
-<!-- Add SweetAlert CDN -->
-<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
 $(document).ready(function() {
@@ -288,7 +305,7 @@ function decrementQty(index) {
 
 function resetInput(index) {
     var row = $('#product' + index).closest('tr');
-    row.find('#product' + index).val('');
+    row.find('#product' + index).removeClass('is-invalid').val('');
     row.find('#p_name' + index).val('');
     row.find('#qtyValue' + index).val('');
     row.find('#unit' + index).val('');
@@ -296,15 +313,40 @@ function resetInput(index) {
 }
 
 
-function validateInput(input) {
-    if (input.value.trim() !== '') {
-        $(input).removeClass('valid-input-red');
-    } else {
-        $(input).addClass('valid-input-red');
-    }
-}
-
 function submitForm() {
+    // Check if the required fields are empty
+    var rqName = $("input[name='rq_name']").val().trim();
+    var stKeeper = $("input[name='st_keeper']").val().trim();
+    var grBy = $("input[name='gr_by']").val().trim();
+
+    // Apply Bootstrap validation classes based on whether the fields are empty
+    if (rqName === '') {
+        $("input[name='rq_name']").removeClass('is-valid').addClass('is-invalid');
+    } else {
+        $("input[name='rq_name']").removeClass('is-invalid');
+    }
+
+    if (stKeeper === '') {
+        $("input[name='st_keeper']").removeClass('is-valid').addClass('is-invalid');
+    } else {
+        $("input[name='st_keeper']").removeClass('is-invalid');
+    }
+
+    if (grBy === '') {
+        $("input[name='gr_by']").removeClass('is-valid').addClass('is-invalid');
+    } else {
+        $("input[name='gr_by']").removeClass('is-invalid');
+    }
+
+    if (rqName === '' || stKeeper === '' || grBy === '') {
+        // Show alert if any required field is empty
+        Swal.fire({
+            icon: 'warning',
+            title: 'Empty Fields',
+            text: 'Please fill in all required fields.',
+        });
+        return false; // Prevent form submission
+    }
     // Define arrays to store form data
     var formData = [];
 
@@ -312,15 +354,58 @@ function submitForm() {
     for (var i = 0; i < 5; i++) {
         // Get values of product, quantity, and unit inputs
         var productCode = $('#product' + i).val();
-        var qty = $('#qtyValue' + i).val();
-        var unit = $('#unit' + i).val();
 
-        // Push values into formData array
-        formData.push({
-            product_code: productCode,
-            qty: qty,
-            unit: unit
-        });
+
+        if (i == 0 && productCode.trim() == '' && $('#qtyValue' + i).val().trim() == '') {
+            $('#product0').removeClass('is-valid').addClass('is-invalid');
+
+            Swal.fire({
+                icon: 'warning',
+                title: 'No Data',
+                text: 'Please fill in both the product code and quantity.',
+            });
+
+            // Prevent form submission
+            return false;
+        } else {
+            $('#product0').removeClass('is-invalid');
+        }
+        // Check if productCode has a value
+        if (productCode.trim() !== '' && $('#qtyValue' + i).val().trim() !== '') {
+            var qty = $('#qtyValue' + i).val();
+            var name = $('#p_name' + i).val();
+            var unit = $('#unit' + i).val();
+            var target = $('#target' + i).val();
+
+            // Push values into formData array
+            formData.push({
+                product_code: productCode,
+                name: name,
+                qty: qty,
+                unit: unit,
+                target: target
+            });
+        } else if (productCode.trim() == '' && $('#qtyValue' + i).val().trim() == '') {
+            break;
+        } else {
+            if (productCode.trim() == '') {
+                $('productCode').addClass('is-invalid');
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No.' + (i + 1) + '<br>Please to reset or fill data',
+                    text: 'Product code cannot be empty.',
+                });
+            } else if ($('#qtyValue' + i).val().trim() == '') {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No.' + (i + 1) + '<br>Please to reset or fill data ',
+                    text: 'Quantity cannot be empty.',
+                });
+            }
+
+            // Prevent form submission
+            return false;
+        }
     }
 
     // Show SweetAlert confirmation dialog
@@ -341,15 +426,24 @@ function submitForm() {
                 data: {
                     formData: formData,
                     r_department: "<?php echo $row['u_department']; ?>",
-                    r_rec_username: "<?php echo $row['u_username']; ?>"
+                    r_req_username: $("input[name='rq_name']").val(),
+                    store_keeper: $("input[name='st_keeper']").val(),
+                    r_rec_username: $("input[name='gr_by']").val(),
+
                 },
                 success: function(response) {
                     // Handle success response
                     console.log("Form submitted successfully!");
                     Swal.fire({
                         title: 'Success!',
-                        text: 'Your request has been submitted successfully.',
+                        text: 'REQUEST NO: ' + response,
                         icon: 'success'
+                    }).then(() => {
+                        console.log(response)
+                        // Redirect to another page
+                        window.location.href = "g_history.php";
+                        // Reload the page
+                        //location.reload();
                     });
                     // You can perform further actions here, like resetting the form
                 },
@@ -364,7 +458,7 @@ function submitForm() {
                 }
             });
         } else if (result.dismiss === Swal.DismissReason.cancel) {
-            Swal.fire('Cancelled', 'Your request has not been submitted.', 'info');
+            return false;
         }
     });
 }
