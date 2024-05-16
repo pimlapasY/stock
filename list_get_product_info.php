@@ -7,13 +7,16 @@ if(isset($_POST['productId'])) {
     // Retrieve the product ID from the POST request
     $productId = $_POST['productId'];
 
-    // Prepare and execute a query to fetch product data based on the product ID
-    $sql = "SELECT * FROM stock WHERE s_id = :productId"; // Adjust table and column names as per your database schema
+    // Prepare and execute a query to fetch product data along with stock information based on the product ID
+    $sql = "SELECT p.*, IFNULL(s.s_qty, 0) AS stock_qty
+            FROM product p
+            LEFT JOIN stock s ON s.s_product_id = p.p_product_id
+            WHERE p.p_product_id = :productId"; // Adjust table and column names as per your database schema
     $stmt = $pdo->prepare($sql);
     $stmt->bindParam(':productId', $productId, PDO::PARAM_INT); // Assuming product ID is an integer
     $stmt->execute();
 
-    // Fetch the product data as an associative array
+    // Fetch the product data along with stock quantity as an associative array
     $productData = $stmt->fetch(PDO::FETCH_ASSOC);
 
     // Check if product data is found

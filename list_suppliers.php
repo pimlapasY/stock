@@ -79,7 +79,7 @@
                     sup_name + "'", // Add a space before the supplier name
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: '#d33',
+                confirmButtonColor: '#fa4b4b',
                 cancelButtonColor: '#3085d6',
                 confirmButtonText: 'Yes, delete it!'
             }).then((result) => {

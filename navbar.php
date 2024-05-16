@@ -138,7 +138,7 @@ if(isset($_SESSION['id'])) {
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'his_all.php' || $currentPage =='his_samt.php' || $currentPage == 'his_sakaba.php') ? 'active' : ''; ?>"
                         href="#" id="navbar3" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-clock-rotate-left"></i> <?php echo $history ?>
+                        <i class="fa-solid fa-laptop-medical"></i> <?php echo $history ?>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbar3">
                         <li><a class="dropdown-item  <?php echo ($currentPage == 'his_all.php') ? 'active' : ''; ?>"
@@ -152,16 +152,24 @@ if(isset($_SESSION['id'])) {
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'pr_create.php' || $currentPage == 'pr_management.php') ? 'active' : ''; ?>"
+                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'pr_create.php' || $currentPage == 'pr_management.php' || $currentPage == 'pr_history.php') ? 'active' : ''; ?>"
                         href="#" id="navbar4" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-clipboard-list"></i>
                         <?php echo 'PR' ?>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbar4">
-                        <li><a class="dropdown-item <?php echo ($currentPage == 'pr_create.php') ? 'active' : ''; ?>"
-                                href="pr_create.php"><?php echo $pr_add ?></a></li>
-                        <li><a class="dropdown-item <?php echo ($currentPage == 'pr_management.php') ? 'active' : ''; ?>"
-                                href="pr_management.php"><?php echo $pr_manage ?></a></li>
+                        <li>
+                            <a class="dropdown-item <?php echo ($currentPage == 'pr_create.php') ? 'active' : ''; ?>"
+                                href="pr_create.php"><?php echo $pr_add ?></a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item <?php echo ($currentPage == 'pr_management.php') ? 'active' : ''; ?>"
+                                href="pr_management.php"><?php echo $pr_manage ?></a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item <?php echo ($currentPage == 'pr_history.php') ? 'active' : ''; ?>"
+                                href="pr_history.php"><?php echo 'PR History' ?></a>
+                        </li>
                     </ul>
                 </li>
             </ul>
@@ -182,11 +190,18 @@ if(isset($_SESSION['id'])) {
                 </li>
             </ul>
             <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link <?php echo ($currentPage == 'stock_in.php') ? 'active' : ''; ?>"
-                        href="stock_in.php" id="nav6">
+                <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'stock_in.php' || $currentPage == 'stock_in_his.php') ? 'active' : ''; ?>"
+                        href="#" id="navbar6" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-inbox"></i> <?php echo $stock_in ?>
                     </a>
+                    <ul class="dropdown-menu" aria-labelledby="navbar6">
+                        <li><a class="dropdown-item <?php echo ($currentPage == 'stock_in.php') ? 'active' : ''; ?>"
+                                href="stock_in.php"><?php echo $stock_in ?></a></li>
+                        <li><a class="dropdown-item <?php echo ($currentPage == 'stock_in_his.php') ? 'active' : ''; ?>"
+                                id="dropdownItem2" href="stock_in_his.php"><?php echo 'StockIn History' ?></a>
+                        </li>
+                    </ul>
                 </li>
             </ul>
             <ul class="navbar-nav">
@@ -237,13 +252,15 @@ if(isset($_SESSION['id'])) {
             <div class="p-2">
                 <ul class="navbar-nav">
                     <li class="nav-item dropdown">
-                        <a href="#" data-mdb-dropdown-init class="nav-link dropdown-toggle" id=" navbar_user"
-                            data-bs-toggle="dropdown" aria-expanded="false">
+                        <a href="#" data-mdb-dropdown-init
+                            class="nav-link dropdown-toggle <?php echo ($currentPage == 'form_proflie.php') ? 'active' : ''; ?>"
+                            id=" navbar_user" data-bs-toggle="dropdown" aria-expanded="false">
                             <i class="fa-solid fa-user-gear"></i>&nbsp;<?php echo $row['u_username'] ?>
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbar_user">
                             <li>
-                                <a class="dropdown-item" href="#">My profile</a>
+                                <a class="dropdown-item <?php echo ($currentPage == 'form_proflie.php') ? 'active' : ''; ?>"
+                                    href="form_proflie.php">My profile</a>
                             </li>
                             <li>
                                 <a class="dropdown-item" href="#">Settings</a>
@@ -284,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
             text: 'You will be logged out!',
             icon: 'warning',
             showCancelButton: true,
-            confirmButtonColor: '#3085d6',
+            confirmButtonColor: '#e06666',
             cancelButtonColor: 'gray',
             confirmButtonText: 'Yes, logout!',
             cancelButtonText: 'Cancel'

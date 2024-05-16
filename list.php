@@ -8,9 +8,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>List</title>
 </head>
+<style>
+.input-group {
+    justify-content: center;
+}
+</style>
 
 <body>
-    <div class="container" style="margin-top: 150px;">
+    <div class="container">
         <h1 id="head_list">
             <?php
             echo ' <i class="fa-solid fa-box fa-lg"></i> Product List'; 
@@ -66,40 +71,32 @@
 </html>
 
 <script>
-// Add click event listeners to tab links
-$('#productTab').click(function(e) {
-    e.preventDefault();
-    $('#head_list').html(
-        '<i class="fa-solid fa-box fa-lg"></i> Product List');
-    // Load list_product.php content via AJAX
-    $('#supplierTab').removeClass('active')
-    $('#productTab').addClass('active')
-    $('#tabContent').load('list_product.php'); // Load list_product.php content via AJAX
-});
+$(document).ready(function() {
+    // Add click event listener to productTab
+    $('#productTab').click(function(e) {
+        e.preventDefault();
+        $('#head_list').html('<i class="fa-solid fa-box fa-lg"></i> Product List');
+        $('#supplierTab').removeClass('active');
+        $(this).addClass('active');
+        $('#tabContent').load('list_product.php'); // Load list_product.php content via AJAX
+        window.location.href = 'list.php'; // Reload list.php with query parameter
+    });
 
-$('#supplierTab').click(function(e) {
-    e.preventDefault(); // Prevent default link behavior
-    $('#head_list').html(
-        '<i class="fa-solid fa-user fa-xl"></i> Suppliers List');
-    $('#productTab').removeClass('active')
-    $('#supplierTab').addClass('active')
-    $('#tabContent').load('list_suppliers.php');
-    // Load list_suppliers.php content via AJAX
+    // Add click event listener to supplierTab
+    $('#supplierTab').click(function(e) {
+        e.preventDefault();
+        $('#head_list').html('<i class="fa-solid fa-user fa-xl"></i> Suppliers List');
+        $('#productTab').removeClass('active');
+        $(this).addClass('active');
+        $('#tabContent').load('list_suppliers.php'); // Load list_suppliers.php content via AJAX
+    });
 
+    // Redirect to the appropriate page after successful deletion
+    if (window.location.href.includes('page=register_supplier')) {
+        $('#head_list').html('<i class="fa-solid fa-user fa-xl"></i> Suppliers List');
+        $('#productTab').removeClass('active');
+        $('#supplierTab').addClass('active');
+        $('#tabContent').load('list_suppliers.php');
+    }
 });
-// Redirect to the appropriate page after successful deletion
-if (window.location.href.includes('page=register_supplier')) {
-    $('#head_list').html(
-        '<i class="fa-solid fa-user fa-xl"></i> Suppliers List');
-    $('#productTab').removeClass('active')
-    $('#supplierTab').addClass('active')
-    $('#tabContent').load('list_suppliers.php');
-} else {
-    $('#head_list').html(
-        '<i class="fa-solid fa-box fa-lg"></i> Product List');
-    // Load list_product.php content via AJAX
-    $('#supplierTab').removeClass('active')
-    $('#productTab').addClass('active')
-    $('#tabContent').load('list_product.php'); // Load list_product.php content via AJAX
-}
 </script>

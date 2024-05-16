@@ -55,8 +55,13 @@ foreach ($rows as $index => $row) {
      
      // Fetch the count
      $count = $count_stmt->fetchColumn();
-  
+    
     $table_data .= '<tr>';
+    if($row['r_prove_username'] == 99){
+    $table_data .= '<td><input class="form-check-input" type="checkbox" value="" id="flexCheckChecked"></td>';
+    }else{
+      $table_data .= '<td></td>';
+    }
     $table_data .= '<td>' . (($index + 1) % 10 == 0 ? $page . '0' : ($page - 1) . ($index + 1)) . '</td>';
     $table_data .= '<td><a class="modal-link my_a" data-reqno="' . $row['r_reqno'] . '" data-toggle="modal" data-target="#myModal">' . $row['r_reqno'] . '</a></td>';
     $objectives = $rows_objective['objectives'];

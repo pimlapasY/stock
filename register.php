@@ -32,7 +32,7 @@
         <br>
         <div class="d-flex justify-content-center">
             <div id="tabContent">
-                <?php include("form_product.php"); ?>
+                <?php include("reg_form_product.php"); ?>
                 <!-- Include form_product.php content by default -->
             </div>
         </div>
@@ -47,13 +47,13 @@ $('#productTab').click(function(e) {
     e.preventDefault(); // Prevent default link behavior
     $('#supplierTab').removeClass('active')
     $('#productTab').addClass('active')
-    $('#tabContent').load('form_product.php'); // Load form_product.php content via AJAX
+    $('#tabContent').load('reg_form_product.php'); // Load form_product.php content via AJAX
 });
 
 $('#supplierTab').click(function(e) {
     $('#productTab').removeClass('active')
     $('#supplierTab').addClass('active')
     e.preventDefault(); // Prevent default link behavior
-    $('#tabContent').load('form_supplier.php'); // Load form_supplier.php content via AJAX
+    $('#tabContent').load('reg_form_supplier.php'); // Load form_supplier.php content via AJAX
 });
 </script>

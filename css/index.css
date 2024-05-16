@@ -11,3 +11,7 @@
 .text-uppercase-first {
     text-transform: capitalize;
 }
+
+body{
+   margin-top: 150px;
+}

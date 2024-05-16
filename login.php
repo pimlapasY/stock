@@ -8,6 +8,10 @@
     <?php include('header.php') ?>
 </head>
 <style>
+body {
+    margin-top: 0;
+}
+
 .gradient-custom {
     /* fallback for old browsers */
     background: #9F9FDC;

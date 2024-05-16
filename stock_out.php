@@ -61,16 +61,16 @@ include('connect.php');
     <?php include('navbar.php') ;
     
     // Fetch product names from the database
-    $stmt_code = $pdo->query("SELECT DISTINCT s_product_code FROM stock");
+    $stmt_code = $pdo->query("SELECT DISTINCT p_product_code FROM product");
     $productNames_code = $stmt_code->fetchAll(PDO::FETCH_COLUMN); 
     // Fetch product names from the database
-    $stmt_color = $pdo->query("SELECT DISTINCT s_color FROM stock");
+    $stmt_color = $pdo->query("SELECT DISTINCT p_color FROM product");
     $productNames_color = $stmt_color->fetchAll(PDO::FETCH_COLUMN);       
     // Fetch product names from the database
-    $stmt_size = $pdo->query("SELECT DISTINCT s_size FROM stock");
+    $stmt_size = $pdo->query("SELECT DISTINCT p_size FROM product");
     $productNames_size = $stmt_size->fetchAll(PDO::FETCH_COLUMN);    
     // Fetch product names from the database
-    $stmt_hands = $pdo->query("SELECT DISTINCT s_hands FROM stock");
+    $stmt_hands = $pdo->query("SELECT DISTINCT p_hands FROM product");
     $productNames_hands = $stmt_hands->fetchAll(PDO::FETCH_COLUMN);   
     
 ?>

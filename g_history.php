@@ -5,69 +5,79 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>History</title>
+    <style>
+    .my_a {
+        cursor: pointer;
+        background-color: none;
+        border-radius: none;
+        padding: none;
+    }
+
+    .my_a:hover {
+        padding-top: 2px;
+        padding-bottom: 2px;
+        color: black;
+    }
+
+    /* Add this CSS for printing */
+    @media print {
+
+        /* Hide all elements except the modal */
+        body>*:not(.modal) {
+            display: none !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        .print_none {
+            display: none !important;
+        }
+
+        /* Adjust modal styles for printing */
+        .modal {
+            position: static !important;
+            display: block !important;
+            overflow: visible !important;
+            width: auto !important;
+            margin: 0 !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Adjust modal content styles for printing */
+        .modal-content {
+            overflow: visible !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+
+        /* Hide unnecessary elements */
+        .modal-header .btn-primary {
+            border: 0 !important;
+            display: none !important;
+            margin: none;
+        }
+
+        /* Hide the close button in modal header */
+        .modal-header .btn-close {
+            display: none !important;
+        }
+
+        /* Set modal body to vertical */
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+    }
+    </style>
 </head>
-<style>
-.my_a {
-    cursor: pointer;
-    background-color: none;
-    border-radius: none;
-    padding: none;
-}
-
-.my_a:hover {
-    padding-top: 2px;
-    padding-bottom: 2px;
-    color: black;
-}
-</style>
-<!-- Add this CSS for printing -->
-<style media="print">
-/* Hide all elements except the modal */
-body>*:not(.modal) {
-    display: none !important;
-}
-
-.print_none {
-    display: none !important;
-}
-
-/* Adjust modal styles for printing */
-.modal {
-    position: static !important;
-    display: block !important;
-    overflow: visible !important;
-    width: auto !important;
-    margin: 0 !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* Adjust modal content styles for printing */
-.modal-content {
-    overflow: visible !important;
-    border: none !important;
-    box-shadow: none !important;
-}
-
-/* Hide unnecessary elements */
-.modal-header .btn-primary {
-    border: 0 !important;
-    display: none !important;
-    margin: none;
-}
-
-/* Hide the close button in modal header */
-.modal-header .btn-close {
-    display: none !important;
-}
-
-.btn-outline-danger .btn-outline-success {
-    border: 0px !important;
-}
-</style>
 
 <body>
     <?php include('navbar.php') ?>
+
+    <!-- Modal -->
     <div class="modal fade" id="myModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-xl">
             <div class="modal-content">
@@ -75,19 +85,6 @@ body>*:not(.modal) {
                     <button type="button" class="btn btn-primary" onclick="printModalContent()">
                         <i class="fa-solid fa-print"></i> PRINT
                     </button>
-                    <!-- Add this script for printing -->
-                    <script>
-                    function printModalContent() {
-                        // Hide the print button before printing
-                        $('.modal-header .btn-primary').hide();
-
-                        // Open print dialog
-                        window.print();
-
-                        // Show the print button after printing is done
-                        $('.modal-header .btn-primary').show();
-                    }
-                    </script>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-header">
@@ -107,7 +104,7 @@ body>*:not(.modal) {
                                 <h5><?php echo $mat_goods ?></h5>
                             </th>
                             <th class="text-end" colspan="3">
-                                <a><?php echo "DATE: "  ;?> <a id="dateR"></a></a>
+                                <a><?php echo "DATE: "; ?><a id="dateR"></a></a>
                             </th>
                         </tr>
                         <tr>
@@ -115,10 +112,10 @@ body>*:not(.modal) {
                                 <div class="d-flex justify-content-between">
                                     <button type="button" class="btn btn-outline-secondary btn-rounded"
                                         data-mdb-ripple-init>
-                                        <?php echo $department  ?> : <a id="department"></a>
+                                        <?php echo $department ?> : <a id="department"></a>
                                     </button>
                                     <button type="button" id="btn-status" class="btn btn-rounded" data-mdb-ripple-init>
-                                        <?php echo $status  ?> : <a id="status"></a>
+                                        <?php echo $status ?> : <a id="status"></a>
                                     </button>
                                 </div>
                             </th>
@@ -135,12 +132,11 @@ body>*:not(.modal) {
                                     <th><?php echo $description ?></th>
                                     <th><?php echo $qty ?></th>
                                     <th><?php echo $unit ?></th>
-                                    <th><?php echo $purpose  ?></th>
+                                    <th><?php echo $purpose ?></th>
                                 </tr>
                             </thead>
                             <tbody class="table-group-divider table-divider-color" id="table-body-modal">
                             </tbody>
-
                         </table>
                         <table class="table table-borderless">
                             <thead>
@@ -149,8 +145,8 @@ body>*:not(.modal) {
                                         <div class="input-group mb-3">
                                             <button class="btn btn-outline-secondary" type="button" id="rq_name"
                                                 data-mdb-ripple-init data-mdb-ripple-color="dark">
-                                                <?php echo $REQUEST_NAME ?>
-                                                :</button>
+                                                <?php echo $REQUEST_NAME ?> :
+                                            </button>
                                             <input class="form-control" id="REQname" aria-describedby="rq_name"
                                                 readonly />
                                         </div>
@@ -159,8 +155,8 @@ body>*:not(.modal) {
                                         <div class="input-group mb-3">
                                             <button class="btn btn-outline-secondary" type="button" id="ap_by"
                                                 data-mdb-ripple-init data-mdb-ripple-color="dark">
-                                                <?php echo $APPROVED_BY ?>
-                                                :</button>
+                                                <?php echo $APPROVED_BY ?> :
+                                            </button>
                                             <input class="form-control" id="ap_by_modal" aria-describedby="ap_by"
                                                 readonly />
                                         </div>
@@ -171,8 +167,8 @@ body>*:not(.modal) {
                                         <div class="input-group mb-3">
                                             <button class="btn btn-outline-secondary" type="button" id="st_keeper"
                                                 data-mdb-ripple-init data-mdb-ripple-color="dark">
-                                                <?php echo $STORE_KEEPER ?>
-                                                :</button>
+                                                <?php echo $STORE_KEEPER ?> :
+                                            </button>
                                             <input class="form-control" id="RKname" aria-describedby="st_keeper"
                                                 readonly />
                                         </div>
@@ -181,7 +177,8 @@ body>*:not(.modal) {
                                         <div class="input-group mb-3">
                                             <button class="btn btn-outline-secondary" type="button" id="gr_by"
                                                 data-mdb-ripple-init data-mdb-ripple-color="dark">
-                                                <?php echo $GOODS_RECEIVED_BY ?> :</button>
+                                                <?php echo $GOODS_RECEIVED_BY ?> :
+                                            </button>
                                             <input class="form-control" id="RECname" aria-describedby="gr_by"
                                                 readonly />
                                         </div>
@@ -197,7 +194,8 @@ body>*:not(.modal) {
             </div>
         </div>
     </div>
-    <div class="container" style="margin-top: 150px;">
+
+    <div class="container">
         <div class="d-flex justify-content-between m-3" style="align-items: center;">
             <div class="d-flex justify-content-end w-100">
                 <div class="input-group p-3">
@@ -209,10 +207,21 @@ body>*:not(.modal) {
             </div>
         </div>
 
+        <table class="table align-middle mb-0 bg-white">
+            <tr>
+                <td>
+                    <button class="btn btn-success">
+                        approve
+                    </button>
+                </td>
+            </tr>
+        </table>
+
         <table class="table table-hover align-middle mb-0 bg-white table-bordered"
             style="text-align:center; white-space: nowrap;">
             <thead class="bg-light">
                 <tr class="uppercase">
+                    <th><?php echo 'approve' ?></th>
                     <th><?php echo '#' ?></th>
                     <th><?php echo $code ?></th>
                     <th><?php echo $purpose ?></th>
@@ -235,161 +244,162 @@ body>*:not(.modal) {
             </nav>
         </div>
     </div>
-    </div>
-</body>
+    <script>
+    $(document).ready(function() {
+        loadData(1, '');
 
-</html>
-<script>
-$(document).ready(function() {
-    // Initial page load
-    loadData(1, '');
+        $('#searchInput').on('input', function() {
+            loadData(1, $(this).val());
+        });
 
-    // Search input change event
-    $('#searchInput').on('input', function() {
-        loadData(1, $(this).val());
+        $(document).on('click', '.pagination-link', function() {
+            loadData($(this).data('page'), $('#searchInput').val());
+        });
     });
 
-    // Pagination click event
-    $(document).on('click', '.pagination-link', function() {
-        loadData($(this).data('page'), $('#searchInput').val());
+    function loadData(page, search) {
+        $.ajax({
+            url: 'fetch_goodRequest.php',
+            method: 'GET',
+            data: {
+                page: page,
+                search: search
+            },
+            dataType: 'json',
+            success: function(response) {
+                $('#tableBody').html(response.table_data);
+                $('#pagination').html(response.pagination);
+            },
+            error: function(error) {
+                console.log('Error:', error);
+            }
+        });
+    }
+
+    $(document).on('click', '.deleteButton', function() {
+        var reqno = $(this).data('reqno');
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'You are about to delete this record. ' + reqno,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                deleteData(reqno); // Pass an array of reqno to deleteData function
+            }
+        });
     });
 
-});
-
-function loadData(page, search) {
-    $.ajax({
-        url: 'fetch_goodRequest.php',
-        method: 'GET',
-        data: {
-            page: page,
-            search: search
-        },
-        dataType: 'json',
-        success: function(response) {
-            // Update table body
-            $('#tableBody').html(response.table_data);
-
-            // Update pagination
-            $('#pagination').html(response.pagination);
-        },
-        error: function(error) {
-            // Handle error here
-            console.log('Error:', error);
-        }
-    });
-}
-$(document).on('click', '.deleteButton', function() {
-    var reqno = $(this).data('reqno');
-
-    // Display a confirmation dialog using SweetAlert
-    Swal.fire({
-        title: 'Are you sure?',
-        text: 'You are about to delete this record. ' + reqno,
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Yes, delete it!'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // If user confirms, proceed with deletion
-            deleteData(reqno);
-        }
-    });
-});
-
-function deleteData(reqno) {
-    $.ajax({
-        url: 'delete.php',
-        method: 'POST',
-        data: {
-            reqno: reqno
-        },
-        dataType: 'json',
-        success: function(response) {
-            if (response.deleted) {
-                // Show success message
+    function deleteData(reqno) {
+        console.log(reqno);
+        $.ajax({
+            url: 'delete_good_quest.php',
+            method: 'POST',
+            data: {
+                reqno: reqno // Pass the array of reqnos
+            },
+            dataType: 'json',
+            //response ต้องถูกส่งมาเป็น reqno ถึงจะ delete สำเร็จ
+            success: function(response) {
+                console.log(response);
                 Swal.fire({
                     title: 'Deleted!',
-                    text: 'The record has been deleted.',
+                    text: 'The records have been deleted.',
                     icon: 'success'
                 }).then(() => {
-                    loadData($(this).data('page'), $('#searchInput').val());
-
-                    // Reload data or update UI as needed
+                    loadData(1, $('#searchInput').val());
                 });
-            } else {
-                // Show error message if deletion fails
+                /* if (response.deleted) {
+                   
+                } else {
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to delete the records.',
+                        icon: 'error'
+                    });
+                } */
+            },
+            error: function(xhr, status, error) {
+                console.log('XHR status:', xhr.status);
+                console.log('Error:', error);
+                var errorMessage = '';
+
+                // Check if the error is due to server-side processing
+                if (xhr.status === 500) {
+                    errorMessage = 'Server error. Please try again later.';
+                } else {
+                    errorMessage = 'An error occurred while processing your request. Please try again.';
+                }
+
                 Swal.fire({
                     title: 'Error!',
-                    text: 'Failed to delete the record.',
+                    text: errorMessage,
                     icon: 'error'
                 });
             }
-        },
-        error: function(error) {
-            // Handle AJAX error
-            console.log('Error:', error);
-            // Show error message using SweetAlert
-            Swal.fire({
-                title: 'Error!',
-                text: 'An error occurred while processing your request.',
-                icon: 'error'
-            });
-        }
-    });
-}
-
-$(document).on('click', 'a.modal-link', function(e) {
-    e.preventDefault(); // Prevent the default behavior of the link
-    var reqno = $(this).data('reqno'); // Get the value of data-reqno attribute
-
-    // Fetch data via AJAX
-    $.ajax({
-        url: 'fetch_modal_request.php',
-        method: 'POST',
-        data: {
-            reqno: reqno
-        },
-        dataType: 'json',
-        success: function(data) {
-            // Call showModalWithData function with the received data
-            showModalWithData(data);
-        },
-        error: function(error) {
-            // Handle AJAX error
-            console.log('Error:', error);
-            // Show error message (if needed)
-        }
-    });
-});
-
-
-function showModalWithData(data) {
-    // Use data fetched via AJAX to populate the modal content
-    // For example, update modal elements with data properties
-    $('#modalTitle').html(data.title);
-    $('#table-body-modal').html(data.data_table);
-    // Show the modal
-    $('#myModal').modal('show');
-    $('#department').text(data.dataDep);
-    $('#dateR').text(data.dataDate);
-    $('#RKname').val(data.rk_username);
-    $('#RECname').val(data.rec_username);
-    $('#REQname').val(data.req_username);
-
-    if (data.status === '99') {
-        $('#btn-status').removeClass('btn-outline-danger btn-outline-success').addClass('btn-secondary');
-        $('#status').text('รออนุมัติ');
-        $('#ap_by_modal').val('Pending for approval');
-    } else if (data.status === '1') {
-        $('#btn-status').removeClass('btn-secondary btn-outline-success').addClass('btn-outline-danger');
-        $('#status').text('ไม่อนุมัติ');
-        $('#ap_by_modal').val('Disapproved');
-    } else {
-        $('#btn-status').removeClass('btn-secondary btn-outline-danger').addClass('btn-outline-success');
-        $('#status').text('อนุมัติ');
-        $('#ap_by_modal').val(data.status);
+        });
     }
-}
-</script>
+
+
+    $(document).on('click', 'a.modal-link', function(e) {
+        e.preventDefault();
+        var reqno = $(this).data('reqno');
+        $.ajax({
+            url: 'fetch_modal_request.php',
+            method: 'POST',
+            data: {
+                reqno: reqno
+            },
+            dataType: 'json',
+            success: function(data) {
+                showModalWithData(data);
+            },
+            error: function(error) {
+                console.log('Error:', error);
+            }
+        });
+    });
+
+    function showModalWithData(data) {
+        $('#modalTitle').html(data.title);
+        $('#table-body-modal').html(data.data_table);
+        $('#myModal').modal('show');
+        $('#department').text(data.dataDep);
+        $('#dateR').text(data.dataDate);
+        $('#RKname').val(data.rk_username);
+        $('#RECname').val(data.rec_username);
+        $('#REQname').val(data.req_username);
+
+        let statusClass = '';
+        let statusText = '';
+
+        if (data.status === '99') {
+            statusClass = 'btn-secondary';
+            statusText = 'รออนุมัติ';
+            $('#ap_by_modal').val('Pending for approval');
+        } else if (data.status === '1') {
+            statusClass = 'btn-outline-danger';
+            statusText = 'ไม่อนุมัติ';
+            $('#ap_by_modal').val('Disapproved');
+        } else {
+            statusClass = 'btn-outline-success';
+            statusText = 'อนุมัติ';
+            $('#ap_by_modal').val(data.status);
+        }
+
+        $('#btn-status').removeClass('btn-secondary btn-outline-danger btn-outline-success').addClass(statusClass);
+        $('#status').text(statusText);
+    }
+
+    function printModalContent() {
+        $('.modal-header .btn-primary').hide();
+        window.print();
+        $('.modal-header .btn-primary').show();
+    }
+    </script>
+</body>
+
+</html>
