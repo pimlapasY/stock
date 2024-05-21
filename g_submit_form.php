@@ -1,5 +1,6 @@
 <?php
 include('connect.php');
+
 date_default_timezone_set('Asia/Bangkok');
 
 // Get last two digits of the current year
@@ -28,15 +29,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Retrieve form data
     $department = $_POST['r_department'];
     $rec_date = date("Y-m-d H:i:s");
-    $rq_username = $_POST['r_req_username'];
+    $rq_username =  $_SESSION['id'];
     $st_username = $_POST['store_keeper'];
     $rec_username = $_POST['r_rec_username'];
 
     // Retrieve formData array sent via AJAX
     $formData = $_POST['formData'];
     // Prepare SQL statement to insert data into the database
-    $sql = "INSERT INTO request (r_reqno, r_description,  r_department, r_product_code, r_qty, r_unit, 	r_objective, r_req_username, 	r_keep_username, r_req_date, r_rec_username, r_prove_username) 
-            VALUES (:r_reqno, :name, :department, :product_code, :qty, :unit, :target, :rq_username, :st_username, :rec_date, :rec_username, 99)";
+    $sql = "INSERT INTO request (r_reqno, r_description,  r_department, r_product_code, r_qty, r_unit, 	r_objective, r_req_username, 	r_keep_username, r_req_date, r_rec_username) 
+            VALUES (:r_reqno, :name, :department, :product_code, :qty, :unit, :target, :rq_username, :st_username, :rec_date, :rec_username)";
 
     // Prepare the SQL statement
     $stmt = $pdo->prepare($sql);

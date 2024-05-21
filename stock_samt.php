@@ -41,7 +41,13 @@
             </ul>
         </div>
         <div class="d-flex justify-content-between m-3" style="align-items: center;">
-            <div class="d-flex justify-content-end w-100">
+            <div class="d-flex justify-content-start">
+                <a href="register.php" class="btn btn-success"><i class="fa-solid fa-plus"></i> NEW</a>&nbsp;
+                <button type="button" class="btn btn-warning" onclick="openPreviewModal()"><i
+                        class="fa-solid fa-cart-flatbed"></i> Stock out</button>&nbsp;
+                <button class="btn btn-info"><i class="fa-solid fa-clipboard-list"></i> add PR</button>
+            </div>
+            <div class="d-flex justify-content-end w-50">
                 <div class="input-group p-3">
                     <input id="searchInput" type="search" class="form-control rounded" placeholder="Search"
                         aria-label="Search" aria-describedby="search-addon" />
@@ -49,6 +55,7 @@
                         onclick="loadData(1, $('#searchInput').val())">Search</button>
                 </div>
             </div>
+
         </div>
 
 
@@ -64,6 +71,7 @@
                     <th rowspan="2">Cost price</th>
                     <th rowspan="2">Sale price</th>
                     <th rowspan="2">Samt Qty</th>
+                    <th rowspan="2"><i class="fa-solid fa-list-check"></i></th>
                     <!--  <th class="text-center" colspan="2">Store</th> -->
                 </tr>
                 <!-- <tr>
@@ -97,6 +105,11 @@
            echo "<td class='text-end'>" . number_format($product['p_cost_price']) . "</td>";
            echo "<td class='text-end'>" . number_format($product['p_sale_price']) . "</td>";
            echo "<td class='text-end' style='color: " . ($product['s_qty'] == 0 ? "red" : "green") . ";background:#E5F9E5;'>" .  htmlspecialchars(($product['s_qty'])-($product['sub_qty'])) . "</td>";
+           echo "<td class='text-center' style='vertical-align: middle;'>";
+           echo '<div class="input-group"><div class="input-group-text">';
+           echo "<input class='form-check-input' type='checkbox' value='' id='checkbox_" . htmlspecialchars($product['p_product_id']) . "' onchange='toggleInput(this)' /> <br>";
+           echo "</div><input class='form-control' min='1' type='number' id='input_" . htmlspecialchars($product['p_product_id']) . "' value='' style='display: none;' /> </div>";
+           echo "</td>";
            echo "</tr>";
            }
             ?>

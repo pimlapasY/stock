@@ -157,10 +157,44 @@ include('connect.php');
                 </table>
             </div>
             <div class="card-body">
+                <div class="text-start">
+                    <p>
+                        ** <i class="fa-solid fa-rectangle-xmark"></i>
+                        No data available : Please register for the product. &nbsp;
+                        <i class="fa-solid fa-arrow-right"></i>&nbsp;
+                        <!-- <a href="register.php">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            <?php echo $register ?>
+                        </a>  -->
+                        <button class="btn btn-sm btn-success" onclick="window.location.href = 'register.php'"
+                            style="color: white;">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            <?php echo $register ?>
+                        </button>**
+                    </p>
+                    <p>
+                        ** <i class="fa-solid fa-sack-xmark"></i>
+                        Out of stock : Please stock more of this product. &nbsp;
+                        <i class="fa-solid fa-arrow-right"></i> &nbsp;
+                        <!-- <a href="stock_in.php">
+                            <i class="fa-solid fa-inbox"></i>
+                            <?php echo $stock_in ?>
+                        </a> -->
+                        <button class="btn btn-sm btn-info" onclick="window.location.href = 'stock_in.php'"
+                            style="color: white;">
+                            <i class="fa-solid fa-inbox"></i>
+                            <?php echo $stock_in ?>
+                        </button>**
+                    </p>
+                    <!-- <p style="color:green;">
+                        <i class="fa-solid fa-check"></i>
+                        Have QTY = The product can stock out following the maximum quantity in
+                        stock.
+                    </p> -->
+                </div>
                 <table class="table">
                     <thead>
                         <tr class="text-center table-warning">
-                            <th>No.</th>
                             <th><?php echo 'MG CODE' ?></th>
                             <th><?php echo $product_code ?></th>
                             <th><?php echo $product_name?></th>
@@ -168,6 +202,7 @@ include('connect.php');
                             <th><?php echo $color ?></th>
                             <th><?php echo $hands ?></th>
                             <th><?php echo $size  ?></th>
+                            <th><?php echo 'Cost Price'  ?></th>
                             <th><?php echo $qty ?></th>
                             <th><?php echo 'Total price'  ?></th>
                             <th><?php echo 'Memo'  ?></th>
@@ -175,11 +210,7 @@ include('connect.php');
                         </tr>
                     </thead>
                     <tbody class="table-group-divider table-divider-color">
-                        <?php for ($i = 1; $i <= 5; $i++) : ?>
                         <tr>
-                            <th scope="row">
-                                <?php echo $i; ?>
-                            </th>
                             <td>
                                 <input type="text" class="form-control" id="MG_code" name="MG_code<?php echo $i; ?>"
                                     value="<?php echo $MG_CODE.$i ?>" style="width:120px;" readonly>
@@ -196,17 +227,16 @@ include('connect.php');
                             </td>
                             <!-- Replace the input field with a readonly input -->
                             <td>
-                                <input type="text" class="form-control" id="selectedProductName"
-                                    name="productName_<?php echo $i; ?>" style="background:#fff8e4;" readonly>
+                                <input type="text" class="form-control" id="selectedProductName" name="productName"
+                                    style="background:#fff8e4;" readonly>
                             </td>
                             <td>
-                                <input type="text" class="form-control" id="selectedProductUnit"
-                                    name="productUnit_<?php echo $i; ?>" style="background:#fff8e4;" readonly>
+                                <input type="text" class="form-control" id="selectedProductUnit" name="productUnit"
+                                    style="background:#fff8e4;" readonly>
                             </td>
                             <td>
-                                <input class="form-control" type="text" id="colorInput"
-                                    name="productColor_<?php echo $i; ?>" list="product_names_color"
-                                    onchange="validateInput(this)">
+                                <input class="form-control" type="text" id="colorInput" name="productColor"
+                                    list="product_names_color" onchange="validateInput(this)">
                                 <datalist id="product_names_color">
                                     <?php foreach ($productNames_color as $productName_color): ?>
                                     <option value="<?php echo $productName_color; ?>">
@@ -214,9 +244,8 @@ include('connect.php');
                                 </datalist>
                             </td>
                             <td>
-                                <input class="form-control" type="text" id="handInput"
-                                    name="productHand_<?php echo $i; ?>" list="product_hand"
-                                    onchange="validateInput(this)">
+                                <input class="form-control" type="text" id="handInput" name="productHand"
+                                    list="product_hand" onchange="validateInput(this)">
                                 <datalist id="product_hand">
                                     <?php foreach ($productNames_hands as $productName_hand): ?>
                                     <option value="<?php echo $productName_hand; ?>">
@@ -224,14 +253,21 @@ include('connect.php');
                                 </datalist>
                             </td>
                             <td>
-                                <input class="form-control" type="text" id="sizeInput"
-                                    name="productSize_<?php echo $i; ?>" list="product_size"
-                                    onchange="validateInput(this)">
+                                <input class="form-control" type="text" id="sizeInput" name="productSize"
+                                    list="product_size" onchange="validateInput(this)">
                                 <datalist id="product_size">
                                     <?php foreach ($productNames_size as $productName_size): ?>
                                     <option value="<?php echo $productName_size; ?>">
                                         <?php endforeach; ?>
                                 </datalist>
+                            </td>
+                            <td>
+
+                                <input class="form-control text-end" type="text" id="selectedProductCost"
+                                    style="background:#fff8e4;" readonly>
+                                <!--  <input type="text" class="form-control" id="total_price" name="total_price"
+                                style="background:#fff8e4;" readonly> -->
+
                             </td>
                             <td>
                                 <div class="input-group">
@@ -242,18 +278,19 @@ include('connect.php');
                                         id="incrementBtn">+</button>
                                 </div>
                             </td>
+
                             <td>
-                                <input type="text" class="form-control" id="total_price"
-                                    name="total_price<?php echo $i; ?>" style="background:#fff8e4;" readonly>
+                                <input class="form-control text-end" id="total_price" style="background:#fff8e4;"
+                                    readonly></input>
                             </td>
                             <td>
-                                <input type="text" class="form-control" id="memo" name="memo_<?php echo $i; ?>">
+                                <input type="text" class="form-control" id="memo" name="memo">
                             </td>
                             <td style="white-space: nowrap;">
                                 <script>
                                 function resetInput() {
                                     var inputs = document.querySelectorAll(
-                                        "#product, #selectedProductName, #myInput, #selectedProductUnit, #colorInput, #sizeInput, #handInput"
+                                        "#product, #selectedProductName, #myInput, #selectedProductUnit, #colorInput, #sizeInput, #handInput, #total_price, #selectedProductCost"
                                     );
 
 
@@ -268,10 +305,9 @@ include('connect.php');
                                 }
                                 </script>
                                 <button type="button" class="btn btn-warning btn-floating" data-mdb-ripple-init
-                                    onclick="resetInput()"><i class="fa-solid fa-minus"></i></button>
+                                    onclick="resetInput()"><i class="fa-solid fa-eraser"></i></button>
                             </td>
                         </tr>
-                        <?php endfor; ?>
                         <!--    <tr>
                             <td colspan="10" class="text-center">
                                 <button type="button" class="btn btn-primary" id="addRowBtn"><i
@@ -281,7 +317,6 @@ include('connect.php');
                                     Row</button>
                             </td>
                         </tr> -->
-
                     </tbody>
 
 
@@ -303,6 +338,25 @@ include('connect.php');
 // Get references to the dropdown menu and the input field
 const stockToOption = document.getElementById('stockToOption');
 const otherInput = document.getElementById('otherInput');
+
+// Function to format the input value with commas
+function formatNumberWithCommas(number) {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+// Event listener to format the number input on keyup
+document.addEventListener('DOMContentLoaded', (event) => {
+    const inputElements = document.querySelectorAll(
+        'input[type="text"][id="selectedProductCost"], #total_price');
+    inputElements.forEach(input => {
+        input.addEventListener('keyup', (event) => {
+            let value = input.value.replace(/,/g, ''); // Remove existing commas
+            if (!isNaN(value) && value.length > 0) {
+                input.value = formatNumberWithCommas(value);
+            }
+        });
+    });
+});
 
 // Add event listener to the dropdown menu
 stockToOption.addEventListener('change', function() {
@@ -346,7 +400,7 @@ $('#product, #colorInput, #sizeInput, #handInput').on('change', function() {
     updateQuantityInput();
 });
 
-// Function to update quantity input based on product, color, and size
+
 function updateQuantityInput() {
     var selectedProductCode = $('#product').val();
     var selectedColor = $('#colorInput').val();
@@ -354,8 +408,11 @@ function updateQuantityInput() {
     var selectedHand = $('#handInput').val();
     var qtyInput = $('#qtyValue');
     var incrementButton = $('#incrementBtn');
+    var total_price = $('#total_price').val();
+    var qtyValue = parseInt($('#qtyValue').text());
+    var productCost = parseFloat($('#selectedProductCost').val());
 
-    // AJAX call to get the stock quantity of the selected product, color, and size
+    // AJAX call to get the stock quantity and product cost of the selected product, color, size, and hand
     $.ajax({
         url: 'ajax_GET/get_stock_quantity.php',
         method: 'POST',
@@ -366,36 +423,62 @@ function updateQuantityInput() {
             hand: selectedHand
         },
         success: function(response) {
-            var stockQuantity = parseInt(response);
-
-            // Disable increment button if stock is not available or quantity is already at maximum
-            if (stockQuantity <= 0) {
-                qtyInput.html('<b style="color: red;">sold out</b>');
-                incrementButton.prop('disabled', true);
-            } else if (stockQuantity > 0) {
-                // Set the default quantity value to the maximum stock quantity
-                qtyInput.text(stockQuantity);
-                incrementButton.prop('disabled', false);
-            } else {
+            var data = JSON.parse(response);
+            if (data.error) {
                 qtyInput.html('<b style="color: orange;">No Data</b>');
                 incrementButton.prop('disabled', true);
             }
+
+            var stockQuantity = parseInt(data.s_qty);
+            var productCost = parseFloat(data.p_cost_price);
+            var productQTY = parseInt(data.p_qty);
+            console.log('s_qty = ' + stockQuantity);
+            console.log('p_cost_price = ' + productCost);
+            console.log('p_qty = ' + productQTY);
+            if (stockQuantity > 0) {
+                // Set the default quantity value to the maximum stock quantity
+                qtyInput.text(stockQuantity);
+                incrementButton.prop('disabled', false);
+                var totalPrice = (stockQuantity * productCost).toFixed(2)
+                    .toLocaleString(); // Calculate the total price
+
+                $('#total_price').val(totalPrice); // Update the total price element
+                $('#selectedProductCost').val(productCost);
+                console.log(totalPrice, qtyValue);
+            } else if (productQTY == 0) {
+                qtyInput.html('<b style="color: red;">out of stock</b>');
+                incrementButton.prop('disabled', true);
+                $('#selectedProductCost').val(productCost);
+            }
+
+
+            // Handle stock quantity and product cost
+            /*    if (stockQuantity <= 0) {
+                   qtyInput.html('<b style="color: red;">Sold out</b>');
+                   incrementButton.prop('disabled', true);
+               } else {
+                   qtyInput.text(stockQuantity);
+                   incrementButton.prop('disabled', false);
+               } */
 
             // Set the max attribute of the quantity span to the stock quantity
             qtyInput.attr('max', stockQuantity);
         },
         error: function() {
-            console.error('Error fetching stock quantity.');
+            console.error('Error fetching stock quantity and product cost.');
         }
     });
 }
+
 // Function to decrement quantity value
 function decrementQty() {
     var qtyValue = parseInt($('#qtyValue').text());
     if (qtyValue > 0) {
         $('#qtyValue').text(qtyValue - 1);
+        updateTotalPrice(); // Call updateTotalPrice after decrementing quantity
     }
 }
+
 
 // Function to increment quantity value
 function incrementQty() {
@@ -403,8 +486,19 @@ function incrementQty() {
     var maxQuantity = parseInt($('#qtyValue').attr('max'));
     if (qtyValue < maxQuantity) {
         $('#qtyValue').text(qtyValue + 1);
+        updateTotalPrice(); // Call updateTotalPrice after incrementing quantity
     }
 }
+
+
+// Function to update total price
+function updateTotalPrice() {
+    var qtyValue = parseInt($('#qtyValue').text());
+    var productCost = parseFloat($('#selectedProductCost').val()); // Get the product cost
+    var totalPrice = (qtyValue * productCost).toFixed(2);
+    $('#total_price').val(totalPrice); // Update the total price element
+}
+
 
 // Get the radio buttons
 var saleRadio = document.getElementById('flexRadioDefault1');

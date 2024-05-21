@@ -31,8 +31,12 @@ if (isset($_POST['i_no'])) {
          // Output total number of records
         $total_records = $stmt->rowCount();
         echo "<div class='p-3'>";
+        echo "<h4 class='text-center'>" . 'Stockin No : ' . htmlspecialchars($products[0]['i_no']) . "</h4>";
         echo "<p>" . 'Date : ' . htmlspecialchars($products[0]['i_date_add']) . "</p>";
         echo "<p>" . 'By : ' . htmlspecialchars($products[0]['u_username']) . "</p>";
+    if (htmlspecialchars($products[0]['i_memo']) != null){
+        echo "<p style='color: red;'>" . 'Memo : ' . htmlspecialchars($products[0]['i_memo']) . "</p>";
+    }
         echo "<p style='color:" . ($products[0]['i_status'] == 1 ? 'green' : 'orange') . "'>" . ($products[0]['i_status'] == 1 ? 'Purchased' : 'Returned') . "</p>";
         echo '</div>';
         echo '<h4 class="text-end">Total : '. $total_records.' </h4>';

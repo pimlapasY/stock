@@ -9,7 +9,7 @@
 </head>
 <style>
 body {
-    margin-top: 0;
+    margin-top: 0 !important;
 }
 
 .gradient-custom {

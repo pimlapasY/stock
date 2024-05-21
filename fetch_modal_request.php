@@ -8,7 +8,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reqno'])) {
     $reqno = $_POST['reqno'];
 
     // SQL to fetch data
-    $sql = "SELECT * FROM request WHERE r_reqno = :reqno";
+    $sql = "SELECT 
+        request.*, 
+        prove_user.u_username AS prove_username, 
+        req_user.u_username AS req_username 
+    FROM 
+        request
+    LEFT JOIN 
+        user AS prove_user ON prove_user.u_userid = request.r_prove_username
+    LEFT JOIN 
+        user AS req_user ON req_user.u_userid = request.r_req_username
+    WHERE 
+        r_reqno = :reqno";
 
     // Prepare and execute SQL statement
     $stmt = $pdo->prepare($sql);
@@ -18,7 +29,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reqno'])) {
 
     
     // SQL to fetch data
-    $sql_data_table = "SELECT * FROM request WHERE r_reqno = :reqno";
+    $sql_data_table = "SELECT *
+    FROM request
+    WHERE r_reqno = :reqno";
 
     // Prepare and execute SQL statement
     $stmt_data_table = $pdo->prepare($sql_data_table);
@@ -50,9 +63,10 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reqno'])) {
         'dataDep' =>  $data['r_department'],
         'dataDate' =>  $data['r_req_date'],
         'status' => $data['r_prove_username'],
+        'prove_name' => $data['prove_username'],
         'rk_username' => $data['r_keep_username'],
         'rec_username' => $data['r_rec_username'],
-        'req_username' => $data['r_req_username']
+        'req_username' => $data['req_username']
     ];
     
     echo json_encode($response);

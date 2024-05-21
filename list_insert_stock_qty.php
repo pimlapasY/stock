@@ -18,6 +18,9 @@ if(isset($_POST['previewData'])) {
     // Increment count by 1 for the new row
     $count++;
     $i_no = $currentDate . $count; //ต้องอยู่นอกลูปเพราะว่าต้องการให้เป็น ID เดียวกันก่อน insert 1 ครั้ง
+    $reason = $_POST['reason'];
+    $date = $_POST['date_create'];
+    $memo = $_POST['memo'];
 
 
     // Loop through the previewData array received from AJAX
@@ -53,17 +56,19 @@ if(isset($_POST['previewData'])) {
 
             // Insert into stockin table
             $sql_insert_stockin = 
-            "INSERT INTO stockin (i_no, i_product_id, i_product_code, i_qty, i_current_qty, i_username, i_status, i_date_add) 
-            VALUES (:no_code, :id, :code, :qty, :current_qty, :usercode, :reason,  now())";
+            "INSERT INTO stockin (i_no, i_product_id, i_product_code, i_qty, i_current_qty, i_username, i_status, i_date, i_memo, i_date_add) 
+            VALUES (:no_code, :id, :code, :qty, :current_qty, :usercode, :reason,  :datevalue, :memo, now())";
 
             $stmt_insert_stockin = $pdo->prepare($sql_insert_stockin);
+            $stmt_insert_stockin->bindParam(':datevalue', $date, PDO::PARAM_STR); 
             $stmt_insert_stockin->bindParam(':no_code', $i_no, PDO::PARAM_STR);
             $stmt_insert_stockin->bindParam(':id', $product['p_product_id'], PDO::PARAM_INT);
             $stmt_insert_stockin->bindParam(':code', $product['p_product_code'], PDO::PARAM_STR);
             $stmt_insert_stockin->bindParam(':qty', $product['s_qty'], PDO::PARAM_INT);
             $stmt_insert_stockin->bindParam(':current_qty', $product['p_qty'], PDO::PARAM_INT);
             $stmt_insert_stockin->bindParam(':usercode', $usercode_add, PDO::PARAM_STR);
-            $stmt_insert_stockin->bindParam(':reason', $product['p_reason'], PDO::PARAM_STR);
+            $stmt_insert_stockin->bindParam(':reason', $reason, PDO::PARAM_STR);
+            $stmt_insert_stockin->bindParam(':memo', $memo, PDO::PARAM_STR);
             $stmt_insert_stockin->execute();
 
        

@@ -28,7 +28,7 @@
                 <?php
 
 
-                $stmt = $pdo->prepare("SELECT i.i_no, i.i_username, i.i_date_add, i.i_status, u.u_username, COUNT(*) AS count 
+                $stmt = $pdo->prepare("SELECT i.*, u.u_username, COUNT(*) AS count 
                 FROM 
                 stockin i 
                 LEFT JOIN user u ON u.u_userid = i.i_username  
@@ -47,8 +47,8 @@
              echo "<td><a class='stockin-link' style='cursor:pointer;'>" . htmlspecialchars($product['i_no']) . "</a></td>";
              echo "<td>" . htmlspecialchars($product['count']) . "</td>";
              echo "<td>" . htmlspecialchars($product['u_username']) . "</td>";
-             echo "<td>" . htmlspecialchars($product['i_memo']) . "</td>";
-             echo "<td>" . htmlspecialchars($product['i_date_add']) . "</td>";
+             echo "<td class='text-start'>" .($product['i_memo'] != null ? '[ ' .htmlspecialchars($product['i_memo']). ' ]' : ''). "</td>";
+             echo "<td>" . htmlspecialchars($product['i_date']) . "</td>";
              echo "<td style='color:" . ($product['i_status'] == 1 ? 'green' : 'orange') . "'>" . ($product['i_status'] == 1 ? 'Purchased' : 'Returned') . "</td>";
              echo "</tr>";
              }

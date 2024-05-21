@@ -1,3 +1,5 @@
+<?php include('./navbar.php') ?>
+
 <?php
  
 $dataPoints = array(
@@ -28,7 +30,6 @@ $dataPoints = array(
 </head>
 
 <body>
-    <?php include('./navbar.php') ?>
     <div class="container" style="margin-top: 150px;">
         <h1>Monthly Report</h1>
         <input class="form-control" type="date">

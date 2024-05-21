@@ -1,3 +1,10 @@
+<?php
+include('connect.php'); // Include your connection script
+session_start();
+
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -207,22 +214,28 @@
             </div>
         </div>
 
-        <table class="table align-middle mb-0 bg-white">
-            <tr>
-                <td>
-                    <button class="btn btn-success">
-                        approve
-                    </button>
-                </td>
-            </tr>
-        </table>
+        <?php if($_SESSION['role'] == 'admin'){?>
+        <div class="d-flex justify-content-end p-3">
+            <button id="updateSelected" class="btn btn-success"><i class="fa-solid fa-check-to-slot"></i>&nbsp;
+                approve</button>&nbsp;
+            <button id="disapproveSelected" class="btn btn-danger"><i class="fa-solid fa-square-xmark"></i>&nbsp;
+                Disapproved</button>
+        </div>
+        <?php } ?>
 
-        <table class="table table-hover align-middle mb-0 bg-white table-bordered"
-            style="text-align:center; white-space: nowrap;">
-            <thead class="bg-light">
+        <table class="table table-hover align-middle mb-0" style="text-align:center; white-space: nowrap;">
+            <!-- table-bordered -->
+            <thead class="table-primary">
                 <tr class="uppercase">
-                    <th><?php echo 'approve' ?></th>
-                    <th><?php echo '#' ?></th>
+
+                    <th colspan="2" class="text-center">
+                        <?php if($_SESSION['role'] == 'admin'){?>
+                        <button id="selectAll" class="btn btn-light">
+                            <i class="fa-solid fa-check-double"></i>
+                        </button>&nbsp;
+                        <?php } ?>
+                    </th>
+
                     <th><?php echo $code ?></th>
                     <th><?php echo $purpose ?></th>
                     <th><?php echo $amount ?></th>
@@ -376,18 +389,18 @@
         let statusClass = '';
         let statusText = '';
 
-        if (data.status === '99') {
+        if (data.status == null) {
             statusClass = 'btn-secondary';
             statusText = 'รออนุมัติ';
             $('#ap_by_modal').val('Pending for approval');
-        } else if (data.status === '1') {
+        } else if (data.status === '99') {
             statusClass = 'btn-outline-danger';
             statusText = 'ไม่อนุมัติ';
             $('#ap_by_modal').val('Disapproved');
         } else {
             statusClass = 'btn-outline-success';
             statusText = 'อนุมัติ';
-            $('#ap_by_modal').val(data.status);
+            $('#ap_by_modal').val(data.prove_name);
         }
 
         $('#btn-status').removeClass('btn-secondary btn-outline-danger btn-outline-success').addClass(statusClass);
@@ -403,3 +416,137 @@
 </body>
 
 </html>
+
+<script>
+$("#selectAll").click(function() {
+    let isChecked = $(this).data("checked") || false;
+    $(".checkbox").prop('checked', !isChecked);
+    $(this).data("checked", !isChecked);
+});
+
+$(document).ready(function() {
+    $('#updateSelected').on('click', function() {
+        var selectedCheckboxes = $('.checkbox:checked');
+
+        if (selectedCheckboxes.length > 0) {
+            // Count the number of selected rows
+            var selectedRowCount = selectedCheckboxes.length;
+
+            // Show SweetAlert confirmation
+            Swal.fire({
+                title: 'Confirm to Approve',
+                text: selectedRowCount + ' selected',
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: 'green',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Proceed with the update
+                    var reqNos = [];
+                    selectedCheckboxes.each(function() {
+                        reqNos.push($(this).data('reqno'));
+                    });
+
+                    $.ajax({
+                        url: 'request_update.php',
+                        method: 'POST',
+                        data: {
+                            reqnos: reqNos,
+                            prove_username: <?php echo $_SESSION['id']; ?>
+                        },
+                        success: function(response) {
+                            var result = JSON.parse(response);
+                            if (result.status === 'success') {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: 'Rows updated successfully!',
+                                    icon: 'success'
+                                }).then((result) => {
+                                    // Reload the page after successful update
+                                    location.reload();
+                                });
+                            } else {
+                                console.error('Update failed: ' + result.message);
+                            }
+                        },
+                        error: function(error) {
+                            console.error('AJAX error: ', error);
+                        }
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'Can not update',
+                text: 'Please select at least 1 item for approval',
+                icon: 'error',
+            })
+            //alert('Please select at least one checkbox to update.');
+        }
+    });
+});
+
+$(document).ready(function() {
+    $('#disapproveSelected').on('click', function() {
+        var selectedCheckboxes = $('.checkbox:checked');
+
+        if (selectedCheckboxes.length > 0) {
+            // Count the number of selected rows
+            var selectedRowCount = selectedCheckboxes.length;
+
+            // Show SweetAlert confirmation
+            Swal.fire({
+                title: 'Confirm to Disapprove',
+                text: selectedRowCount + ' selected',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: 'red',
+                confirmButtonText: 'Yes'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // Proceed with the update
+                    var reqNos = [];
+                    selectedCheckboxes.each(function() {
+                        reqNos.push($(this).data('reqno'));
+                    });
+
+                    $.ajax({
+                        url: 'request_update.php',
+                        method: 'POST',
+                        data: {
+                            reqnos: reqNos,
+                            prove_username: 99 // Change to disapprove
+                        },
+                        success: function(response) {
+                            var result = JSON.parse(response);
+                            if (result.status === 'success') {
+                                Swal.fire({
+                                    title: 'Success',
+                                    text: 'Rows disapproved successfully!',
+                                    icon: 'success'
+                                }).then((result) => {
+                                    // Reload the page after successful update
+                                    location.reload();
+                                });
+                            } else {
+                                console.error('Update failed: ' + result.message);
+                            }
+                        },
+                        error: function(error) {
+                            console.error('AJAX error: ', error);
+                        }
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'Can not update',
+                text: 'Please select at least 1 item for disapprove',
+                icon: 'error',
+            })
+            //alert('Please select at least one checkbox to disapprove.');
+        }
+    });
+});
+</script>

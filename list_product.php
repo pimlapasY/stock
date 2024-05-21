@@ -17,9 +17,10 @@
 
 <body>
     <div class="d-flex justify-content-end m-3">
-        <a href="register.php" class="btn btn-success">+ NEW</a>&nbsp;
-        <button type="button" class="btn btn-primary" onclick="openPreviewModal()">Stock in</button>&nbsp;
-        <button class="btn btn-info">PR</button>
+        <a href="register.php" class="btn btn-success"><i class="fa-solid fa-plus"></i> NEW</a>&nbsp;
+        <button type="button" class="btn btn-primary" onclick="openPreviewModal()"><i class="fa-solid fa-inbox"></i>
+            Stock in</button>&nbsp;
+        <button class="btn btn-info"><i class="fa-solid fa-clipboard-list"></i> add PR</button>
     </div>
 
     <table class="table table-bordered table-hover" style="width: 100%;">
@@ -44,11 +45,12 @@
         <tbody>
             <?php
 
-                                // Fetch individual product rows
+                    // Fetch individual product rows
                     $stmt = $pdo->prepare("SELECT p.*, IFNULL(s.s_qty, 0) AS stock_qty
                     FROM product p
                     LEFT JOIN stock s ON s.s_product_id = p.p_product_id
-                    GROUP BY p.p_product_code, p.p_product_name, p.p_hands, p.p_color,FIELD(p.p_size, 'SS', 'S', 'M', 'L', 'XL', 'XXL'), p.p_unit, p.p_collection, p.p_cost_price, p.p_sale_price;
+                    GROUP BY p.p_product_code, p.p_product_name, p.p_hands, p.p_color,FIELD(p.p_size, 'SS', 'S', 'M', 'L', 'XL', 'XXL'), p.p_unit, p.p_collection, p.p_cost_price, p.p_sale_price
+                    ORDER BY p.p_date_add DESC, p.p_color ,FIELD(p.p_size, 'SS', 'S', 'M', 'L', 'XL', 'XXL')
                     ");
 
                     // Execute the statement
@@ -87,14 +89,14 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="margin: 50px;">
-                    <div class="d-flex justify-content-start w-50">
+                    <!--  <div class="d-flex justify-content-start w-50">
                         <p>PR CODE : </p>&nbsp;
                         <p><?php echo date('Ymd'); ?></p>
-                    </div>
+                    </div> -->
                     <div class="d-flex justify-content-start w-50">
                         <div class="input-group mb-3">
                             <span class="input-group-text" id="basic-addon1"><b>Date</b></span>
-                            <input class="form-control" type="date" value="" id="currentDate"
+                            <input class="form-control" type="date" value="" name="date_create" id="currentDate"
                                 aria-describedby="basic-addon1" />
                         </div>
                         <script>
@@ -120,6 +122,7 @@
                                     <th rowspan="2">Sale price</th>
                                     <th rowspan="2">All Qty</th>
                                     <th class="text-center" colspan="1">Store</th>
+                                    <th rowspan="2">Total Price</th>
                                 </tr>
                             </thead>
                             <tbody class=" modal-body" id="previewBody">
@@ -127,7 +130,9 @@
                             </tbody>
                         </table>
                     </div>
-
+                    <div class="d-flex justify-content-end">
+                        <textarea class="form-control" name="memo" placeholder="memo" style="width: 300px;"></textarea>
+                    </div>
                     <div class="d-flex justify-content-end">
                         <div class="form-check m-3">
                             <input class="form-check-input" type="radio" name="reason" id="flexRadioDefault1" value="1"
@@ -143,6 +148,7 @@
                             </label>
                         </div>
                     </div>
+
                 </div>
 
                 <div class="modal-footer">
@@ -273,6 +279,7 @@ function updatePreviewDisplay() {
             <td style="width:200px; color: green; text-align: center;">
                 +${product.s_qty} (${parseInt(product.p_qty) + parseInt(product.s_qty)})
             </td>
+            <td class='text-end'>${Number(parseInt(product.s_qty) * parseInt(product.p_cost_price)).toLocaleString()}</td>
         `;
         previewBody.appendChild(row);
     });
@@ -328,13 +335,21 @@ document.querySelector('#confirmButton').addEventListener('click', function() {
         cancelButtonText: 'Cancel'
     }).then((result) => {
         if (result.isConfirmed) {
+            var selectedReason = document.querySelector('input[name="reason"]:checked').value;
+            // ค่าวันที่
+            var dateCreate = document.querySelector('#currentDate').value;
+            var memo = document.querySelector('textarea[name="memo"]').value;
 
             // ถ้าผู้ใช้กด OK ให้ดำเนินการส่งข้อมูลไปยังสคริปต์ PHP ด้วย AJAX
             $.ajax({
                 type: 'POST',
                 url: 'list_insert_stock_qty.php', // ตั้งค่า URL ของสคริปต์ PHP ที่จะปรับปรุงข้อมูลในฐานข้อมูล
                 data: {
-                    previewData: previewData // ส่งข้อมูลทั้งหมดใน previewData
+                    previewData: previewData, // ส่งข้อมูลทั้งหมดใน previewData
+                    reason: selectedReason, // ส่งค่า reason
+                    date_create: dateCreate, // ส่งค่าวันที่
+                    memo: memo // ส่งค่า memo
+
                 },
                 success: function(response) {
                     console.log(response);
@@ -360,8 +375,12 @@ document.querySelector('#confirmButton').addEventListener('click', function() {
                     });
                 },
                 error: function(xhr, status, error) {
+                    Swal.fire({
+                        title: 'Error',
+                        icon: 'error',
+                    });
                     console.error(error);
-                    alert('Error occurred while updating stock.');
+                    //alert('Error occurred while updating stock.');
                 }
             });
         }

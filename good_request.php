@@ -204,7 +204,7 @@ function validateInput(input) {
                                         <?php echo $REQUEST_NAME ?>
                                         :</button>
                                     <input value="<?php echo $row['u_username'] ?>" class="form-control" name="rq_name"
-                                        aria-describedby="rq_name" required />
+                                        aria-describedby="rq_name" required readonly />
                                     <div class="invalid-feedback">
                                         ** <?php echo $require ?>
                                     </div>
@@ -420,7 +420,7 @@ function submitForm() {
         if (result.isConfirmed) {
             // Proceed with form submission
             $.ajax({
-                url: "submit_form.php",
+                url: "g_submit_form.php",
                 method: "POST",
                 data: {
                     formData: formData,
