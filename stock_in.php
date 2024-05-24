@@ -90,7 +90,7 @@
                 </table>
             </div>
             <div class="card-body">
-                <table class="table">
+                <table class="table  table-borderless">
                     <thead>
                         <tr class="text-center table-info">
                             <th><?php echo $product_code ?></th>
@@ -102,7 +102,6 @@
                             <th><?php echo 'Cost' ?></th>
                             <th><?php echo $qty ?></th>
                             <th><?php echo 'Total price'  ?></th>
-                            <th><?php echo 'Memo'  ?></th>
                             <th><?php echo $reset  ?></th>
                         </tr>
                     </thead>
@@ -180,9 +179,7 @@
                                 <input class=" form-control text-end" id="total_price" style="background:#fff8e4;"
                                     readonly></input>
                             </td>
-                            <td>
-                                <input type="text" class="form-control" id="memo" name="memo">
-                            </td>
+
                             <td style="white-space: nowrap;" class="text-center">
                                 <script>
                                 function resetInput() {
@@ -214,18 +211,25 @@
                                     Row</button>
                             </td>
                         </tr> -->
+
                         <tr style="vertical-align: middle;">
-                            <th class="text-end" colspan="10">CURRENT QTY :</th>
-                            <td class="text-end" colspan="2">
+                            <th class="text-end" colspan="8">CURRENT QTY :</th>
+                            <td class="text-end " colspan="3">
                                 <input class="form-control text-end" type="number" id="currentQTY"
                                     style="background:#fff8e4;" readonly>
                             </td>
                         </tr>
-                        <tr style=" vertical-align: middle;">
-                            <th class="text-end" colspan="10">TOTAL :</th>
-                            <td class="text-end" colspan="2">
+                        <tr style="vertical-align: middle;">
+                            <th class="text-end" colspan="8">TOTAL :</th>
+                            <td class="text-end" colspan="3">
                                 <input id="totalQTY" class="form-control text-end" style="background:#c9e9f6 ;"
                                     type="number" readonly>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-end" colspan="8">MEMO :</th>
+                            <td colspan="3">
+                                <textarea type="text" class="form-control" id="memo" name="memo"></textarea>
                             </td>
                         </tr>
                     </tbody>
@@ -356,7 +360,9 @@ function updateQuantityInput() {
                 qtyInput.text(1);
                 incrementButton.prop('disabled', false);
 
-                var totalPrice = (stockQuantity * productCost).toFixed(2);
+                //var totalPrice = (stockQuantity * productCost).toFixed(2);
+                var totalPrice = (1 * productCost).toFixed(2);
+
                 totalPrice = parseFloat(totalPrice).toLocaleString(); // Calculate the total price
 
                 $('#total_price').val(totalPrice);
@@ -420,8 +426,12 @@ function incrementQty() {
 function updateTotalPrice() {
     var currentQTY = $('#currentQTY').val()
     var qtyValue = parseInt($('#qtyValue').text());
+
     var productCost = parseFloat($('#selectedProductCost').val()); // Get the product cost
+
     var totalPrice = (qtyValue * productCost).toFixed(2);
+    totalPrice = parseFloat(totalPrice).toLocaleString(); // Calculate the total price
+
     $('#total_price').val(totalPrice); // Update the total price element
     $('#totalQTY').val(parseInt(currentQTY) + parseInt($('#qtyValue').text()));
 }

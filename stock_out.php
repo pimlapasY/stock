@@ -216,7 +216,7 @@ function validateInput(input) {
                         stock.
                     </p> -->
                 </div>
-                <table class="table">
+                <table class="table  table-borderless">
                     <thead>
                         <tr class="text-center table-warning">
                             <th><?php echo $product_code ?></th>
@@ -228,7 +228,6 @@ function validateInput(input) {
                             <th><?php echo 'Cost Price'  ?></th>
                             <th><?php echo $qty ?></th>
                             <th><?php echo 'Total price'  ?></th>
-                            <th><?php echo 'Memo'  ?></th>
                             <th><?php echo $reset  ?></th>
                         </tr>
                     </thead>
@@ -306,9 +305,7 @@ function validateInput(input) {
                                 <input class="form-control text-end" id="total_price" style="background:#fff8e4;"
                                     readonly></input>
                             </td>
-                            <td>
-                                <input type="text" class="form-control" id="memo" name="memo">
-                            </td>
+
                             <td style="white-space: nowrap;">
                                 <script>
                                 function resetInput() {
@@ -329,6 +326,12 @@ function validateInput(input) {
                                 </script>
                                 <button type="button" class="btn btn-warning btn-floating" data-mdb-ripple-init
                                     onclick="resetInput()"><i class="fa-solid fa-eraser"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th class="text-end" colspan="7">MEMO :</th>
+                            <td colspan="4">
+                                <textarea type="text" class="form-control" id="memo" name="memo"></textarea>
                             </td>
                         </tr>
                         <!--    <tr>
@@ -525,6 +528,8 @@ function updateTotalPrice() {
     var qtyValue = parseInt($('#qtyValue').text());
     var productCost = parseFloat($('#selectedProductCost').val()); // Get the product cost
     var totalPrice = (qtyValue * productCost).toFixed(2);
+    totalPrice = parseFloat(totalPrice).toLocaleString(); // Calculate the total price
+
     $('#total_price').val(totalPrice); // Update the total price element
 }
 
