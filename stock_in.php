@@ -88,6 +88,22 @@
                         </td>
                     </tr>
                 </table>
+                <div class="text-start">
+                    <p>
+                        ** <i class="fa-solid fa-rectangle-xmark"></i>
+                        No data available : Please register for the product. &nbsp;
+                        <i class="fa-solid fa-arrow-right"></i>&nbsp;
+                        <!-- <a href="register.php">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            <?php echo $register ?>
+                        </a>  -->
+                        <button class="btn btn-sm btn-success" onclick="window.location.href = 'register.php'"
+                            style="color: white;">
+                            <i class="fa-solid fa-circle-plus"></i>
+                            <?php echo $register ?>
+                        </button>**
+                    </p>
+                </div>
             </div>
             <div class="card-body">
                 <table class="table  table-borderless">
@@ -166,12 +182,12 @@
 
                             </td>
                             <td>
-                                <div class=" input-group">
+                                <div class="input-group">
                                     <button type="button" class="btn btn-outline-secondary"
-                                        onclick="decrementQty()">-</button>
-                                    <span class="input-group-text" id="qtyValue"></span>
-                                    <button type="button" class="btn btn-outline-secondary" onclick="incrementQty()"
-                                        id="incrementBtn">+</button>
+                                        id="decrementButton">-</button>
+                                    <span class="input-group-text" id="qtyValue">1</span>
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        id="incrementButton">+</button>
                                 </div>
                             </td>
 
@@ -404,6 +420,8 @@ function updateQuantityInput() {
     });
 }
 
+var interval; // Variable to store the interval
+
 // Function to decrement quantity value
 function decrementQty() {
     var qtyValue = parseInt($('#qtyValue').text());
@@ -413,7 +431,6 @@ function decrementQty() {
     }
 }
 
-
 // Function to increment quantity value
 function incrementQty() {
     var qtyValue = parseInt($('#qtyValue').text());
@@ -421,19 +438,46 @@ function incrementQty() {
     updateTotalPrice(); // Call updateTotalPrice after incrementing quantity
 }
 
+// Start continuous decrement
+function startDecrement() {
+    interval = setInterval(decrementQty, 100);
+}
+
+// Start continuous increment
+function startIncrement() {
+    interval = setInterval(incrementQty, 100);
+}
+
+// Stop the continuous change
+function stopChange() {
+    clearInterval(interval);
+}
+
+// Attach event handlers for increment and decrement buttons
+$(document).ready(function() {
+    $('#decrementButton').mousedown(startDecrement);
+    $('#decrementButton').mouseup(stopChange);
+    $('#decrementButton').mouseleave(stopChange); // Also stop when mouse leaves the button
+
+    $('#incrementButton').mousedown(startIncrement);
+    $('#incrementButton').mouseup(stopChange);
+    $('#incrementButton').mouseleave(stopChange); // Also stop when mouse leaves the button
+});
+
+
 
 // Function to update total price
 function updateTotalPrice() {
-    var currentQTY = $('#currentQTY').val()
     var qtyValue = parseInt($('#qtyValue').text());
-
-    var productCost = parseFloat($('#selectedProductCost').val()); // Get the product cost
+    var productCost = parseFloat($('#selectedProductCost').val().replace(/,/g,
+        '')); // Get the product cost and remove commas
 
     var totalPrice = (qtyValue * productCost).toFixed(2);
-    totalPrice = parseFloat(totalPrice).toLocaleString(); // Calculate the total price
+    totalPrice = parseFloat(totalPrice).toLocaleString(); // Calculate the total price and format it with commas
 
     $('#total_price').val(totalPrice); // Update the total price element
-    $('#totalQTY').val(parseInt(currentQTY) + parseInt($('#qtyValue').text()));
+    var currentQTY = parseInt($('#currentQTY').val() || 0);
+    $('#totalQTY').val(currentQTY + qtyValue);
 }
 
 

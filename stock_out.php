@@ -179,8 +179,6 @@ function validateInput(input) {
                         </td>
                     </tr>
                 </table>
-            </div>
-            <div class="card-body">
                 <div class="text-start">
                     <p>
                         ** <i class="fa-solid fa-rectangle-xmark"></i>
@@ -216,6 +214,9 @@ function validateInput(input) {
                         stock.
                     </p> -->
                 </div>
+            </div>
+            <div class="card-body">
+
                 <table class="table  table-borderless">
                     <thead>
                         <tr class="text-center table-warning">
@@ -641,7 +642,10 @@ function submitStockOut() {
                     success: function(response) {
                         // จัดการข้อมูลหลังจากที่ส่งไปยังเซิร์ฟเวอร์สำเร็จ
                         // Handle success response
-                        Swal.fire('Success!', 'Form submitted successfully', 'success');
+                        Swal.fire('Success!', 'Form submitted successfully', 'success')
+                            .then((result) => {
+                                location.reload();
+                            });
                     },
                     error: function(xhr, status, error) {
                         // จัดการข้อมูลหลังจากที่เกิดข้อผิดพลาดในการส่งข้อมูล
