@@ -12,16 +12,6 @@
     // Fetch product names from the database
     $stmt_hands = $pdo->query("SELECT DISTINCT p_hands FROM product");
     $productNames_hands = $stmt_hands->fetchAll(PDO::FETCH_COLUMN);  
-        
-    $dateNow = date('ymd');
-    $stmt = $pdo->prepare("SELECT COUNT(*) AS count FROM stockin WHERE i_no LIKE CONCAT('N', :dateNow, '%')");
-    $stmt->bindParam(':dateNow', $dateNow);
-    $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $count = $row['count'];
-
-    // Construct MG_CODE
-    $NN_CODE = 'N' . $dateNow . str_pad($count + 1, STR_PAD_LEFT);
 
 ?>
 <!DOCTYPE html>
@@ -177,7 +167,7 @@
 
                             </td>
                             <td>
-                                <div class="input-group">
+                                <div class=" input-group">
                                     <button type="button" class="btn btn-outline-secondary"
                                         onclick="decrementQty()">-</button>
                                     <span class="input-group-text" id="qtyValue"></span>
@@ -187,13 +177,13 @@
                             </td>
 
                             <td>
-                                <input class="form-control text-end" id="total_price" style="background:#fff8e4;"
+                                <input class=" form-control text-end" id="total_price" style="background:#fff8e4;"
                                     readonly></input>
                             </td>
                             <td>
                                 <input type="text" class="form-control" id="memo" name="memo">
                             </td>
-                            <td style="white-space: nowrap;">
+                            <td style="white-space: nowrap;" class="text-center">
                                 <script>
                                 function resetInput() {
                                     var inputs = document.querySelectorAll(
@@ -224,6 +214,20 @@
                                     Row</button>
                             </td>
                         </tr> -->
+                        <tr style="vertical-align: middle;">
+                            <th class="text-end" colspan="10">CURRENT QTY :</th>
+                            <td class="text-end" colspan="2">
+                                <input class="form-control text-end" type="number" id="currentQTY"
+                                    style="background:#fff8e4;" readonly>
+                            </td>
+                        </tr>
+                        <tr style=" vertical-align: middle;">
+                            <th class="text-end" colspan="10">TOTAL :</th>
+                            <td class="text-end" colspan="2">
+                                <input id="totalQTY" class="form-control text-end" style="background:#c9e9f6 ;"
+                                    type="number" readonly>
+                            </td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -236,6 +240,20 @@
 </body>
 
 </html>
+<script>
+function validateInput(input) {
+    // Check if the input has a value
+    if (input.value.trim() !== '') {
+        input.classList.remove('valid-input-red');
+        // If the input has a value, add the valid-input class
+        //input.classList.add('valid-input-green');
+    } else {
+        // If the input doesn't have a value, remove the valid-input class
+        //input.classList.remove('valid-input-green');
+        input.classList.add('valid-input-red');
+    }
+}
+</script>
 
 
 <script>
@@ -262,17 +280,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     });
 });
 
-// Add event listener to the dropdown menu
-stockToOption.addEventListener('change', function() {
-    // Check if the selected option is "Other"
-    if (stockToOption.value == '3') {
-        // If "Other" is selected, show the input field
-        otherInput.style.display = 'block';
-    } else {
-        // If any other option is selected, hide the input field
-        otherInput.style.display = 'none';
-    }
-});
+
 
 $('#product').on('input', function() {
     // Get the selected product code from the input field
@@ -344,8 +352,8 @@ function updateQuantityInput() {
             console.log('productID = ' + productID);
 
 
-            if (stockQuantity > 0) {
-                qtyInput.text(stockQuantity);
+            if (stockQuantity > 0 || productQTY == 0) {
+                qtyInput.text(1);
                 incrementButton.prop('disabled', false);
 
                 var totalPrice = (stockQuantity * productCost).toFixed(2);
@@ -354,13 +362,23 @@ function updateQuantityInput() {
                 $('#total_price').val(totalPrice);
                 $('#selectedProductCost').val(productCost);
                 $('#product_id').val(productID);
+                if (stockQuantity > 0) {
+                    $('#total_price').val(totalPrice);
+                    $('#currentQTY').val(stockQuantity);
+                    $('#totalQTY').val(stockQuantity + parseInt($('#qtyValue').text()));
+                } else {
+                    $('#total_price').val(productCost);
+                    $('#currentQTY').val(0);
+                    $('#totalQTY').val(stockQuantity + parseInt($('#qtyValue').text()));
 
-            } else if (productQTY == 0) {
-                qtyInput.html('<b style="color: red;">out of stock</b>');
-                incrementButton.prop('disabled', true);
-                $('#selectedProductCost').val(productCost);
-                $('#product_id').val(productID);
+                }
             }
+            /* else if (productQTY == 0) {
+                           qtyInput.html('<b style="color: red;">out of stock</b>');
+                           incrementButton.prop('disabled', true);
+                           $('#selectedProductCost').val(productCost);
+                           $('#product_id').val(productID);
+                       } */
 
             // Handle stock quantity and product cost
             /*    if (stockQuantity <= 0) {
@@ -372,7 +390,7 @@ function updateQuantityInput() {
                } */
 
             // Set the max attribute of the quantity span to the stock quantity
-            qtyInput.attr('max', stockQuantity);
+            //qtyInput.attr('max', stockQuantity);
         },
         error: function() {
             console.error('Error fetching stock quantity and product cost.');
@@ -383,7 +401,7 @@ function updateQuantityInput() {
 // Function to decrement quantity value
 function decrementQty() {
     var qtyValue = parseInt($('#qtyValue').text());
-    if (qtyValue > 0) {
+    if (qtyValue > 1) {
         $('#qtyValue').text(qtyValue - 1);
         updateTotalPrice(); // Call updateTotalPrice after decrementing quantity
     }
@@ -393,87 +411,25 @@ function decrementQty() {
 // Function to increment quantity value
 function incrementQty() {
     var qtyValue = parseInt($('#qtyValue').text());
-    var maxQuantity = parseInt($('#qtyValue').attr('max'));
-    if (qtyValue < maxQuantity) {
-        $('#qtyValue').text(qtyValue + 1);
-        updateTotalPrice(); // Call updateTotalPrice after incrementing quantity
-    }
+    $('#qtyValue').text(qtyValue + 1);
+    updateTotalPrice(); // Call updateTotalPrice after incrementing quantity
 }
 
 
 // Function to update total price
 function updateTotalPrice() {
+    var currentQTY = $('#currentQTY').val()
     var qtyValue = parseInt($('#qtyValue').text());
     var productCost = parseFloat($('#selectedProductCost').val()); // Get the product cost
     var totalPrice = (qtyValue * productCost).toFixed(2);
     $('#total_price').val(totalPrice); // Update the total price element
+    $('#totalQTY').val(parseInt(currentQTY) + parseInt($('#qtyValue').text()));
 }
 
 
-// Get the radio buttons
-var saleRadio = document.getElementById('flexRadioDefault1');
-var takeOutRadio = document.getElementById('flexRadioDefault2');
-// Get the select container
-var selectContainerSale = document.getElementById('selectContainerSale');
-var selectContainerTakeOut = document.getElementById('selectContainerTakeOut');
-
-// Function to toggle select container visibility
-function toggleSelectContainer() {
-    if (takeOutRadio.checked) {
-        selectContainerTakeOut.style.display = 'table-cell'; // Show select container
-    } else {
-        selectContainerTakeOut.style.display = 'none'; // Hide select container
-    }
-    if (saleRadio.checked) {
-        selectContainerSale.style.display = 'table-cell'; // Show select container
-    } else {
-        selectContainerSale.style.display = 'none'; // Hide select container
-    }
-}
-
-// Call the function initially
-toggleSelectContainer();
-
-// Add event listener to the radio buttons
-saleRadio.addEventListener('change', toggleSelectContainer);
-takeOutRadio.addEventListener('change', toggleSelectContainer);
 
 
 function submitStockOut() {
-
-    /* สำหรับเช็คดรอปดาว */
-
-    // Get the radio inputs
-    var saleRadio = document.getElementById("flexRadioDefault1");
-    var takeOutRadio = document.getElementById("flexRadioDefault2");
-    var paidOption = $('#paidOption').val();
-    var stockToOption = $('#stockToOption').val();
-    var customerName = $('#cusname').val(); // Get the value of the customer name input
-    var date = $('#dateStockOut').val(); // Get the value of the customer name input
-
-
-    var reasons_submit; // Define reasons_submit variable
-
-    // Check if the sale radio is checked
-    if (saleRadio.checked) {
-        reasons_submit = 'sale,' + paidOption + ',' + customerName; // Update reasons_submit for 'sale' reason
-    }
-    // Check if the take out radio is checked
-    else if (takeOutRadio.checked) {
-        reasons_submit = stockToOption; // Update reasons_submit for 'take_out' reason
-    } else {
-        Swal.fire({
-            title: 'ERROR',
-            text: 'Please select stock out to',
-            icon: 'error',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-        });
-        return false;
-    }
-    /* สำหรับเช็คดรอปดาว */
-
-
 
     var mgCode = $('#MG_code').val();
     var productID = $('#product_id').val();
@@ -483,7 +439,6 @@ function submitStockOut() {
     var productTotal = $('#total_price').val();
     var memo = $('#memo').val();
     var qtyValue = parseInt($('#qtyValue').text());
-    console.log(reasons_submit, qtyValue);
 
     var data = {
         mgCode: mgCode,
@@ -494,7 +449,6 @@ function submitStockOut() {
         productTotal: productTotal,
         memo: memo,
         qtyValue: qtyValue,
-        reasons: reasons_submit,
         date: date
     };
 
