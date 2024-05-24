@@ -42,19 +42,7 @@ function validateInput(input) {
     }
 }
 </script>
-<?php
-include('connect.php');
- $dateNow = date('ymd');
- $stmt = $pdo->prepare("SELECT COUNT(*) AS count FROM stockout WHERE o_mg_code LIKE CONCAT('MG', :dateNow, '%')");
- $stmt->bindParam(':dateNow', $dateNow);
- $stmt->execute();
- $row = $stmt->fetch(PDO::FETCH_ASSOC);
- $count = $row['count'];
 
- // Construct MG_CODE
-  $MG_CODE = 'M' . $dateNow . str_pad($count + 1, STR_PAD_LEFT);
-
-?>
 
 <body>
 
@@ -71,7 +59,18 @@ include('connect.php');
     $productNames_size = $stmt_size->fetchAll(PDO::FETCH_COLUMN);    
     // Fetch product names from the database
     $stmt_hands = $pdo->query("SELECT DISTINCT p_hands FROM product");
-    $productNames_hands = $stmt_hands->fetchAll(PDO::FETCH_COLUMN);   
+    $productNames_hands = $stmt_hands->fetchAll(PDO::FETCH_COLUMN);  
+        
+    $dateNow = date('ymd');
+    $stmt = $pdo->prepare("SELECT COUNT(*) AS count FROM stockout WHERE o_mg_code LIKE CONCAT('M', :dateNow, '%')");
+    $stmt->bindParam(':dateNow', $dateNow);
+    $stmt->execute();
+    $row = $stmt->fetch(PDO::FETCH_ASSOC);
+    $count = $row['count'];
+
+    // Construct MG_CODE
+    $MG_CODE = 'M' . $dateNow . str_pad($count + 1, STR_PAD_LEFT);
+
     
 ?>
     <div class="container-fluid" style="margin-top: 150px;">
@@ -90,14 +89,39 @@ include('connect.php');
                         <td class="text-start" style="width: 150px; text-transform: uppercase;">
                             <!-- Large -->
                             <span class="badge bg-warning text-dark">
-                                <a class="nav-link link-light" href="list.php">
+                                <a class="nav-link link-light" href="stock_samt.php">
                                     <i class="fa-solid fa-plus"></i>&nbsp; <?php echo $stockList ?></a>
                             </span>
                         </td>
                     </tr>
                     <tr>
+                        <th class="text-start">
+                            <span class="badge bg-warning text-dark">
+                                <i class="fa-solid fa-hashtag"></i>
+                                MG CODE
+                            </span>
+                        </th>
+                        <td>
+                            <input type="text" class="form-control" id="MG_code" name="MG_code"
+                                value="<?php echo $MG_CODE ?>" style="width:120px; background:#d0f0c0 ;" readonly>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th class="text-start">
+                            <span class="badge bg-warning text-dark">
+                                <i class="fa-solid fa-calendar-days"></i>
+                                DATE
+                            </span>
+                        </th>
+                        <td class="text-start">
+                            <input class="form-control w-25" type="date" value="<?php echo date('Y-m-d'); ?>"
+                                id="dateStockOut">
+                        </td>
+                    </tr>
+                    <tr>
                         <td class="text-start" style="text-transform: uppercase;">
                             <span class="badge bg-warning text-dark">
+                                <i class="fa-solid fa-right-from-bracket"></i>
                                 <?php echo $stock_out ?>
                             </span>
                             <!-- Default checkbox -->
@@ -133,7 +157,7 @@ include('connect.php');
                             </div>
                             <div class="input-group mb-3">
                                 <span class="input-group-text" id="basic-addon1"><?php echo $cus_name ?></span>
-                                <input type="text" class="form-control" aria-label="Username"
+                                <input type="text" class="form-control" aria-label="Username" id="cusname"
                                     aria-describedby="basic-addon1" />
                             </div>
                         </td>
@@ -142,9 +166,9 @@ include('connect.php');
                                 <button class="btn btn-outline-secondary" type="stockToOption">To</button>
                                 <select class="form-select" id="stockToOption">
                                     <option selected><?php echo $choose ?>...</option>
-                                    <option value="1">SAKABA</option>
-                                    <option value="2">Sale Sample</option>
-                                    <option value="3">Other</option>
+                                    <option>SAKABA</option>
+                                    <option>Sale Sample</option>
+                                    <option>Other</option>
                                 </select>
                             </div>
                         </td>
@@ -195,7 +219,6 @@ include('connect.php');
                 <table class="table">
                     <thead>
                         <tr class="text-center table-warning">
-                            <th><?php echo 'MG CODE' ?></th>
                             <th><?php echo $product_code ?></th>
                             <th><?php echo $product_name?></th>
                             <th><?php echo $unit ?></th>
@@ -211,13 +234,13 @@ include('connect.php');
                     </thead>
                     <tbody class="table-group-divider table-divider-color">
                         <tr>
+                            <!-- ไอดี product จาก product(Master) -->
+                            <input type="text" class="form-control" id="product_id" hidden>
+
+
                             <td>
-                                <input type="text" class="form-control" id="MG_code" name="MG_code<?php echo $i; ?>"
-                                    value="<?php echo $MG_CODE.$i ?>" style="width:120px;" readonly>
-                            </td>
-                            <td>
-                                <input class="form-control" type="text" id="product" name="product_<?php echo $i; ?>"
-                                    list="product_names" onchange="validateInput(this)">
+                                <input class="form-control" type="text" id="product" name="product" list="product_names"
+                                    onchange="validateInput(this)">
                                 <!-- Populate datalist with product names -->
                                 <datalist id="product_names">
                                     <?php foreach ($productNames_code as $productName_code): ?>
@@ -325,7 +348,7 @@ include('connect.php');
                 </table>
             </div>
             <div class="card-footer text-end">
-                <button type="button" class="btn btn-success btn-lg" data-mdb-ripple-init><i
+                <button type="button" class="btn btn-success btn-lg" data-mdb-ripple-init onclick="submitStockOut()"><i
                         class="fa-solid fa-floppy-disk"></i> Submit</button>
             </div>
         </div>
@@ -429,28 +452,34 @@ function updateQuantityInput() {
                 incrementButton.prop('disabled', true);
             }
 
+
+            var productID = data.p_product_id;
             var stockQuantity = parseInt(data.s_qty);
             var productCost = parseFloat(data.p_cost_price);
             var productQTY = parseInt(data.p_qty);
             console.log('s_qty = ' + stockQuantity);
             console.log('p_cost_price = ' + productCost);
             console.log('p_qty = ' + productQTY);
+            console.log('productID = ' + productID);
+
+
             if (stockQuantity > 0) {
-                // Set the default quantity value to the maximum stock quantity
                 qtyInput.text(stockQuantity);
                 incrementButton.prop('disabled', false);
-                var totalPrice = (stockQuantity * productCost).toFixed(2)
-                    .toLocaleString(); // Calculate the total price
 
-                $('#total_price').val(totalPrice); // Update the total price element
+                var totalPrice = (stockQuantity * productCost).toFixed(2);
+                totalPrice = parseFloat(totalPrice).toLocaleString(); // Calculate the total price
+
+                $('#total_price').val(totalPrice);
                 $('#selectedProductCost').val(productCost);
-                console.log(totalPrice, qtyValue);
+                $('#product_id').val(productID);
+
             } else if (productQTY == 0) {
                 qtyInput.html('<b style="color: red;">out of stock</b>');
                 incrementButton.prop('disabled', true);
                 $('#selectedProductCost').val(productCost);
+                $('#product_id').val(productID);
             }
-
 
             // Handle stock quantity and product cost
             /*    if (stockQuantity <= 0) {
@@ -527,4 +556,117 @@ toggleSelectContainer();
 // Add event listener to the radio buttons
 saleRadio.addEventListener('change', toggleSelectContainer);
 takeOutRadio.addEventListener('change', toggleSelectContainer);
+
+
+function submitStockOut() {
+
+    /* สำหรับเช็คดรอปดาว */
+
+    // Get the radio inputs
+    var saleRadio = document.getElementById("flexRadioDefault1");
+    var takeOutRadio = document.getElementById("flexRadioDefault2");
+    var paidOption = $('#paidOption').val();
+    var stockToOption = $('#stockToOption').val();
+    var customerName = $('#cusname').val(); // Get the value of the customer name input
+    var date = $('#dateStockOut').val(); // Get the value of the customer name input
+
+
+    var reasons_submit; // Define reasons_submit variable
+
+    // Check if the sale radio is checked
+    if (saleRadio.checked) {
+        reasons_submit = 'sale,' + paidOption + ',' + customerName; // Update reasons_submit for 'sale' reason
+    }
+    // Check if the take out radio is checked
+    else if (takeOutRadio.checked) {
+        reasons_submit = stockToOption; // Update reasons_submit for 'take_out' reason
+    } else {
+        Swal.fire({
+            title: 'ERROR',
+            text: 'Please select stock out to',
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+        return false;
+    }
+    /* สำหรับเช็คดรอปดาว */
+
+
+
+    var mgCode = $('#MG_code').val();
+    var productID = $('#product_id').val();
+    var productCode = $('#product').val();
+    var productName = $('#selectedProductName').val();
+    var productCost = $('#selectedProductCost').val();
+    var productTotal = $('#total_price').val();
+    var memo = $('#memo').val();
+    var qtyValue = parseInt($('#qtyValue').text());
+    console.log(reasons_submit, qtyValue);
+
+    var data = {
+        mgCode: mgCode,
+        productID: productID,
+        productCode: productCode,
+        productName: productName,
+        productCost: productCost,
+        productTotal: productTotal,
+        memo: memo,
+        qtyValue: qtyValue,
+        reasons: reasons_submit,
+        date: date
+    };
+
+
+    if (productID != '' && qtyValue != 0) {
+        Swal.fire({
+            title: 'Are you sure?',
+            text: 'Do you want to submit the form?',
+            icon: 'question',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Yes, submit it!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                $.ajax({
+                    url: 'stock_out_submit.php',
+                    method: 'POST',
+                    data: data,
+                    success: function(response) {
+                        // จัดการข้อมูลหลังจากที่ส่งไปยังเซิร์ฟเวอร์สำเร็จ
+                        // Handle success response
+                        Swal.fire('Success!', 'Form submitted successfully', 'success');
+                    },
+                    error: function(xhr, status, error) {
+                        // จัดการข้อมูลหลังจากที่เกิดข้อผิดพลาดในการส่งข้อมูล
+                        Swal.fire('Error!', 'Failed to submit form', 'error');
+
+                    }
+
+                });
+            } else {
+                console.log('cancel')
+            }
+        });
+    } else if (qtyValue == '') {
+
+        Swal.fire({
+            title: 'ERROR',
+            text: 'Please stock in or add QTY of product',
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    } else {
+        Swal.fire({
+            title: 'ERROR',
+            text: 'Please fill to data or register of product',
+            icon: 'error',
+            confirmButtonColor: '#3085d6',
+            confirmButtonText: 'OK'
+        });
+    }
+
+};
 </script>
