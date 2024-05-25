@@ -45,8 +45,20 @@ if (isset($_SESSION['role'])) {
         // Execute SQL statement
         $stmt->execute();
 
-        // Set $stmt to null to release resources
+      
+        // Prepare SQL statement to update stock quantity
+        $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty - ? WHERE s_product_id = ?");
+
+        // Bind parameters for update
+        $updateStmt->bindParam(1, $qtyValue);
+        $updateStmt->bindParam(2, $productID);
+
+        // Execute SQL statement to update stock quantity
+        $updateStmt->execute();
+
+        // Set $stmt and $updateStmt to null to release resources
         $stmt = null;
+        $updateStmt = null;
 
         // Print success message
         echo "Form submitted successfully";

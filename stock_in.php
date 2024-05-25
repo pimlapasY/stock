@@ -236,7 +236,7 @@
                             </td>
                         </tr>
                         <tr style="vertical-align: middle;">
-                            <th class="text-end" colspan="8">TOTAL :</th>
+                            <th class="text-end" colspan="8">TOTAL QTY :</th>
                             <td class="text-end" colspan="3">
                                 <input id="totalQTY" class="form-control text-end" style="background:#c9e9f6 ;"
                                     type="number" readonly>

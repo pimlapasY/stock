@@ -164,7 +164,7 @@ if(isset($_SESSION['id'])) {
                         <i class="fa-solid fa-database"></i> <?php echo 'Current Taken' ?>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbar1">
-                        <li><a class="dropdown-item" href="#">All</a></li>
+                        <li><a class="dropdown-item" href="current_taken.php">All</a></li>
                         <li><a class="dropdown-item" href="#">SAMT</a></li>
                         <li><a class="dropdown-item" href="#">SAKABA</a></li>
                     </ul>
