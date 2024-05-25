@@ -78,10 +78,9 @@
             </thead>
             <tbody>
                 <?php
-            $stmt = $pdo->prepare("SELECT p.*, sub.sub_qty, s.s_qty
-            FROM product p 
-            LEFT JOIN stock s ON s.s_product_id = p.p_product_id 
-            LEFT JOIN sub_stock sub ON sub.sub_product_id = s.s_id
+            $stmt = $pdo->prepare("SELECT p.*, sub.sub_qty
+            FROM sub_stock sub
+            LEFT JOIN product p  ON sub.sub_product_id = p.p_product_id
             GROUP BY p.p_product_code, p.p_product_name, p.p_hands, p.p_color, FIELD(p.p_size, 'SS', 'S', 'M', 'L', 'XL', 'XXL'), p.p_unit, p.p_collection, p.p_cost_price, p.p_sale_price
             HAVING sub.sub_qty IS NOT NULL;");
 

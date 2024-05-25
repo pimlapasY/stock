@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Current Taken</title>
+    <title>Currently Taken</title>
 </head>
 <!-- <style>
 td {
@@ -21,13 +21,12 @@ th {
 </style> -->
 
 <body>
-    <div class="container">
-        <h1><i class="fa-solid fa-database fa-xl"></i> Current Taken</h1><br>
-        <a href="#" class="btn btn-success" id="allBtn">All</a>
-        <a href="#" class="btn btn-warning" id="partSaleBtn">Part Sale</a>
-    </div>
-    <br>
     <div class="container-fluid">
+        <div class="mb-2">
+            <h1><i class="fa-solid fa-database fa-xl"></i> Currently Taken</h1><br>
+            <a href="#" class="btn btn-success" id="allBtn">All</a>
+            <a href="#" class="btn btn-warning" id="partSaleBtn">Part Sale</a>
+        </div>
         <table class="table table-hover mx-auto">
             <thead class="text-center table-secondary" style="text-transform: uppercase;">
                 <th>#</th>
@@ -35,19 +34,20 @@ th {
                 <!-- <th>Stock out</th> -->
                 <th>product</th>
                 <!-- <th>Receipt date</th> -->
-                <th>Supplier</th>
+                <!-- <th>Supplier</th> -->
                 <th>size</th>
                 <th>color</th>
                 <th>hand</th>
                 <th>qty</th>
                 <th>Sold date</th>
                 <th>customer</th>
-                <th>piad by</th>
+                <th>paid by</th>
                 <th>payment</th>
-                <th>PR status</th>
-                <th>PO status</th>
-                <th>Delivery status</th>
+                <th>Delivery</th>
+                <th>PR/PO</th>
+                <!-- <th>PO status</th> -->
                 <th>Memo</th>
+                <th>Update</th>
                 <th>select</th>
             </thead>
             <tbody id="dataTable">
@@ -65,7 +65,7 @@ $(document).ready(function() {
     // Function to load data based on button clicked
     function loadData(reasons = null) {
         // Define the URL for the AJAX request
-        var url = "current_fetch_data.php";
+        var url = "currently_fetch_data.php";
         // Define the data to be sent
         var data = {
             reasons: reasons

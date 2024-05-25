@@ -71,6 +71,7 @@
                     <th rowspan="2">Cost price</th>
                     <th rowspan="2">Sale price</th>
                     <th rowspan="2">Samt Qty</th>
+                    <th rowspan="2">Other stock</th>
                     <th rowspan="2"><i class="fa-solid fa-list-check"></i></th>
                     <!--  <th class="text-center" colspan="2">Store</th> -->
                 </tr>
@@ -84,7 +85,7 @@
          $stmt = $pdo->prepare("SELECT p.*, sub.sub_qty, s.s_qty
          FROM product p 
          LEFT JOIN stock s ON s.s_product_id = p.p_product_id 
-         LEFT JOIN sub_stock sub ON sub.sub_product_id = s.s_id
+         LEFT JOIN sub_stock sub ON sub.sub_product_id = p.p_product_id 
          GROUP BY p.p_product_code, p.p_product_name, p.p_hands, p.p_color, FIELD(p.p_size, 'SS', 'S', 'M', 'L', 'XL', 'XXL'), p.p_unit, p.p_collection, p.p_cost_price, p.p_sale_price
          HAVING s.s_qty!=0;");
 
@@ -105,6 +106,7 @@
            echo "<td class='text-end'>" . number_format($product['p_cost_price']) . "</td>";
            echo "<td class='text-end'>" . number_format($product['p_sale_price']) . "</td>";
            echo "<td class='text-end' style='color: " . ($product['s_qty'] == 0 ? "red" : "green") . ";background:#E5F9E5;'>" .  htmlspecialchars(($product['s_qty'])-($product['sub_qty'])) . "</td>";
+           echo "<td class='text-center'>" . ($product['sub_qty'] == null ? '' : '<i class="fa-solid fa-check"></i>') . "</td>";
            echo "<td class='text-center' style='vertical-align: middle;'>";
            echo '<div class="input-group"><div class="input-group-text">';
            echo "<input class='form-check-input' type='checkbox' value='' id='checkbox_" . htmlspecialchars($product['p_product_id']) . "' onchange='toggleInput(this)' /> <br>";

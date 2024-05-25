@@ -20,7 +20,9 @@ if (isset($_SESSION['role'])) {
     $username = $_SESSION['id'];
     $reasons =  $_POST['reasons'];
     $date =  $_POST['date'];
-
+  
+    //แยกข้อมูลของง reasons
+    $data_reasons = explode(",", $reasons);
 
 
     try {
@@ -45,20 +47,35 @@ if (isset($_SESSION['role'])) {
         // Execute SQL statement
         $stmt->execute();
 
-      
-        // Prepare SQL statement to update stock quantity
-        $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty - ? WHERE s_product_id = ?");
+   
+        // Check if the reason is 'sale'
+        if($data_reasons[0] == 'sale') {
+            // Prepare SQL statement to update stock quantity
+            $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty - ? WHERE s_product_id = ?");
 
-        // Bind parameters for update
-        $updateStmt->bindParam(1, $qtyValue);
-        $updateStmt->bindParam(2, $productID);
+            // Bind parameters for update
+            $updateStmt->bindParam(1, $qtyValue);
+            $updateStmt->bindParam(2, $productID);
 
-        // Execute SQL statement to update stock quantity
-        $updateStmt->execute();
+            // Execute SQL statement to update stock quantity
+            $updateStmt->execute();
+        } else {
+            // Insert into sub_stock table
+            $insertStmt = $pdo->prepare("INSERT INTO sub_stock (sub_product_id, sub_qty, sub_location, sub_date_add) VALUES (?, ?, ?, NOW())");
 
-        // Set $stmt and $updateStmt to null to release resources
+            // Bind parameters for insertion
+            $insertStmt->bindParam(1, $productID);
+            $insertStmt->bindParam(2, $qtyValue);
+            $insertStmt->bindParam(3, $data_reasons[1]); // Assuming location data is at index 1
+
+            // Execute SQL statement to insert into sub_stock table
+            $insertStmt->execute();
+        }
+
+        // Set $stmt, $updateStmt, and $insertStmt to null to release resources
         $stmt = null;
         $updateStmt = null;
+        $insertStmt = null;
 
         // Print success message
         echo "Form submitted successfully";

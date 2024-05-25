@@ -161,10 +161,10 @@ if(isset($_SESSION['id'])) {
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'current_taken.php') ? 'active' : ''; ?>"
                         href="#" id="navbar2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                        <i class="fa-solid fa-database"></i> <?php echo 'Current Taken' ?>
+                        <i class="fa-solid fa-database"></i> <?php echo 'Currently Taken' ?>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbar1">
-                        <li><a class="dropdown-item" href="current_taken.php">All</a></li>
+                        <li><a class="dropdown-item" href="Currently_taken.php">All</a></li>
                         <li><a class="dropdown-item" href="#">SAMT</a></li>
                         <li><a class="dropdown-item" href="#">SAKABA</a></li>
                     </ul>

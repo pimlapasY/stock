@@ -59,10 +59,11 @@
         </div>
 
 
-        <table class="table table-bordered table-hover">
+        <table class="table table-bordered table-hover mx-auto">
             <thead class="table-dark text-center">
                 <tr style="vertical-align: middle;">
                     <th rowspan="2">No</th>
+                    <th rowspan="2">Product code</th>
                     <th rowspan="2">Collection</th>
                     <th rowspan="2">Name</th>
                     <th rowspan="2">Hands</th>
@@ -83,7 +84,7 @@
              $stmt = $pdo->prepare("SELECT p.*,sub.sub_qty, s.s_qty, IFNULL(s.s_qty, 0) AS stock_qty
              FROM product p 
              LEFT JOIN stock s ON s.s_product_id = p.p_product_id 
-             LEFT JOIN sub_stock sub ON sub.sub_product_id = s.s_id
+             LEFT JOIN sub_stock sub ON sub.sub_product_id = p.p_product_id 
              GROUP BY p.p_product_code, p.p_product_name, p.p_hands, p.p_color, FIELD(p.p_size, 'SS', 'S', 'M', 'L', 'XL', 'XXL'), p.p_unit, p.p_collection, p.p_cost_price, p.p_sale_price
              ");
 

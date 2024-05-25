@@ -585,7 +585,7 @@ function submitStockOut() {
     }
     // Check if the take out radio is checked
     else if (takeOutRadio.checked) {
-        reasons_submit = stockToOption; // Update reasons_submit for 'take_out' reason
+        reasons_submit = 'out to,' + stockToOption; // Update reasons_submit for 'take_out' reason
     } else {
         Swal.fire({
             title: 'ERROR',
