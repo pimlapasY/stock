@@ -23,6 +23,7 @@ if(isset($_POST['reasons'])) {
             $stmt = $pdo->prepare("SELECT o.*, p.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
+                                   WHERE o.o_reasons NOT LIKE '%out to%'
                                    ORDER BY o.o_mg_code DESC");
         }
 
@@ -48,17 +49,17 @@ if(isset($_POST['reasons'])) {
              echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";
              echo "<td class='text-end'>" . $product['o_out_qty'] . "</td>";
              echo "<td class='text-end'>" . date('d/m/Y', strtotime($product['o_out_date'])) . "</td>";
-             echo "<td class='text-center'>" . $data_reasons[2] . "</td>";
+             echo "<td class='text-center'>" . ($data_reasons[2]!= null ? $data_reasons[2] : $data_reasons[0]) . "</td>";
              echo "<td class='text-center'>";
              
              if ($data_reasons[1] == 1) {
-                 echo "<i class='fa-solid fa-money-bill'></i><br>cash";
+                 echo '<i class="fa-solid fa-money-bill" style="color: green;"></i><br>cash';
              } elseif ($data_reasons[1] == 2) {
-                 echo "<i class='fa-solid fa-qrcode'></i><br>QR";
+                 echo "<i class='fa-solid fa-qrcode' style='color: blue;'></i><br>QR";
              } elseif ($data_reasons[1] == 3) {
-                 echo "<i class='fa-solid fa-cart-shopping'></i><br>shopify";
+                 echo "<i class='fa-solid fa-cart-shopping' style='color: orange;''></i><br>shopify";
              } else {
-                 echo "$data_reasons[1]"; // กรณีที่ค่าไม่ตรงกับเงื่อนไขที่กำหนด
+                 echo "<p style='color: red;'>FREE</p>"; // กรณีที่ค่าไม่ตรงกับเงื่อนไขที่กำหนด
              }
              
              echo "</td>";  

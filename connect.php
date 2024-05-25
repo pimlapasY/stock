@@ -23,7 +23,7 @@ try {
     // Handle database connection error
     die("Database connection failed: " . $e->getMessage());
 }
-
+ 
 }else{ 
     header('Location: login.php');
     exit;
