@@ -129,15 +129,21 @@ function validateInput(input) {
 
                         <td class="d-flex justify-content-start">
                             <!-- Default radio -->
-                            <div class="form-check">
+                            <div class="form-check me-3">
                                 <input class="form-check-input" type="radio" name="flexRadioDefault"
                                     id="flexRadioDefault1" required>
                                 <label class="form-check-label" for="flexRadioDefault1"><?php echo $sale ?></label>
-                            </div>&nbsp;&nbsp;&nbsp;
-                            <div class="form-check">
+                            </div>
+                            <div class="form-check me-3">
                                 <input class="form-check-input" type="radio" name="flexRadioDefault"
                                     id="flexRadioDefault2">
                                 <label class="form-check-label" for="flexRadioDefault2"> <?php echo $take_out ?></label>
+                            </div>
+                            <div class="form-check">
+                                <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                    id="flexRadioDefault3">
+                                <label class="form-check-label" for="flexRadioDefault3">
+                                    <?php echo 'Sale sample' ?></label>
                             </div>
                         </td>
                     </tr>
@@ -146,7 +152,14 @@ function validateInput(input) {
                         <td class="text-start" id="selectContainerSale" style="display:none;">
                             <!-- Add your list select here -->
                             <div class="input-group mb-3">
-                                <button class="btn btn-outline-secondary"
+                                <button class="btn btn-outline-success" type="store"><?php echo 'From' ?></button>
+                                <select class="form-select" id="store" style="text-transform: uppercase;">
+                                    <option selected value="1">samt</option>
+                                    <option value="2">sakaba</option>
+                                </select>
+                            </div>
+                            <div class="input-group mb-3">
+                                <button class="btn btn-outline-warning"
                                     type="paidOption"><?php echo $paid_by ?></button>
                                 <select class="form-select" id="paidOption">
                                     <option selected><?php echo $choose ?>...</option>
@@ -156,18 +169,18 @@ function validateInput(input) {
                                 </select>
                             </div>
                             <div class="input-group mb-3">
-                                <span class="input-group-text" id="basic-addon1"><?php echo $cus_name ?></span>
+                                <span class="input-group-text btn btn-outline-warning"
+                                    id="basic-addon1"><?php echo $cus_name ?></span>
                                 <input type="text" class="form-control" aria-label="Username" id="cusname"
                                     aria-describedby="basic-addon1" />
                             </div>
                         </td>
                         <td class="text-start" id="selectContainerTakeOut" style="display:none;">
                             <div class="input-group mb-3">
-                                <button class="btn btn-outline-secondary" type="stockToOption">To</button>
+                                <button class="btn btn-outline-warning" type="stockToOption">To</button>
                                 <select class="form-select" id="stockToOption">
                                     <option selected><?php echo $choose ?>...</option>
                                     <option>SAKABA</option>
-                                    <option>Sale Sample</option>
                                     <option>Other</option>
                                 </select>
                             </div>
@@ -388,7 +401,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
 // Add event listener to the dropdown menu
 stockToOption.addEventListener('change', function() {
     // Check if the selected option is "Other"
-    if (stockToOption.value == '3') {
+    if (stockToOption.value == 'Other') {
         // If "Other" is selected, show the input field
         otherInput.style.display = 'block';
     } else {
@@ -538,6 +551,8 @@ function updateTotalPrice() {
 // Get the radio buttons
 var saleRadio = document.getElementById('flexRadioDefault1');
 var takeOutRadio = document.getElementById('flexRadioDefault2');
+var saleSampleRadio = document.getElementById('flexRadioDefault3');
+
 // Get the select container
 var selectContainerSale = document.getElementById('selectContainerSale');
 var selectContainerTakeOut = document.getElementById('selectContainerTakeOut');
@@ -554,6 +569,10 @@ function toggleSelectContainer() {
     } else {
         selectContainerSale.style.display = 'none'; // Hide select container
     }
+    if (saleSampleRadio.checked) {
+        selectContainerSale.style.display = 'none'; // Hide select container
+        selectContainerTakeOut.style.display = 'none'; // Hide select container
+    }
 }
 
 // Call the function initially
@@ -562,7 +581,7 @@ toggleSelectContainer();
 // Add event listener to the radio buttons
 saleRadio.addEventListener('change', toggleSelectContainer);
 takeOutRadio.addEventListener('change', toggleSelectContainer);
-
+saleSampleRadio.addEventListener('change', toggleSelectContainer);
 
 function submitStockOut() {
 
@@ -571,21 +590,30 @@ function submitStockOut() {
     // Get the radio inputs
     var saleRadio = document.getElementById("flexRadioDefault1");
     var takeOutRadio = document.getElementById("flexRadioDefault2");
+    var saleSampleRadio = document.getElementById('flexRadioDefault3');
     var paidOption = $('#paidOption').val();
+    var store = $('#store').val();
     var stockToOption = $('#stockToOption').val();
     var customerName = $('#cusname').val(); // Get the value of the customer name input
     var date = $('#dateStockOut').val(); // Get the value of the customer name input
-
+    var otherInput = $('#otherInput').val();
 
     var reasons_submit; // Define reasons_submit variable
 
     // Check if the sale radio is checked
     if (saleRadio.checked) {
-        reasons_submit = 'sale,' + paidOption + ',' + customerName; // Update reasons_submit for 'sale' reason
+        reasons_submit = 'sale,' + store + ',' + paidOption + ',' +
+            customerName; // Update reasons_submit for 'sale' reason
     }
     // Check if the take out radio is checked
     else if (takeOutRadio.checked) {
-        reasons_submit = 'out to,' + stockToOption; // Update reasons_submit for 'take_out' reason
+        if (stockToOption == 'SAKABA') {
+            reasons_submit = 'out to,' + stockToOption; // Update reasons_submit for 'take_out' reason
+        } else {
+            reasons_submit = 'out to,' + otherInput;
+        }
+    } else if (saleSampleRadio.checked) {
+        reasons_submit = 'sale sample';
     } else {
         Swal.fire({
             title: 'ERROR',

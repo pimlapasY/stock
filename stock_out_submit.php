@@ -49,7 +49,7 @@ if (isset($_SESSION['role'])) {
 
    
         // Check if the reason is 'sale'
-        if($data_reasons[0] == 'sale') {
+        if($data_reasons[0] == 'sale' || $data_reasons[0] == 'sale sample') {
             // Prepare SQL statement to update stock quantity
             $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty - ? WHERE s_product_id = ?");
 

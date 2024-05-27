@@ -18,13 +18,13 @@ if(isset($_POST['reasons'])) {
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
                                    WHERE o.o_reasons LIKE '%sale%' AND o.o_reasons NOT LIKE '%sale sample%'
-                                   ORDER BY o.o_mg_code DESC");
+                                   ORDER BY o_reasons, o.o_mg_code DESC");
         } else {
             $stmt = $pdo->prepare("SELECT o.*, p.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
                                    WHERE o.o_reasons NOT LIKE '%out to%'
-                                   ORDER BY o.o_mg_code DESC");
+                                   ORDER BY o_reasons, o.o_mg_code DESC");
         }
 
         // Execute the statement
@@ -41,6 +41,10 @@ if(isset($_POST['reasons'])) {
 
              echo "<tr data-id='" . htmlspecialchars($product['o_id']) . "'>";
              echo "<td>" . ($index + 1) . "</td>"; // Display No starting from 1
+             echo "<td>" .    
+             ($data_reasons[1] == 1 ? 'SAMT' : 
+             ($data_reasons[1] == 2 ? 'SAKABA' : 'SAMT')) .
+                 "</td>";
              echo "<td>" . htmlspecialchars($product['o_mg_code']) . "</td>";
              echo "<td>" . htmlspecialchars($product['o_product_code']) . "</td>";
              /* echo "<td>" . htmlspecialchars('Nipponrika') . "</td>"; */
@@ -49,7 +53,7 @@ if(isset($_POST['reasons'])) {
              echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";
              echo "<td class='text-end'>" . $product['o_out_qty'] . "</td>";
              echo "<td class='text-end'>" . date('d/m/Y', strtotime($product['o_out_date'])) . "</td>";
-             echo "<td class='text-center'>" . ($data_reasons[2]!= null ? $data_reasons[2] : $data_reasons[0]) . "</td>";
+             echo "<td class='text-center'>" . ($data_reasons[3]!= null ? $data_reasons[3] : $data_reasons[0]) . "</td>";
              echo "<td class='text-center'>";
              
              if ($data_reasons[1] == 1) {
@@ -63,14 +67,14 @@ if(isset($_POST['reasons'])) {
              }
              
              echo "</td>";  
-             if($product['o_payment'] == null){
+             if($product['o_payment'] == 2 || $product['o_payment'] == null){
                 echo "<td class='text-center' style='background:#FCF3CF;'>" . '' . "</td>";
-             }else{
+             }else if($product['o_payment'] == 1){
                 echo "<td class='text-center' style='background:#FCF3CF;'>" . '<a class="btn btn-success btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
              }
-             if($product['o_delivery'] == null){
+             if($product['o_delivery'] == null || $product['o_delivery'] == 2){
                 echo "<td class='text-center' style='background:#FCF3CF;'>" . '' . "</td>";
-             }else{
+             }else if($product['o_delivery'] == 1){
                 echo "<td class='text-center' style='background:#FCF3CF;'>" . '<a class="btn btn-success btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
              }
              /* echo "<td class='text-center' style='text-transform: uppercase; background:#FCF3CF;'>" . $data_reasons[0] . "</td>"; */
@@ -78,8 +82,14 @@ if(isset($_POST['reasons'])) {
              /* echo "<td class='text-center' style='background:#FCF3CF;'>" . '' . "</td>"; */
             
              echo "<td class='text-center'>" . $product['o_memo'] . "</td>";
-             echo "<td class='text-center'>" . '<a class="btn btn-outline-warning btn-sm btn-floating"><i class="fa-regular fa-pen-to-square"></i></a>' . "</td>";
-             echo '<td class="text-center"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div></td>';
+             echo "<td class='text-center'>" . 
+             '<button class="btn btn-outline-warning btn-sm btn-floating edit-btn" data-id="' . $product['o_id'] . '" data-mg-code="' . $product['o_mg_code'] . '" onclick="showModal(' . $product['o_id'] . ', \'' . $product['o_mg_code'] . '\')">
+                 <i class="fa-regular fa-pen-to-square"></i>
+             </button>' . 
+                "</td>";
+    
+            
+            echo '<td class="text-center"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div></td>';
              echo "</tr>";
                 
         }
