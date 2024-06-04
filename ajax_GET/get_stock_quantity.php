@@ -9,16 +9,23 @@ if(isset($_POST['product_code']) && isset($_POST['color']) && isset($_POST['size
     $color = $_POST['color'];
     $size = $_POST['size'];
     $hand = $_POST['hand'];
+    $store = $_POST['store'];
+    
 
     try {
-        // Prepare and execute a query to fetch the stock quantity and product cost for the selected product code, color, size, and hand
-        $stmt = $pdo->prepare("SELECT stock.s_qty, product.p_cost_price, product.p_qty, p_product_id
-            FROM product
-            LEFT JOIN stock ON stock.s_product_id = product.p_product_id
-            WHERE product.p_product_code = ? AND product.p_color = ? AND product.p_size = ? AND product.p_hands = ?
-        ");
-        $stmt->execute([$productCode, $color, $size, $hand]);
 
+        
+             // Prepare and execute a query to fetch the stock quantity and product cost for the selected product code, color, size, and hand
+             $stmt = $pdo->prepare("SELECT stock.s_qty, product.p_cost_price, product.p_qty, p_product_id, 	sub_stock.sub_qty
+             FROM product
+             LEFT JOIN stock ON stock.s_product_id = product.p_product_id
+             LEFT JOIN sub_stock ON sub_stock.sub_product_id = product.p_product_id
+             WHERE product.p_product_code = ? AND product.p_color = ? AND product.p_size = ? AND product.p_hands = ?
+         ");
+         
+      
+
+        $stmt->execute([$productCode, $color, $size, $hand]);
         // Fetch the result
         $result = $stmt->fetch(PDO::FETCH_ASSOC);
 

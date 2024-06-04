@@ -19,6 +19,26 @@ th {
     background-color: #E5F9E5;
 }
 </style> -->
+<style>
+.modal-body {
+    overflow-y: auto;
+}
+
+.custom-modal-size {
+    max-width: 80%;
+    /* Adjust the width as needed */
+}
+
+.table-responsive {
+    overflow-x: auto;
+}
+
+@media (max-width: 576px) {
+    .table-responsive {
+        overflow-x: auto;
+    }
+}
+</style>
 
 <body>
     <!-- Bootstrap Modal -->
@@ -40,25 +60,38 @@ th {
                         </div>
                         <!-- Hidden field to store product ID -->
                         <div class="mb-3">
-                            <label for="o_payment" class="form-label"><i class="fa-solid fa-hand-holding-dollar"></i>
-                                Payment:</label>
-                            <select id="o_payment" name="o_payment" class="form-select">
-                                <option></option>
-                                <option value="1">Success</option>
-                                <option value="2">Pending</option>
-                                <!-- Add more options as needed -->
-                            </select>
+                            <div class="mb-3">
+                                <label for="o_payment" class="form-label"><i
+                                        class="fa-solid fa-hand-holding-dollar"></i> Payment Status:</label><br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="o_payment" id="paymentSuccess"
+                                        value="1">
+                                    <label class="form-check-label" for="paymentSuccess">Payment Successful</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="o_payment" id="paymentPending"
+                                        value="2">
+                                    <label class="form-check-label" for="paymentPending">Payment Pending</label>
+                                </div>
+                            </div>
+
+                            <!-- Add more options as needed -->
                         </div>
                         <div class="mb-3">
-                            <label for="o_delivery" class="form-label"><i class="fa-solid fa-cart-flatbed"></i>
-                                Delivery:</label>
-                            <select id="o_delivery" name="o_delivery" class="form-select">
-                                <option></option>
-                                <option value="1">Delivered</option>
-                                <option value="2">Not Delivered</option>
-                                <!-- Add more options as needed -->
-                            </select>
+                            <label for="o_delivery" class="form-label"><i class="fa-solid fa-cart-flatbed"></i> Delivery
+                                Status:</label><br>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="o_delivery" id="deliveryDelivered"
+                                    value="1">
+                                <label class="form-check-label" for="deliveryDelivered">Successfully Delivered</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="o_delivery" id="deliveryNotDelivered"
+                                    value="2">
+                                <label class="form-check-label" for="deliveryNotDelivered">Delivery Pending</label>
+                            </div>
                         </div>
+
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -71,10 +104,22 @@ th {
 
 
     <div class="container-fluid">
-        <div class="mb-2">
-            <h1><i class="fa-solid fa-database fa-xl"></i> Currently Taken</h1><br>
-            <a href="#" class="btn btn-success" id="allBtn">All</a>
-            <a href="#" class="btn btn-warning" id="partSaleBtn">Part Sale</a>
+        <h1><i class="fa-solid fa-database fa-xl"></i> Currently Taken</h1><br>
+
+        <div class="d-flex justify-content-between">
+            <div class="mb-2">
+                <a href="#" class="btn btn-primary" id="allBtn"><i class="fa-solid fa-bars"></i> All</a>
+                <a href="#" class="btn btn-danger" id="partSaleBtn"><i class="fa-solid fa-file-invoice-dollar"></i> Part
+                    Sale</a>
+            </div>
+            <div class="mb-2">
+                <a href="#" id="previewPRSelectedBtn" class="btn btn-info"><i class="fa-solid fa-file-lines"></i> PR
+                    create</a>
+                <a href="#" id="previewReturnedSelectedBtn" class="btn btn-warning"><i
+                        class="fa-solid fa-right-left"></i> Returned</a>
+                <a href="his_all.php" class="btn btn-success"><i class="fa-solid fa-file-circle-check"></i>
+                    Completed</a>
+            </div>
         </div>
         <table class="table table-hover mx-auto">
             <thead class="text-center table-secondary" style="text-transform: uppercase;">
@@ -96,8 +141,8 @@ th {
                 <th>Delivery</th>
                 <th>PR/PO</th>
                 <!-- <th>PO status</th> -->
-                <th>Memo</th>
                 <th>Update</th>
+                <th>Memo</th>
                 <th>select</th>
             </thead>
             <tbody id="dataTable">
@@ -106,29 +151,201 @@ th {
             </tbody>
         </table>
     </div>
+    <!------------------------ Preview Modal -------------------------------------------------------------------->
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+        <div class="modal-dialog custom-modal-size mx-auto">
+            <div class="modal-content">
+                <div class="modal-header text-center" id="previewModalHeader">
+                    <h5 class="modal-title" id="previewModalLabel">Preview Selected Items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="previewModalBody">
+                    <!-- Details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-warning" id="returnButton">RETURN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+    $(document).ready(function() {
+        // Other code...
 
+        $('#previewReturnedSelectedBtn').click(function() {
+            // Collect selected IDs
+            var selectedIds = [];
+            $('input[name="selected_ids[]"]:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
+
+            if (selectedIds.length > 0) {
+                // Fetch details for selected IDs
+                $.ajax({
+                    url: 'currently_selectd_details.php',
+                    type: 'POST',
+                    data: {
+                        ids: selectedIds
+                    },
+                    success: function(response) {
+                        $('#previewModalHeader').removeClass('text-bg-info').addClass(
+                            'text-bg-warning');
+                        // Populate the modal body with the response
+                        $('#previewModalBody').html(response);
+
+                        $('#previewModalLabel').html('Preview Selected Items (Returned)');
+
+                        // Show the modal
+                        var modal = new bootstrap.Modal(document.getElementById(
+                            'previewModal'));
+                        modal.show();
+                    },
+                    error: function() {
+                        alert('Error fetching details. Please try again.');
+                    }
+                });
+            } else {
+                alert('No items selected.');
+            }
+        });
+
+
+        $('#returnButton').click(function() {
+            // Collect selected IDs
+            var selectedIds = [];
+            $('input[name="selected_ids[]"]:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
+
+            // Send an AJAX request to insert data into the stockin table
+            $.ajax({
+                url: 'currently_return.php', // Update the URL to your PHP script
+                type: 'POST',
+                data: {
+                    ids: selectedIds
+                }, // Send the selectedIds array with the key 'ids'
+                success: function(response) {
+                    Swal.fire({
+                        title: 'Return Updated!',
+                        text: 'Stock has been updated successfully.',
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonText: '<i class="fa-solid fa-folder-plus"></i> on this page',
+                        cancelButtonText: '<i class="fa-solid fa-arrow-right-to-bracket"></i> History StockIn',
+                        confirmButtonColor: '#28a745', // Custom color for confirm button
+                        cancelButtonColor: 'orange' // Custom color for cancel button
+                    }).then((result) => {
+                        // If user clicks "Move to Other Page" button
+                        if (!result.isConfirmed) {
+                            // Redirect to other page
+                            window.location.href = 'stock_in_his.php';
+                        } else {
+                            location.reload();
+                        }
+                    });
+                    // Handle the success response
+                    console.log(response); // Log the response
+                    // You can add further actions here if needed, such as displaying a success message or updating the UI
+                },
+                error: function() {
+                    // Handle the error
+                    alert('Error inserting data into stockin table. Please try again.');
+                }
+            });
+        });
+
+
+
+
+        $('#previewPRSelectedBtn').click(function() {
+            // Collect selected IDs
+            var selectedIds = [];
+            $('input[name="selected_ids[]"]:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
+
+            if (selectedIds.length > 0) {
+                // Fetch details for selected IDs
+                $.ajax({
+                    url: 'currently_selectd_details.php',
+                    type: 'POST',
+                    data: {
+                        ids: selectedIds
+                    },
+                    success: function(response) {
+                        $('#previewModalHeader').removeClass('text-bg-warning').addClass(
+                            'text-bg-info');
+                        // Populate the modal body with the response
+                        $('#previewModalBody').html(response);
+                        $('#previewModalLabel').html('Preview Selected Items (PR Create)');
+
+                        // Show the modal
+                        var modal = new bootstrap.Modal(document.getElementById(
+                            'previewModal'));
+                        modal.show();
+                    },
+                    error: function() {
+                        /*  Swal.fire({
+                             icon: 'error',
+                             title: 'No items selected',
+                             text: 'Please select at least one item to preview.'
+                         }); */
+                        alert('Error fetching details. Please try again.');
+                    }
+                });
+            } else {
+                /* swal({
+                    title: "No items selected.",
+                    icon: "error"
+                }); */
+                //alert('No items selected.');
+            }
+        });
+    });
+    </script>
+    <!------------------------ Preview Modal -------------------------------------------------------------------->
 </body>
 
 </html>
 
 <script>
-function showModal(productId, mgCode) {
+function showModal(productId, mgCode, payment, delivery) {
     const modal = new bootstrap.Modal(document.getElementById('updateModal'), {
         keyboard: false
     });
+
+    console.log('ID:', productId);
+    console.log('Mg Code:', mgCode);
+    console.log('Payment:', payment);
+    console.log('Delivery:', delivery);
     // Set the product ID in the modal form
     document.getElementById('product-id').value = productId;
     document.getElementById('mg-code').value = mgCode;
+
+    if (payment == null) {
+        payment == 2;
+    }
+    if (delivery == null) {
+        delivery == 2;
+    }
+
+    // Set the checked state of the radio buttons
+    document.getElementById('paymentSuccess').checked = (payment === '1');
+    document.getElementById('paymentPending').checked = (payment === '2');
+    document.getElementById('deliveryDelivered').checked = (delivery === '1');
+    document.getElementById('deliveryNotDelivered').checked = (delivery === '2');
 
     // Show the modal
     modal.show();
 }
 
+
 function updateData() {
     // Get form values
     const productId = document.getElementById('product-id').value;
-    const o_payment = document.getElementById('o_payment').value || null;
-    const o_delivery = document.getElementById('o_delivery').value || null;
+    const o_payment = document.querySelector('input[name="o_payment"]:checked').value;
+    const o_delivery = document.querySelector('input[name="o_delivery"]:checked').value;
 
     // Send POST request to update data
     fetch('currently_update.php', {

@@ -411,6 +411,7 @@ stockToOption.addEventListener('change', function() {
 });
 
 $('#product').on('input', function() {
+
     // Get the selected product code from the input field
     var selectedProductCode = $(this).val();
     console.log('Selected product code:', selectedProductCode);
@@ -420,7 +421,7 @@ $('#product').on('input', function() {
         url: 'ajax_GET/get_product_name.php', // URL to your PHP script that fetches the product name
         method: 'POST',
         data: {
-            product_code: selectedProductCode
+            product_code: selectedProductCode,
         },
         success: function(response) {
             // Split the response into product name and unit
@@ -434,14 +435,19 @@ $('#product').on('input', function() {
 
         }
     });
-}); // Function to update quantity input based on product, color, or size changes
+});
+
+
+// Function to update quantity input based on product, color, or size changes
 // Function to update quantity input based on product, color, or size changes
 $('#product, #colorInput, #sizeInput, #handInput').on('change', function() {
     updateQuantityInput();
 });
 
+$('#store').on('change', updateQuantityInput);
 
 function updateQuantityInput() {
+    var store = $('#store').val();
     var selectedProductCode = $('#product').val();
     var selectedColor = $('#colorInput').val();
     var selectedSize = $('#sizeInput').val();
@@ -460,7 +466,8 @@ function updateQuantityInput() {
             product_code: selectedProductCode,
             color: selectedColor,
             size: selectedSize,
-            hand: selectedHand
+            hand: selectedHand,
+            store: store
         },
         success: function(response) {
             var data = JSON.parse(response);
@@ -471,7 +478,12 @@ function updateQuantityInput() {
 
 
             var productID = data.p_product_id;
-            var stockQuantity = parseInt(data.s_qty);
+            if (store == '2') {
+                var stockQuantity = parseInt(data.sub_qty);
+            } else {
+                var stockQuantity = parseInt(data.s_qty) - parseInt(data.sub_qty);
+                console.log("Stock Quantity: " + stockQuantity);
+            }
             var productCost = parseFloat(data.p_cost_price);
             var productQTY = parseInt(data.p_qty);
             console.log('s_qty = ' + stockQuantity);
@@ -556,7 +568,6 @@ var saleSampleRadio = document.getElementById('flexRadioDefault3');
 // Get the select container
 var selectContainerSale = document.getElementById('selectContainerSale');
 var selectContainerTakeOut = document.getElementById('selectContainerTakeOut');
-
 // Function to toggle select container visibility
 function toggleSelectContainer() {
     if (takeOutRadio.checked) {
@@ -564,11 +575,13 @@ function toggleSelectContainer() {
     } else {
         selectContainerTakeOut.style.display = 'none'; // Hide select container
     }
+
     if (saleRadio.checked) {
         selectContainerSale.style.display = 'table-cell'; // Show select container
     } else {
         selectContainerSale.style.display = 'none'; // Hide select container
     }
+
     if (saleSampleRadio.checked) {
         selectContainerSale.style.display = 'none'; // Hide select container
         selectContainerTakeOut.style.display = 'none'; // Hide select container

@@ -102,7 +102,7 @@
              echo "<td class='text-end'>" . number_format($product['p_cost_price']) . "</td>";
              echo "<td class='text-end'>" . number_format($product['p_sale_price']) . "</td>";
              //echo "<td class='text-end' style='color: " . ($product['s_qty'] == 0 ? "red" : "black") . ";'>" . htmlspecialchars($product['s_qty']) . "</td>";
-             echo "<td class='text-end' style='color: " . ($product['sub_qty'] == 0 ? "red" : "green") . "; background:#E5F9E5;'>" . htmlspecialchars($product['sub_qty']) . "</td>";
+             echo "<td class='text-end' style='color: " . ($product['sub_qty'] <= 0 ? "black; background:pink;" : "green; background:#E5F9E5;") . "'>" .$product['sub_qty'] . "</td>";
              echo "</tr>";
              }
             

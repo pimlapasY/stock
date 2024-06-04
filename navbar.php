@@ -1,8 +1,29 @@
 <?php 
 include('header.php'); 
+include('connect.php');
 ?>
 
 <style>
+/* width */
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+    background: #888;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 #myBtn {
     display: none;
     /* Hidden by default */
@@ -87,7 +108,7 @@ include('header.php');
 // Set the current page based on the PHP_SELF server variable
 $currentPage = basename($_SERVER['PHP_SELF']);
 
-include('connect.php');
+
 
 if ($_SESSION["lang"] == "en" || !isset($_SESSION["lang"])) {
     include("lang/lang_en.php");
@@ -164,7 +185,7 @@ if(isset($_SESSION['id'])) {
                         <i class="fa-solid fa-database"></i> <?php echo 'Currently Taken' ?>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbar1">
-                        <li><a class="dropdown-item" href="Currently_taken.php">All</a></li>
+                        <li><a class="dropdown-item" href="currently_taken.php">All</a></li>
                         <li><a class="dropdown-item" href="#">SAMT</a></li>
                         <li><a class="dropdown-item" href="#">SAKABA</a></li>
                     </ul>
@@ -307,7 +328,8 @@ if(isset($_SESSION['id'])) {
             </div>
             <div class="p-2">
                 <!-- Avatar -->
-                <a href="#!" class="btn btn-danger" id="logoutBtn" type="button" data-mdb-ripple-init>
+                <a href="#!" class="btn btn-danger" id="logoutBtn" type="button" data-mdb-ripple-init
+                    style="border-radius: 50px;">
                     <!-- <button id="logoutBtn" type="button" class="btn btn-danger" data-mdb-ripple-init
                         data-mdb-ripple-color="dark" style="width: 150px;"> --><i
                         class="fa-solid fa-right-from-bracket"></i>
@@ -323,12 +345,9 @@ if(isset($_SESSION['id'])) {
 <!-- Navbar -->
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-
     // Logout button click event
     const logoutBtn = document.getElementById('logoutBtn');
-
     logoutBtn.addEventListener('click', function() {
-
         Swal.fire({
             title: 'Are you sure?',
             text: 'You will be logged out!',

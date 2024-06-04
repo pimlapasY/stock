@@ -1,5 +1,5 @@
 <?php
-session_start();    
+session_start();
 error_reporting(E_ALL & ~E_NOTICE);
 ini_set('display_errors', 0);
 
@@ -18,12 +18,11 @@ if (isset($_SESSION['role'])) {
     $memo = $_POST['memo'];
     $qtyValue = $_POST['qtyValue'];
     $username = $_SESSION['id'];
-    $reasons =  $_POST['reasons'];
-    $date =  $_POST['date'];
-  
-    //แยกข้อมูลของง reasons
-    $data_reasons = explode(",", $reasons);
+    $reasons = $_POST['reasons'];
+    $date = $_POST['date'];
 
+    // Split reasons data
+    $data_reasons = explode(",", $reasons);
 
     try {
         // Prepare SQL statement
@@ -42,14 +41,11 @@ if (isset($_SESSION['role'])) {
         $stmt->bindParam(10, $reasons);
         $stmt->bindParam(11, $date);
 
-
-
         // Execute SQL statement
         $stmt->execute();
 
-   
-        // Check if the reason is 'sale'
-        if($data_reasons[0] == 'sale' || $data_reasons[0] == 'sale sample') {
+        // Check if the reason is 'sale' or 'sale sample'
+        if ($data_reasons[0] == 'sale' || $data_reasons[0] == 'sale sample') {
             // Prepare SQL statement to update stock quantity
             $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty - ? WHERE s_product_id = ?");
 
@@ -59,23 +55,41 @@ if (isset($_SESSION['role'])) {
 
             // Execute SQL statement to update stock quantity
             $updateStmt->execute();
+
+            if ($data_reasons[1] == '2') {
+                // Prepare SQL statement to update stock quantity
+                $updateSakaba = $pdo->prepare("UPDATE sub_stock SET sub_qty = sub_qty - ? WHERE sub_product_id = ?");
+
+                // Bind parameters for update
+                $updateSakaba->bindParam(1, $qtyValue);
+                $updateSakaba->bindParam(2, $productID);
+
+                // Execute SQL statement to update stock quantity
+                $updateSakaba->execute();
+            }
         } else {
-            // Insert into sub_stock table
-            $insertStmt = $pdo->prepare("INSERT INTO sub_stock (sub_product_id, sub_qty, sub_location, sub_date_add) VALUES (?, ?, ?, NOW())");
+                   // Check if the sub_stock record exists
+            $checkStmt = $pdo->prepare("SELECT * FROM sub_stock WHERE sub_product_id = ? AND sub_location = ?");
+            $checkStmt->bindParam(1, $productID);
+            $checkStmt->bindParam(2, $data_reasons[1]);
+            $checkStmt->execute();
 
-            // Bind parameters for insertion
-            $insertStmt->bindParam(1, $productID);
-            $insertStmt->bindParam(2, $qtyValue);
-            $insertStmt->bindParam(3, $data_reasons[1]); // Assuming location data is at index 1
-
-            // Execute SQL statement to insert into sub_stock table
-            $insertStmt->execute();
+            if ($checkStmt->rowCount() > 0) {
+                // If exists, update the sub_qty
+                $updateSubQtyStmt = $pdo->prepare("UPDATE sub_stock SET sub_qty = sub_qty + ? WHERE sub_product_id = ? AND sub_location = ?");
+                $updateSubQtyStmt->bindParam(1, $qtyValue);
+                $updateSubQtyStmt->bindParam(2, $productID);
+                $updateSubQtyStmt->bindParam(3, $data_reasons[1]);
+                $updateSubQtyStmt->execute();
+            } else {
+                // If not exists, insert new entry into sub_stock
+                $insertSubStockStmt = $pdo->prepare("INSERT INTO sub_stock (sub_product_id, sub_qty, sub_location, sub_date_add) VALUES (?, ?, ?, NOW())");
+                $insertSubStockStmt->bindParam(1, $productID);
+                $insertSubStockStmt->bindParam(2, $qtyValue);
+                $insertSubStockStmt->bindParam(3, $data_reasons[1]);
+                $insertSubStockStmt->execute();
+            }
         }
-
-        // Set $stmt, $updateStmt, and $insertStmt to null to release resources
-        $stmt = null;
-        $updateStmt = null;
-        $insertStmt = null;
 
         // Print success message
         echo "Form submitted successfully";

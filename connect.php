@@ -4,6 +4,12 @@ error_reporting(E_ALL & ~E_NOTICE);
 ini_set('display_errors', 0);
 // Disable warnings
 if (isset($_SESSION['role'])) {
+
+//สำหรับ xamp ทั่วไป
+/* $dbHost = "localhost";
+$dbUser = "root";
+$dbPass = ""; */
+
 $dbHost = "192.168.100.122";
 $dbUser = "samt";
 $dbPass = "samtadmin12";

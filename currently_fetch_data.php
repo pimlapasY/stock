@@ -68,12 +68,12 @@ if(isset($_POST['reasons'])) {
              
              echo "</td>";  
              if($product['o_payment'] == 2 || $product['o_payment'] == null){
-                echo "<td class='text-center' style='background:#FCF3CF;'>" . '' . "</td>";
+                echo "<td class='text-center' style='background:#FCF3CF;'>" . '<a class="btn btn-outline-warning btn-sm btn-floating"><i class="fa-solid fa-hourglass-half"></i></a>' . "</td>";
              }else if($product['o_payment'] == 1){
                 echo "<td class='text-center' style='background:#FCF3CF;'>" . '<a class="btn btn-success btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
              }
              if($product['o_delivery'] == null || $product['o_delivery'] == 2){
-                echo "<td class='text-center' style='background:#FCF3CF;'>" . '' . "</td>";
+                echo "<td class='text-center' style='background:#FCF3CF;'>" . '<a class="btn btn-outline-warning btn-sm btn-floating"><i class="fa-solid fa-hourglass-half"></i></a>' . "</td>";
              }else if($product['o_delivery'] == 1){
                 echo "<td class='text-center' style='background:#FCF3CF;'>" . '<a class="btn btn-success btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
              }
@@ -81,16 +81,16 @@ if(isset($_POST['reasons'])) {
              echo "<td class='text-center' style='background:#FCF3CF; color:".($product['o_req_no'] !== null ? 'green;' : 'red;')."'>" . ($product['o_req_no'] !== null ? 'issued' : 'unissue') . "</td>";
              /* echo "<td class='text-center' style='background:#FCF3CF;'>" . '' . "</td>"; */
             
-             echo "<td class='text-center'>" . $product['o_memo'] . "</td>";
+            
              echo "<td class='text-center'>" . 
-             '<button class="btn btn-outline-warning btn-sm btn-floating edit-btn" data-id="' . $product['o_id'] . '" data-mg-code="' . $product['o_mg_code'] . '" onclick="showModal(' . $product['o_id'] . ', \'' . $product['o_mg_code'] . '\')">
+             '<button class="btn btn-outline-warning btn-sm btn-floating edit-btn" data-id="' . $product['o_id'] . '" data-mg-code="' . $product['o_mg_code'] . '" data-payment="' . $product['o_payment'] . '" data-delivery="' . $product['o_delivery'] . '" onclick="showModal(' . $product['o_id'] . ', \'' . $product['o_mg_code'] . '\', \'' . $product['o_payment'] . '\', \'' . $product['o_delivery'] . '\')">
                  <i class="fa-regular fa-pen-to-square"></i>
              </button>' . 
                 "</td>";
-    
-            
-            echo '<td class="text-center"><input class="form-check-input" type="checkbox" value="" id="flexCheckDefault"></div></td>';
-             echo "</tr>";
+        
+            echo "<td class='text-center'>" . $product['o_memo'] . "</td>";
+            echo '<td class="text-center"><input class="form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['o_mg_code'] . '"></td>';
+            echo "</tr>";
                 
         }
 
