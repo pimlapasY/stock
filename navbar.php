@@ -184,7 +184,7 @@ if(isset($_SESSION['id'])) {
                         href="#" id="navbar2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-database"></i> <?php echo 'Currently Taken' ?>
                     </a>
-                    <ul class="dropdown-menu" aria-labelledby="navbar1">
+                    <ul class="dropdown-menu" aria-labelledby="navbar2">
                         <li><a class="dropdown-item  <?php echo ($currentPage == 'currently_taken.php') ? 'active' : ''; ?>"
                                 href="currently_taken.php">All</a></li>
                         <li><a class="dropdown-item <?php echo ($currentPage == 'currently_samt.php') ? 'active' : ''; ?>"
@@ -196,7 +196,7 @@ if(isset($_SESSION['id'])) {
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'his_all.php' || $currentPage =='his_samt.php' || $currentPage == 'his_sakaba.php') ? 'active' : ''; ?>"
+                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'his_all.php' || $currentPage == 'his_samt.php' || $currentPage == 'his_sakaba.php') ? 'active' : ''; ?>"
                         href="#" id="navbar3" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-laptop-medical"></i> <?php echo $history ?>
                     </a>

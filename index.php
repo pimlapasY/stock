@@ -1,7 +1,6 @@
 <?php include('./navbar.php') ?>
 
 <?php
- 
 $dataPoints = array(
 	array("x"=> 10, "y"=> 41),
 	array("x"=> 20, "y"=> 35, "indexLabel"=> "Lowest"),

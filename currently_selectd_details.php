@@ -83,7 +83,7 @@ if (isset($_POST['ids'])) {
        // $output .=  "<td class='text-center'>" . $product['o_memo'] . "</td>";
         $output .= '</tr>';
 
-        $total_data_count ++;
+        $total_data_count += $product['o_out_qty'];
     }
 
     $output .= '</tbody></table></div>' ;

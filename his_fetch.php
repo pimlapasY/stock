@@ -44,7 +44,7 @@ if(isset($_POST['store'])) {
             if ($data_reasons[0] == 'out to') {
                 echo "<tr class='table-secondary' data-id='" . htmlspecialchars($product['o_id']) . "'>";
             } elseif ($product['o_return'] == 1) {
-                echo "<tr class='table-danger' data-id='" . htmlspecialchars($product['o_id']) . "'>";
+                echo "<tr class='table-warning' data-id='" . htmlspecialchars($product['o_id']) . "'>";
             } else {
                 echo "<tr data-id='" . htmlspecialchars($product['o_id']) . "'>";
             }

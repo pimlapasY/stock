@@ -43,7 +43,8 @@
         <div class="d-flex justify-content-between m-3" style="align-items: center;">
             <div class="d-flex justify-content-start">
                 <a href="register.php" class="btn btn-success"><i class="fa-solid fa-plus"></i> NEW</a>&nbsp;
-                <a href="#" class="btn btn-danger"><i class="fa-solid fa-database"></i> Current Taken</a>&nbsp;
+                <a href="currently_taken.php" class="btn btn-danger"><i class="fa-solid fa-database"></i> Current
+                    Taken</a>&nbsp;
                 <button class="btn btn-info"><i class="fa-solid fa-cart-arrow-down"></i> Part Sale</button>&nbsp;
                 <button class="btn btn-info"><i class="fa-solid fa-clipboard-list"></i> PR List</button>
             </div>

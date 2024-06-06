@@ -1,8 +1,12 @@
 * {
-    font-size: 16px;
-    /*  font-family: "Rubik", sans-serif; */
-    /* font-optical-sizing: auto; */
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
     font-style: normal;
+    font-variation-settings: "slnt" 0;
+}
+
+th {
+    font-weight: bold !important;
 }
 
 .uppercase {

@@ -21,17 +21,17 @@
         <div class="d-flex justify-content-start p-4">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
-                    <a class="nav-link" href="#" id="productTab" style="font-size: 20px;">
+                    <a class="nav-link tab" href="#" id="productTab" style="font-size: 20px;">
                         <i class="fa-solid fa-box fa-lg"></i> All Store
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" id="samtTab" style="font-size: 20px;">
+                    <a class="nav-link tab" href="#" id="samtTab" style="font-size: 20px;">
                         <i class="fa-solid fa-store fa-lg"></i> SAMT Store
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#" id="sakabaTab" style="font-size: 20px;">
+                    <a class="nav-link tab" href="#" id="sakabaTab" style="font-size: 20px;">
                         <i class="fa-solid fa-store fa-lg"></i> SAKABA Store
                     </a>
                 </li>
@@ -88,13 +88,13 @@
 
         // Function to handle tab click events
         function handleTabClick(tabId, store) {
-            $('.nav-link').removeClass('active');
+            $('.tab').removeClass('active');
             $(tabId).addClass('active');
             loadData(store);
         }
 
         // Load all data when the page loads
-        handleTabClick('#samtTab');
+        handleTabClick('#samtTab', 'samt');
 
         // Set up click event handlers for each tab
         $('#productTab').click(function(e) {
