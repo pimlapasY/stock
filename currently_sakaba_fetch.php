@@ -2,8 +2,6 @@
 // Include database connection
 include 'connect.php';
 
-
-
 // Check if reasons is set
 if(isset($_POST['reasons'])) {
     // Get reasons value
@@ -19,13 +17,13 @@ if(isset($_POST['reasons'])) {
             $stmt = $pdo->prepare("SELECT o.*, p.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
-                                   WHERE o.o_return IS NULL AND (o.o_reasons LIKE '%sale%' AND o.o_reasons NOT LIKE '%sale sample%')
+                                   WHERE o.o_return IS NULL AND (o.o_reasons LIKE '%sale,2%' AND o.o_reasons NOT LIKE '%sale sample%')
                                    ORDER BY o_reasons, o.o_mg_code DESC");
         } else {
             $stmt = $pdo->prepare("SELECT o.*, p.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
-                                   WHERE o.o_return IS NULL AND o.o_reasons NOT LIKE '%out to%'
+                                   WHERE o.o_return IS NULL AND (o.o_reasons NOT LIKE '%out to%' AND o.o_reasons LIKE '%sale,2%')
                                    ORDER BY o_reasons, o.o_mg_code DESC");
         }
 

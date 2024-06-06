@@ -5,7 +5,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Currently Taken</title>
+    <title>Currently Taken (SAMT)</title>
 </head>
 <!-- <style>
 td {
@@ -104,7 +104,7 @@ th {
 
 
     <div class="container-fluid">
-        <h1><i class="fa-solid fa-database fa-xl"></i> Currently Taken</h1><br>
+        <h1><i class="fa-solid fa-database fa-xl"></i> Currently Taken (SAMT)</h1><br>
         <div class="d-flex justify-content-between">
             <div class="mb-2">
                 <a href="#" class="btn btn-primary" id="allBtn"><i class="fa-solid fa-bars"></i> All</a>
@@ -344,20 +344,19 @@ function showModal(productId, mgCode, payment, delivery) {
 
     console.log('ID:', productId);
     console.log('Mg Code:', mgCode);
-
+    console.log('Payment:', payment);
+    console.log('Delivery:', delivery);
     // Set the product ID in the modal form
     document.getElementById('product-id').value = productId;
     document.getElementById('mg-code').value = mgCode;
 
-    if (payment === null) {
-        payment === '2';
+    if (payment == null) {
+        payment == 2;
     }
     if (delivery == null) {
-        delivery === '2';
+        delivery == 2;
     }
 
-    console.log('Payment:', payment);
-    console.log('Delivery:', delivery);
     // Set the checked state of the radio buttons
     document.getElementById('paymentSuccess').checked = (payment === '1');
     document.getElementById('paymentPending').checked = (payment === '2');
@@ -372,20 +371,8 @@ function showModal(productId, mgCode, payment, delivery) {
 function updateData() {
     // Get form values
     const productId = document.getElementById('product-id').value;
-    let o_payment = 2;
-    let o_delivery = 2;
-
-    // Check if payment is checked
-    const selectedPayment = document.querySelector('input[name="o_payment"]:checked');
-    if (selectedPayment) {
-        o_payment = selectedPayment.value;
-    }
-
-    // Check if delivery is checked
-    const selectedDelivery = document.querySelector('input[name="o_delivery"]:checked');
-    if (selectedDelivery) {
-        o_delivery = selectedDelivery.value;
-    }
+    const o_payment = document.querySelector('input[name="o_payment"]:checked').value;
+    const o_delivery = document.querySelector('input[name="o_delivery"]:checked').value;
 
     // Send POST request to update data
     fetch('currently_update.php', {
@@ -427,7 +414,7 @@ $(document).ready(function() {
     // Function to load data based on button clicked
     function loadData(reasons = null) {
         // Define the URL for the AJAX request
-        var url = "currently_fetch_data.php";
+        var url = "currently_samt_fetch.php";
         // Define the data to be sent
         var data = {
             reasons: reasons

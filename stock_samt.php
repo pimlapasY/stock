@@ -82,12 +82,12 @@
             </thead>
             <tbody>
                 <?php
-         $stmt = $pdo->prepare("SELECT p.*, sub.sub_qty, s.s_qty
+         $stmt = $pdo->prepare("SELECT p.*, sub.sub_qty, s.s_qty, s.s_return_date
          FROM product p 
          LEFT JOIN stock s ON s.s_product_id = p.p_product_id 
          LEFT JOIN sub_stock sub ON sub.sub_product_id = p.p_product_id 
          GROUP BY p.p_product_code, p.p_product_name, p.p_hands, p.p_color, FIELD(p.p_size, 'SS', 'S', 'M', 'L', 'XL', 'XXL'), p.p_unit, p.p_collection, p.p_cost_price, p.p_sale_price
-         HAVING s.s_qty!=0;");
+         HAVING s.s_qty != 0;");
 
 
            // Execute the statement
@@ -96,7 +96,23 @@
 
            // Loop through products and output each row
            foreach ($products as $index => $product) {
-           echo "<tr data-id='" . htmlspecialchars($product['p_product_id']) . "'>";
+
+                    // Check if s_return_date exists and is within 2 days from today
+            $returnDate = $product['s_return_date'];
+            if ($returnDate != null) {
+                $returnDateTime = new DateTime($returnDate);
+                $currentDateTime = new DateTime();
+                $interval = $currentDateTime->diff($returnDateTime);
+                $daysDiff = $interval->days;
+                
+                // If return date is within 2 days from today, mark the row as red
+                $rowColor = ($daysDiff <= 2) ? "class='table-warning'" : '';
+            } else {
+                $rowColor = '';
+            }
+            
+           echo "<tr $rowColor data-id='" . htmlspecialchars($product['p_product_id']) . "'>";
+           /* echo "<td>".$product['s_return_date']."</td>"; */
            echo "<td>" . ($index + 1) . "</td>"; // Display No starting from 1
            echo "<td>" . htmlspecialchars($product['p_collection']) . "</td>";
            echo "<td>" . htmlspecialchars($product['p_product_name']) . "</td>";

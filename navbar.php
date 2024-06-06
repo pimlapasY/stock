@@ -180,14 +180,17 @@ if(isset($_SESSION['id'])) {
             </ul>
             <ul class="navbar-nav">
                 <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'current_taken.php') ? 'active' : ''; ?>"
+                    <a class="nav-link dropdown-toggle <?php echo ($currentPage == 'currently_taken.php' || $currentPage == 'currently_samt.php' || $currentPage == 'currently_sakaba.php') ? 'active' : ''; ?>"
                         href="#" id="navbar2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <i class="fa-solid fa-database"></i> <?php echo 'Currently Taken' ?>
                     </a>
                     <ul class="dropdown-menu" aria-labelledby="navbar1">
-                        <li><a class="dropdown-item" href="currently_taken.php">All</a></li>
-                        <li><a class="dropdown-item" href="#">SAMT</a></li>
-                        <li><a class="dropdown-item" href="#">SAKABA</a></li>
+                        <li><a class="dropdown-item  <?php echo ($currentPage == 'currently_taken.php') ? 'active' : ''; ?>"
+                                href="currently_taken.php">All</a></li>
+                        <li><a class="dropdown-item <?php echo ($currentPage == 'currently_samt.php') ? 'active' : ''; ?>"
+                                href="currently_samt.php">SAMT</a></li>
+                        <li><a class="dropdown-item <?php echo ($currentPage == 'currently_sakaba.php') ? 'active' : ''; ?>"
+                                href="currently_sakaba.php">SAKABA</a></li>
                     </ul>
                 </li>
             </ul>

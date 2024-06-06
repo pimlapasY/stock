@@ -1,9 +1,10 @@
 * {
     font-size: 16px;
-    font-family: "Rubik", sans-serif;
-    font-optical-sizing: auto;
+    /*  font-family: "Rubik", sans-serif; */
+    /* font-optical-sizing: auto; */
     font-style: normal;
 }
+
 .uppercase {
     text-transform: uppercase;
 }
@@ -12,6 +13,6 @@
     text-transform: capitalize;
 }
 
-body{
-   margin-top: 150px !important;
+body {
+    margin-top: 150px !important;
 }

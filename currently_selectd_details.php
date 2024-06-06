@@ -25,7 +25,7 @@ if (isset($_POST['ids'])) {
     $output = '<div class="table-responsive">
                 <table class="table text-center">';
     $output .= '<thead style="text-transform: uppercase;">
-                <tr>
+                <tr class="table-warning">
                 <th>#</th>
                 <th>MG</th>
                 <th>CODE</th>
@@ -41,7 +41,6 @@ if (isset($_POST['ids'])) {
 
     foreach ($selectedProducts as $index => $product) {
         $data_reasons = explode(",", $product['o_reasons']);
-
         $output .= '<tr>';
         $output .= "<td>" . ($index + 1) . "</td>"; // Display No starting from 1
         $output .= '<td>' . htmlspecialchars($product['o_mg_code']) . '</td>';
@@ -55,11 +54,11 @@ if (isset($_POST['ids'])) {
         $output .= "<td class='text-center'>" . ($data_reasons[3]!= null ? $data_reasons[3] : $data_reasons[0]) . "</td>";
         $output .=  "<td class='text-center'>";
              
-        if ($data_reasons[1] == 1) {
+        if ($data_reasons[2] == 1) {
             $output .= '<i class="fa-solid fa-money-bill" style="color: green;"></i><br>cash';
-        } elseif ($data_reasons[1] == 2) {
+        } elseif ($data_reasons[2] == 2) {
             $output .=  "<i class='fa-solid fa-qrcode' style='color: blue;'></i><br>QR";
-        } elseif ($data_reasons[1] == 3) {
+        } elseif ($data_reasons[2] == 3) {
             $output .=  "<i class='fa-solid fa-cart-shopping' style='color: orange;''></i><br>shopify";
         } else {
             $output .=  "<p style='color: red;'>FREE</p>"; // กรณีที่ค่าไม่ตรงกับเงื่อนไขที่กำหนด
