@@ -61,6 +61,7 @@
             <thead class="table-danger text-center">
                 <tr style="vertical-align: middle;">
                     <th rowspan="2">No</th>
+                    <th rowspan="2">Code</th>
                     <th rowspan="2">Collection</th>
                     <th rowspan="2">Name</th>
                     <th rowspan="2">Hands</th>
@@ -76,7 +77,7 @@
                     <th>SAKABA</th>
                 </tr> -->
             </thead>
-            <tbody>
+            <tbody class="table-group-divider table-divider-color">
                 <?php
             $stmt = $pdo->prepare("SELECT p.*, sub.sub_qty
             FROM sub_stock sub
@@ -94,6 +95,7 @@
              foreach ($products as $index => $product) {
              echo "<tr data-id='" . htmlspecialchars($product['p_product_id']) . "'>";
              echo "<td>" . ($index + 1) . "</td>"; // Display No starting from 1
+             echo "<td>" . htmlspecialchars($product['p_product_code']) . "</td>";
              echo "<td>" . htmlspecialchars($product['p_collection']) . "</td>";
              echo "<td>" . htmlspecialchars($product['p_product_name']) . "</td>";
              echo "<td>" . htmlspecialchars($product['p_hands']) . "</td>";

@@ -12,6 +12,9 @@
     // Fetch product names from the database
     $stmt_hands = $pdo->query("SELECT DISTINCT p_hands FROM product");
     $productNames_hands = $stmt_hands->fetchAll(PDO::FETCH_COLUMN);  
+    //MGCODE
+    $stmt_mg = $pdo->query("SELECT DISTINCT o_mg_code FROM stockout");
+    $mg_code = $stmt_mg->fetchAll(PDO::FETCH_COLUMN);  
 
 ?>
 <!DOCTYPE html>
@@ -54,7 +57,7 @@
                         </th>
                         <td class="text-start">
                             <input class="form-control w-25" type="date" value="<?php echo date('Y-m-d'); ?>"
-                                id="dateStockOut">
+                                id="dateStockIn">
                         </td>
                     </tr>
                     <tr>
@@ -65,9 +68,9 @@
                             <!-- Default checkbox -->
                         </td>
 
-                        <td class="d-flex justify-content-start" style="vertical-align: middle;">
+                        <td class="d-flex justify-content-start">
                             <!-- Default radio -->
-                            <div class="form-check">
+                            <div class="form-check d-flex align-items-center">
                                 <input class="form-check-input" type="radio" id="check_purchased" name="check_stockIn"
                                     required>
                                 <label class="form-check-label" for="check_purchased">
@@ -78,8 +81,8 @@
                     </tr>
                     <tr>
                         <td></td>
-                        <td>
-                            <div class="form-check">
+                        <td class="d-flex justify-content-start">
+                            <div class="form-check d-flex align-items-center">
                                 <input class="form-check-input" type="radio" id="check_returned" name="check_stockIn">
                                 <label class="form-check-label" for="check_returned">
                                     <?php echo 'Returned' ?>
@@ -106,7 +109,7 @@
                 </div>
             </div>
             <div class="card-body">
-                <table class="table  table-borderless">
+                <table class="table">
                     <thead>
                         <tr class="text-center table-info">
                             <th><?php echo $product_code ?></th>
@@ -227,34 +230,37 @@
                                     Row</button>
                             </td>
                         </tr> -->
-
-                        <tr style="vertical-align: middle;">
-                            <th class="text-end" colspan="8">CURRENT QTY :</th>
-                            <td class="text-end " colspan="3">
-                                <input class="form-control text-end" type="number" id="currentQTY"
-                                    style="background:#fff8e4;" readonly>
-                            </td>
-                        </tr>
-                        <tr style="vertical-align: middle;">
-                            <th class="text-end" colspan="8">TOTAL QTY :</th>
-                            <td class="text-end" colspan="3">
-                                <input id="totalQTY" class="form-control text-end" style="background:#c9e9f6 ;"
-                                    type="number" readonly>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th class="text-end" colspan="8">MEMO :</th>
-                            <td colspan="3">
-                                <textarea type="text" class="form-control" id="memo" name="memo"></textarea>
-                            </td>
-                        </tr>
                     </tbody>
+                </table>
+                <table class="table mx-auto table-borderless w-100">
+                    <tr style="vertical-align: middle;">
+                        <th class="text-end w-75">CURRENT QTY :</th>
+                        <td class="text-end">
+                            <input class="form-control text-end" type="number" id="currentQTY"
+                                style="background:#fff8e4;" readonly>
+                        </td>
+                    </tr>
+                    <tr style="vertical-align: middle;">
+                        <th class="text-end">TOTAL QTY :</th>
+                        <td class="text-end">
+                            <input id="totalQTY" class="form-control text-end" style="background:#c9e9f6 ;"
+                                type="number" readonly>
+                        </td>
+                    </tr>
+                    <tr style="vertical-align: middle;">
+                        <th class="text-end">MEMO :</th>
+                        <td>
+                            <textarea type="text" class="form-control" id="memo" name="memo"></textarea>
+                        </td>
+                    </tr>
                 </table>
             </div>
             <div class="card-footer text-end">
-                <button type="button" class="btn btn-success btn-lg" data-mdb-ripple-init><i
-                        class="fa-solid fa-floppy-disk"></i> Submit</button>
+                <button type="button" class="btn btn-success btn-lg" data-mdb-ripple-init onclick="submitStockin()">
+                    <i class="fa-solid fa-floppy-disk"></i> Submit
+                </button>
             </div>
+
         </div>
     </div>
 </body>
@@ -483,9 +489,7 @@ function updateTotalPrice() {
 
 
 
-function submitStockOut() {
-
-    var mgCode = $('#MG_code').val();
+function submitStockin() {
     var productID = $('#product_id').val();
     var productCode = $('#product').val();
     var productName = $('#selectedProductName').val();
@@ -493,9 +497,19 @@ function submitStockOut() {
     var productTotal = $('#total_price').val();
     var memo = $('#memo').val();
     var qtyValue = parseInt($('#qtyValue').text());
+    var date = $('#dateStockIn').val();
+    var currentQTY = $('#currentQTY').val();
+
+    let status;
+
+    if ($('#check_purchased').is(':checked')) {
+        status = 1;
+    } else if ($('#check_returned').is(':checked')) {
+        status = 2;
+    }
+
 
     var data = {
-        mgCode: mgCode,
         productID: productID,
         productCode: productCode,
         productName: productName,
@@ -503,7 +517,9 @@ function submitStockOut() {
         productTotal: productTotal,
         memo: memo,
         qtyValue: qtyValue,
-        date: date
+        date: date,
+        status: status,
+        currentQTY: currentQTY
     };
 
 
@@ -519,13 +535,19 @@ function submitStockOut() {
         }).then((result) => {
             if (result.isConfirmed) {
                 $.ajax({
-                    url: 'stock_out_submit.php',
+                    url: 'stock_in_submit.php',
                     method: 'POST',
                     data: data,
                     success: function(response) {
                         // จัดการข้อมูลหลังจากที่ส่งไปยังเซิร์ฟเวอร์สำเร็จ
                         // Handle success response
-                        Swal.fire('Success!', 'Form submitted successfully', 'success');
+                        // Handle success response
+                        Swal.fire('Success!', 'Form submitted successfully', 'success').then((
+                            result) => {
+                            if (result.isConfirmed) {
+                                window.location.reload(); // Reload the window
+                            }
+                        });
                     },
                     error: function(xhr, status, error) {
                         // จัดการข้อมูลหลังจากที่เกิดข้อผิดพลาดในการส่งข้อมูล

@@ -57,7 +57,7 @@
                     <th>Memo</th>
                 </tr>
             </thead>
-            <tbody id="dataTable">
+            <tbody id="dataTable" class="table-group-divider table-divider-color">
                 <!-- Data will be loaded here via AJAX -->
             </tbody>
         </table>

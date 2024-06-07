@@ -23,9 +23,9 @@ if (isset($_POST['ids'])) {
 
     // Generate the HTML for the modal body
     $output = '<div class="table-responsive">
-                <table class="table text-center">';
+                <table class="table text-center table-bordered table-sm">';
     $output .= '<thead style="text-transform: uppercase;">
-                <tr class="table-warning">
+                <tr class="table-light">
                 <th>#</th>
                 <th>MG</th>
                 <th>CODE</th>
@@ -37,20 +37,20 @@ if (isset($_POST['ids'])) {
                 <th>Sold date</th>
                 <th>customer</th>
                 <th>paid by</th>
-                </tr></thead><tbody>';
+                </tr></thead><tbody class="table-group-divider table-divider-color">';
 
     foreach ($selectedProducts as $index => $product) {
         $data_reasons = explode(",", $product['o_reasons']);
         $output .= '<tr>';
         $output .= "<td>" . ($index + 1) . "</td>"; // Display No starting from 1
-        $output .= '<td>' . htmlspecialchars($product['o_mg_code']) . '</td>';
-        $output .= '<td>' . htmlspecialchars($product['o_product_code']) . '</td>';
-        $output .= '<td>' . $product['p_product_name']  . '</td>';
+        $output .= '<td class="text-start">' . htmlspecialchars($product['o_mg_code']) . '</td>';
+        $output .= '<td class="text-start">' . htmlspecialchars($product['o_product_code']) . '</td>';
+        $output .= '<td class="text-start">' . $product['p_product_name']  . '</td>';
         $output .= "<td>" . htmlspecialchars($product['p_hands']) . "</td>";
         $output .= "<td>" . htmlspecialchars($product['p_color']) . "</td>";
         $output .= "<td>" . htmlspecialchars($product['p_size']) . "</td>";
-        $output .= "<td>" . htmlspecialchars($product['o_out_qty']) . "</td>";
-        $output .= "<td class='text-end'>" . date('d/m/Y', strtotime($product['o_out_date'])) . "</td>";
+        $output .= "<td class='text-end'>" . htmlspecialchars($product['o_out_qty']) . "</td>";
+        $output .= "<td class='text-center'>" . date('d/m/Y', strtotime($product['o_out_date'])) . "</td>";
         $output .= "<td class='text-center'>" . ($data_reasons[3]!= null ? $data_reasons[3] : $data_reasons[0]) . "</td>";
         $output .=  "<td class='text-center'>";
              

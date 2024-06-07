@@ -53,31 +53,28 @@ th {
                 </div>
                 <form id="update-form">
                     <div class="modal-body">
-                        <div class="mb-3">
+                        <div class="mb-4 ms-2 me-2">
                             <input type="hidden" id="product-id" name="product-id">
                             <label for="mg-code" class="form-label"><i class="fa-solid fa-barcode"></i> MG CODE:</label>
                             <input class="form-control" type="text" id="mg-code" name="mg-code" disabled>
                         </div>
                         <!-- Hidden field to store product ID -->
-                        <div class="mb-3">
-                            <div class="mb-3">
-                                <label for="o_payment" class="form-label"><i
-                                        class="fa-solid fa-hand-holding-dollar"></i> Payment Status:</label><br>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="o_payment" id="paymentSuccess"
-                                        value="1">
-                                    <label class="form-check-label" for="paymentSuccess">Payment Successful</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="o_payment" id="paymentPending"
-                                        value="2">
-                                    <label class="form-check-label" for="paymentPending">Payment Pending</label>
-                                </div>
+                        <div class="mb-4 ms-2 me-2">
+                            <label for="o_payment" class="form-label"><i class="fa-solid fa-hand-holding-dollar"></i>
+                                Payment Status:</label><br>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="o_payment" id="paymentSuccess"
+                                    value="1">
+                                <label class="form-check-label" for="paymentSuccess">Payment Successful</label>
                             </div>
-
-                            <!-- Add more options as needed -->
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="o_payment" id="paymentPending"
+                                    value="2">
+                                <label class="form-check-label" for="paymentPending">Payment Pending</label>
+                            </div>
                         </div>
-                        <div class="mb-3">
+                        <!-- Add more options as needed -->
+                        <div class="mb-1 ms-2 me-2">
                             <label for="o_delivery" class="form-label"><i class="fa-solid fa-cart-flatbed"></i> Delivery
                                 Status:</label><br>
                             <div class="form-check form-check-inline">
@@ -91,7 +88,6 @@ th {
                                 <label class="form-check-label" for="deliveryNotDelivered">Delivery Pending</label>
                             </div>
                         </div>
-
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -144,7 +140,7 @@ th {
                 <th>select</th>
                 <th>Memo</th>
             </thead>
-            <tbody id="dataTable">
+            <tbody id="dataTable" class="table-group-divider table-divider-color">
             </tbody>
         </table>
     </div>
@@ -160,14 +156,14 @@ th {
                     // กำหนดวันที่ปัจจุบันในรูปแบบ 'Y-m-d'
                     $currentDate = date('Y-m-d');
                     ?>
-                <div class="modal-body">
+                <div class="modal-body m-3">
                     <label for="returnDate">Date: </label>
-                    <input id="returnDate" type="date" class="form-control w-50"
+                    <input id="returnDate" type="date" class="form-control w-50 ms-1"
                         value="<?php echo $currentDate; ?>"><br>
                     <label for="memo">Memo: </label>
-                    <textarea id="memo" class="form-control w-50" placeholder="memo"></textarea>
+                    <textarea id="memo" class="form-control w-50 ms-1" placeholder="memo"></textarea>
                 </div>
-                <div class="modal-body" id="previewModalBody">
+                <div class="modal-body m-3" id="previewModalBody">
                     <!-- Details will be populated here -->
                 </div>
                 <div class="modal-footer">

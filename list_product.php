@@ -23,7 +23,7 @@
         <button class="btn btn-info"><i class="fa-solid fa-clipboard-list"></i> add PR</button>
     </div>
 
-    <table class="table table-bordered table-hover" style="width: 100%;">
+    <table class="table table-bordered table-hover mx-auto" style="width: 100%;">
         <!-- Table content -->
         <thead class="table-primary text-center">
             <tr style="vertical-align: middle;">
@@ -72,7 +72,7 @@
                     echo "<td class='text-end'>" . number_format($product['p_sale_price']) . "</td>";
                     echo "<td class='text-end' style='color: " . ($product['stock_qty'] == 0 ? "red ;background:#FCF3CF;" : "green;") . "'>" . htmlspecialchars($product['stock_qty']) . "</td>";
                     echo "<td class='text-center' style='vertical-align: middle;'>";
-                    echo '<div class="input-group"><div class="input-group-text">';
+                    echo '<div class="input-group w-75 mx-auto"><div class="input-group-text">';
                     echo "<input class='form-check-input' type='checkbox' value='' id='checkbox_" . htmlspecialchars($product['p_product_id']) . "' onchange='toggleInput(this)' /> <br>";
                     echo "</div><input class='form-control' min='1' type='number' id='input_" . htmlspecialchars($product['p_product_id']) . "' value='' style='display: none;' /> </div>";
                     echo "</td>";
