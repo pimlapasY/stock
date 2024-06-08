@@ -102,8 +102,8 @@ function validateInput(input) {
                             </span>
                         </th>
                         <td>
-                            <input type="text" class="form-control" id="MG_code" name="MG_code"
-                                value="<?php echo $MG_CODE ?>" style="width:120px; background:#d0f0c0 ;" readonly>
+                            <input type="text" class="form-control badge-success w-25" id="MG_code" name="MG_code"
+                                value="<?php echo $MG_CODE ?>" readonly>
                         </td>
                     </tr>
                     <tr>
@@ -263,12 +263,12 @@ function validateInput(input) {
                             </td>
                             <!-- Replace the input field with a readonly input -->
                             <td>
-                                <input type="text" class="form-control" id="selectedProductName" name="productName"
-                                    style="background:#fff8e4;" readonly>
+                                <input type="text" class="form-control badge-warning" id="selectedProductName"
+                                    name="productName" readonly>
                             </td>
                             <td>
-                                <input type="text" class="form-control" id="selectedProductUnit" name="productUnit"
-                                    style="background:#fff8e4;" readonly>
+                                <input type="text" class="form-control badge-warning" id="selectedProductUnit"
+                                    name="productUnit" readonly>
                             </td>
                             <td>
                                 <input class="form-control" type="text" id="colorInput" name="productColor"
@@ -299,8 +299,8 @@ function validateInput(input) {
                             </td>
                             <td>
 
-                                <input class="form-control text-end" type="text" id="selectedProductCost"
-                                    style="background:#fff8e4;" readonly>
+                                <input class="form-control text-end badge-warning" type="text" id="selectedProductCost"
+                                    readonly>
                                 <!--  <input type="text" class="form-control" id="total_price" name="total_price"
                                 style="background:#fff8e4;" readonly> -->
 
@@ -316,8 +316,7 @@ function validateInput(input) {
                             </td>
 
                             <td>
-                                <input class="form-control text-end" id="total_price" style="background:#fff8e4;"
-                                    readonly></input>
+                                <input class="form-control text-end badge-warning" id="total_price" readonly></input>
                             </td>
 
                             <td style="white-space: nowrap;">

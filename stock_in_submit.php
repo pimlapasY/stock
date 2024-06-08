@@ -9,6 +9,7 @@ include 'connect.php';
 // Check if user is logged in
 if (isset($_SESSION['role'])) {
     // Get form data
+    $mgCode = $_POST['mgCode'];
     $productID = $_POST['productID'];
     $productCode = $_POST['productCode'];
     $productCost = $_POST['productCost'];
@@ -34,8 +35,8 @@ if (isset($_SESSION['role'])) {
 
     try {
         // Prepare SQL statement
-        $stmt = $pdo->prepare("INSERT INTO stockin (i_no, i_product_id, i_product_code, i_current_qty, i_qty, i_total_price, i_status, i_memo, i_username, i_date, i_date_add) 
-        VALUES (?,?,?,?,?,?,?,?,?,?, now())");
+        $stmt = $pdo->prepare("INSERT INTO stockin (i_no, i_product_id, i_product_code, i_current_qty, i_qty, i_total_price, i_status, i_memo, i_username, i_date, i_mg_code, i_date_add) 
+        VALUES (?,?,?,?,?,?,?,?,?,?,?, now())");
 
         // Bind parameters
         $stmt->bindParam(1, $i_no);
@@ -48,12 +49,25 @@ if (isset($_SESSION['role'])) {
         $stmt->bindParam(8, $memo);
         $stmt->bindParam(9, $username);
         $stmt->bindParam(10, $date);
+        $stmt->bindParam(11, $mgCode);
+
 
         // Execute SQL statement
         $stmt->execute();
 
 
         if($status == 2){
+
+        // Prepare SQL statement to update stock quantity
+        $RTupdateStmt = $pdo->prepare("UPDATE stockout SET o_return = '1' WHERE o_mg_code = ?");
+
+        // Bind parameters for update
+        $RTupdateStmt->bindParam(1, $mgCode);
+
+        // Execute SQL statement to update stock quantity
+        $RTupdateStmt->execute();
+
+        
         // Prepare SQL statement to update stock quantity
         $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty + ?, s_return_date = NOW() WHERE s_product_id = ?");
 

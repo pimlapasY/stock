@@ -13,8 +13,18 @@
     $stmt_hands = $pdo->query("SELECT DISTINCT p_hands FROM product");
     $productNames_hands = $stmt_hands->fetchAll(PDO::FETCH_COLUMN);  
     //MGCODE
-    $stmt_mg = $pdo->query("SELECT DISTINCT o_mg_code FROM stockout");
+    $stmt_mg = $pdo->query("SELECT DISTINCT o_mg_code FROM stockout WHERE o_return IS NULL");
     $mg_code = $stmt_mg->fetchAll(PDO::FETCH_COLUMN);  
+    // SQL query to select the specified columns from the stockout table
+    $sql = "SELECT o_mg_code, o_product_name
+    FROM stockout 
+    WHERE o_return IS NULL";
+
+    // Prepare and execute the query
+    $stmt = $pdo->query($sql);
+
+    // Fetch all results as an associative array
+    $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!DOCTYPE html>
@@ -25,6 +35,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock In</title>
 </head>
+
 
 <body>
     <div class="container-fluid" style="margin-top: 150px;">
@@ -87,6 +98,17 @@
                                 <label class="form-check-label" for="check_returned">
                                     <?php echo 'Returned' ?>
                                 </label>
+                                &nbsp;&nbsp;
+                                <input class="form-control badge-info" type="text" id="mgCodeInput" name="mgCode"
+                                    list="mgCodeList" onchange="validateInput(this)" placeholder="Mg Code...">
+                                <!-- Populate datalist with product names -->
+                                <datalist id="mgCodeList">
+                                    <?php foreach ($results as $row): ?>
+                                    <option value="<?php echo htmlspecialchars($row['o_mg_code']); ?>">
+                                        <?php echo htmlspecialchars($row['o_product_name']); ?>
+                                    </option>
+                                    <?php endforeach; ?>
+                                </datalist>
                             </div>
                         </td>
                     </tr>
@@ -120,7 +142,7 @@
                             <th><?php echo $size  ?></th>
                             <th><?php echo 'Cost' ?></th>
                             <th><?php echo $qty ?></th>
-                            <th><?php echo 'Total price'  ?></th>
+                            <th><?php echo 'Total Price'  ?></th>
                             <th><?php echo $reset  ?></th>
                         </tr>
                     </thead>
@@ -142,12 +164,12 @@
                             </td>
                             <!-- Replace the input field with a readonly input -->
                             <td>
-                                <input type="text" class="form-control" id="selectedProductName" name="productName"
-                                    style="background:#fff8e4;" readonly>
+                                <input type="text" class="form-control badge-warning" id="selectedProductName"
+                                    name="productName" readonly>
                             </td>
                             <td>
-                                <input type="text" class="form-control" id="selectedProductUnit" name="productUnit"
-                                    style="background:#fff8e4;" readonly>
+                                <input type="text" class="form-control badge-warning" id="selectedProductUnit"
+                                    name="productUnit" readonly>
                             </td>
                             <td>
                                 <input class="form-control" type="text" id="colorInput" name="productColor"
@@ -178,8 +200,8 @@
                             </td>
                             <td>
 
-                                <input class="form-control text-end" type="text" id="selectedProductCost"
-                                    style="background:#fff8e4;" readonly>
+                                <input class="form-control text-end badge-warning" type="text" id="selectedProductCost"
+                                    readonly>
                                 <!--  <input type="text" class="form-control" id="total_price" name="total_price"
                                 style="background:#fff8e4;" readonly> -->
 
@@ -195,18 +217,18 @@
                             </td>
 
                             <td>
-                                <input class=" form-control text-end" id="total_price" style="background:#fff8e4;"
-                                    readonly></input>
+                                <input class=" form-control text-end badge-warning" id="total_price" readonly>
                             </td>
 
                             <td style="white-space: nowrap;" class="text-center">
                                 <script>
                                 function resetInput() {
                                     var inputs = document.querySelectorAll(
-                                        "#product, #selectedProductName, #myInput, #selectedProductUnit, #colorInput, #sizeInput, #handInput, #total_price, #selectedProductCost"
+                                        "#mgCodeInput, #currentQTY, #memo, #totalQTY, #product_id, #product, #selectedProductName, #myInput, #selectedProductUnit, #colorInput, #sizeInput, #handInput, #total_price, #selectedProductCost"
                                     );
 
-
+                                    $('#decrementButton').removeClass('disabled');
+                                    $('#incrementButton').removeClass('disabled');
                                     // Reset the value of the input fields
                                     inputs.forEach(function(input) {
                                         input.value = "";
@@ -236,15 +258,13 @@
                     <tr style="vertical-align: middle;">
                         <th class="text-end w-75">CURRENT QTY :</th>
                         <td class="text-end">
-                            <input class="form-control text-end" type="number" id="currentQTY"
-                                style="background:#fff8e4;" readonly>
+                            <input class="form-control text-end badge-warning" type="number" id="currentQTY" readonly>
                         </td>
                     </tr>
                     <tr style="vertical-align: middle;">
                         <th class="text-end">TOTAL QTY :</th>
                         <td class="text-end">
-                            <input id="totalQTY" class="form-control text-end" style="background:#c9e9f6 ;"
-                                type="number" readonly>
+                            <input id="totalQTY" class="form-control text-end badge-info" type="number" readonly>
                         </td>
                     </tr>
                     <tr style="vertical-align: middle;">
@@ -266,7 +286,73 @@
 </body>
 
 </html>
+
 <script>
+$('#mgCodeInput').on('change', function() {
+    var mgCode = $('#mgCodeInput').val();
+    $('#check_returned').prop('checked', true); // This will check the checkbox
+
+    // Send an AJAX request to fetch the product name
+    $.ajax({
+        url: 'ajax_GET/get_product_name.php', // URL to your PHP script that fetches the product name
+        method: 'POST',
+        data: {
+            mgCode: mgCode
+        },
+        success: function(response) {
+            var data = JSON.parse(response);
+            if (data.error) {
+                // Handle error case
+                Swal.fire({
+                    title: 'ERROR',
+                    text: data.error,
+                    icon: 'error',
+                    confirmButtonColor: '#3085d6',
+                    confirmButtonText: 'OK'
+                });
+                //alert(data.error);
+                resetInput();
+            } else {
+                // Extract product name and unit from the response
+                var productName = data.product_name;
+                var productUnit = data.unit;
+                var productCode = data.o_product_code;
+                var productID = data.o_product_id;
+                var productColor = data.color;
+                var productHands = data.hands;
+                var qtyOut = data.qtyOut;
+                var qtyStock = data.qtyStock;
+                var cost = data.cost;
+                var color = data.color;
+                var hand = data.hand;
+                var size = data.size;
+
+
+                // Update the value of the readonly input fields with the fetched product name and unit
+                $('#selectedProductName').val(productName);
+                $('#selectedProductUnit').val(productUnit);
+                $('#product').val(productCode);
+                $('#product_id').val(productID);
+                $('#qtyValue').text(qtyOut);
+                $('#decrementButton').addClass('disabled');
+                $('#incrementButton').addClass('disabled');
+                $('#selectedProductCost').val(cost);
+                $('#total_price').val(cost * qtyOut);
+                $('#colorInput').val(color);
+                $('#handInput').val(hand);
+                $('#sizeInput').val(size);
+                $('#currentQTY').val(qtyStock);
+                console.log(qtyStock);
+                $('#totalQTY').val(parseInt(qtyStock) + parseInt(qtyOut));
+
+
+
+            }
+        }
+    });
+
+});
+
 function validateInput(input) {
     // Check if the input has a value
     if (input.value.trim() !== '') {
@@ -499,6 +585,7 @@ function submitStockin() {
     var qtyValue = parseInt($('#qtyValue').text());
     var date = $('#dateStockIn').val();
     var currentQTY = $('#currentQTY').val();
+    var mgCode = $('#mgCodeInput').val();
 
     let status;
 
@@ -519,7 +606,8 @@ function submitStockin() {
         qtyValue: qtyValue,
         date: date,
         status: status,
-        currentQTY: currentQTY
+        currentQTY: currentQTY,
+        mgCode: mgCode
     };
 
 
@@ -545,7 +633,8 @@ function submitStockin() {
                         Swal.fire('Success!', 'Form submitted successfully', 'success').then((
                             result) => {
                             if (result.isConfirmed) {
-                                window.location.reload(); // Reload the window
+                                window.location.href =
+                                'stock_in_his.php'; // Redirect to stock_in_his.php
                             }
                         });
                     },
@@ -561,7 +650,6 @@ function submitStockin() {
             }
         });
     } else if (qtyValue == '') {
-
         Swal.fire({
             title: 'ERROR',
             text: 'Please stock in or add QTY of product',

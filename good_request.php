@@ -144,8 +144,8 @@ function validateInput(input) {
                             </td>
                             <!-- Replace the input field with a readonly input -->
                             <td>
-                                <input type="text" class="form-control product-name-input" id="p_name<?php echo $i; ?>"
-                                    <?php if ($value == '') { ?> style="background:#fff8e4;" <?php } ?> readonly>
+                                <input type="text" class="form-control product-name-input badge-warning"
+                                    id="p_name<?php echo $i; ?>" <?php if ($value == '') { ?> <?php } ?> readonly>
                             </td>
                             <td>
                                 <div class="input-group">
@@ -158,8 +158,8 @@ function validateInput(input) {
                                 </div>
                             </td>
                             <td>
-                                <input type="text" class="form-control unit-input" id="unit<?php echo $i; ?>"
-                                    style="background:#fff8e4;" readonly>
+                                <input type="text" class="form-control unit-input badge-warning"
+                                    id="unit<?php echo $i; ?>" readonly>
                             </td>
                             <td>
                                 <input type="text" class="form-control target-input" id="target<?php echo $i; ?>">

@@ -62,7 +62,7 @@
                     foreach ($products as $index => $product) {
                     echo "<tr data-id='" . htmlspecialchars($product['p_product_id']) . "'>";
                     echo "<td>" . ($index + 1) . "</td>"; // Display No starting from 1
-                    echo "<td>".htmlspecialchars($product['p_product_id'])."</td>";
+                    echo "<td>".htmlspecialchars($product['p_product_code'])."</td>";
                     echo "<td>" . htmlspecialchars($product['p_collection']) . "</td>";
                     echo "<td>" . htmlspecialchars($product['p_product_name']) . "</td>";
                     echo "<td>" . htmlspecialchars($product['p_hands']) . "</td>";

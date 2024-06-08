@@ -12,6 +12,9 @@
 <body>
     <div class="container">
         <h1><i class="fa-solid fa-folder-plus fa-2x"></i> History</h1> <br>
+        <div class="d-flex justify-content-start mb-2">
+            <a class="btn btn-info rounded-8" href="stock_in.php"><i class="fa-solid fa-inbox fa-xl"></i> Stock In</a>
+        </div>
         <table class="table table-hover">
             <thead class="table-warning text-center">
                 <tr style="vertical-align: middle;">
@@ -22,6 +25,7 @@
                     <th rowspan="2">Memo</th>
                     <th rowspan="2">Date</th>
                     <th rowspan="2">Reason</th>
+                    <th rowspan="2">Mg Code</th>
                 </tr>
             </thead>
             <tbody>
@@ -50,6 +54,7 @@
              echo "<td class='text-start'>" .($product['i_memo'] != null ? '[ ' .htmlspecialchars($product['i_memo']). ' ]' : ''). "</td>";
              echo "<td>" . htmlspecialchars($product['i_date']) . "</td>";
              echo "<td style='color:" . ($product['i_status'] == 1 ? 'green' : 'orange') . "'>" . ($product['i_status'] == 1 ? 'Purchased' : 'Returned') . "</td>";
+             echo "<td class='text-center'>" . $product['i_mg_code'] . "</td>";
              echo "</tr>";
              }
             
