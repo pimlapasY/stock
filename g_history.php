@@ -216,9 +216,11 @@ session_start();
 
         <?php if($_SESSION['role'] == 'admin'){?>
         <div class="d-flex justify-content-end p-3">
-            <button id="updateSelected" class="btn btn-success"><i class="fa-solid fa-check-to-slot"></i>&nbsp;
+            <button id="updateSelected" class="btn btn-success rounded-8"><i
+                    class="fa-solid fa-check-to-slot"></i>&nbsp;
                 approve</button>&nbsp;
-            <button id="disapproveSelected" class="btn btn-danger"><i class="fa-solid fa-square-xmark"></i>&nbsp;
+            <button id="disapproveSelected" class="btn btn-danger rounded-8"><i
+                    class="fa-solid fa-square-xmark"></i>&nbsp;
                 Disapproved</button>
         </div>
         <?php } ?>

@@ -112,11 +112,12 @@ th {
                     Sale</a>
             </div>
             <div class="mb-2">
-                <a href="#" id="previewPRSelectedBtn" class="btn btn-info"><i class="fa-solid fa-file-lines"></i> PR
+                <a href="#" id="previewPRSelectedBtn" class="btn btn-info  rounded-8"><i
+                        class="fa-solid fa-file-lines"></i> PR
                     create</a>
-                <a href="#" id="previewReturnedSelectedBtn" class="btn btn-warning"><i
+                <a href="#" id="previewReturnedSelectedBtn" class="btn btn-warning  rounded-8"><i
                         class="fa-solid fa-right-left"></i> Returned</a>
-                <a href="his_all.php" class="btn btn-success"><i class="fa-solid fa-file-circle-check"></i>
+                <a href="his_all.php" class="btn btn-success  rounded-8"><i class="fa-solid fa-file-circle-check"></i>
                     Completed</a>
             </div>
         </div>
