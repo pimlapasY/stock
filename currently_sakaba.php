@@ -173,7 +173,8 @@ th {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-warning" id="returnButton">RETURN</button>
+                    <button type="button" class="btn btn-info" id="makePR" hidden>PR CREATE</button>
+                    <button type="button" class="btn btn-warning" id="returnButton" hidden>RETURN</button>
                 </div>
             </div>
         </div>
@@ -183,6 +184,8 @@ th {
         // Other code...
 
         $('#previewReturnedSelectedBtn').click(function() {
+            $('#makePR').prop('hidden', true);
+            $('#returnButton').prop('hidden', false);
             // Collect selected IDs
             var selectedIds = [];
             $('input[name="selected_ids[]"]:checked').each(function() {
@@ -280,6 +283,8 @@ th {
 
 
         $('#previewPRSelectedBtn').click(function() {
+            $('#makePR').prop('hidden', false);
+            $('#returnButton').prop('hidden', true);
             // Collect selected IDs
             var selectedIds = [];
             $('input[name="selected_ids[]"]:checked').each(function() {

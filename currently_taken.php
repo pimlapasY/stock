@@ -56,7 +56,7 @@ th {
                         <div class="mb-4 ms-2 me-2">
                             <input type="hidden" id="product-id" name="product-id">
                             <label for="mg-code" class="form-label"><i class="fa-solid fa-barcode"></i> MG CODE:</label>
-                            <input class="form-control" type="text" id="mg-code" name="mg-code" disabled>
+                            <input class="form-control badge-warning" type="text" id="mg-code" name="mg-code">
                         </div>
                         <!-- Hidden field to store product ID -->
                         <div class="mb-4 ms-2 me-2">
@@ -158,8 +158,8 @@ th {
                     $currentDate = date('Y-m-d');
                     ?>
                 <div class="modal-body m-3">
-                    <label for="returnDate">Date: </label>
-                    <input id="returnDate" type="date" class="form-control w-50 ms-1"
+                    <label for="newDate">Date: </label>
+                    <input id="newDate" type="date" class="form-control w-50 ms-1"
                         value="<?php echo $currentDate; ?>"><br>
                     <label for="memo">Memo: </label>
                     <textarea id="memo" class="form-control w-50 ms-1" placeholder="memo"></textarea>
@@ -169,7 +169,8 @@ th {
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-warning" id="returnButton">RETURN</button>
+                    <button type="button" class="btn btn-info" id="makePR" hidden>PR CREATE</button>
+                    <button type="button" class="btn btn-warning" id="returnButton" hidden>RETURN</button>
                 </div>
             </div>
         </div>
@@ -177,8 +178,9 @@ th {
     <script>
     $(document).ready(function() {
         // Other code...
-
         $('#previewReturnedSelectedBtn').click(function() {
+            $('#makePR').prop('hidden', true);
+            $('#returnButton').prop('hidden', false);
             // Collect selected IDs
             var selectedIds = [];
             $('input[name="selected_ids[]"]:checked').each(function() {
@@ -222,6 +224,58 @@ th {
         });
 
 
+        $('#makePR').click(function() {
+            // Collect selected IDs
+            var selectedIds = [];
+            $('input[name="selected_ids[]"]:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
+
+            var memo = $('#memo').val();
+            var newDate = $('#newDate').val();
+
+
+            // Send an AJAX request to insert data into the stockin table
+            $.ajax({
+                url: 'currently_pr.php', // Update the URL to your PHP script
+                type: 'POST',
+                data: {
+                    ids: selectedIds,
+                    memo: memo,
+                    prDate: newDate
+                }, // Send the selectedIds array with the key 'ids'
+                success: function(response) {
+                    Swal.fire({
+                        title: 'PR Create!',
+                        text: 'PR has been create successfully.',
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonText: 'OK',
+                        cancelButtonText: 'Go to PR page...',
+                        confirmButtonColor: 'gray', // Custom color for confirm button
+                        cancelButtonColor: '#8AD4D9' // Custom color for cancel button
+                    }).then((result) => {
+                        // If user clicks "Move to Other Page" button
+                        if (!result.isConfirmed) {
+                            // Redirect to other page
+                            window.location.href = 'pr_management.php';
+                        } else {
+                            location.reload();
+                        }
+                    });
+                    // Handle the success response
+                    console.log(response); // Log the response
+                    // You can add further actions here if needed, such as displaying a success message or updating the UI
+                },
+                error: function() {
+                    // Handle the error
+                    alert('Error inserting data into stockin table. Please try again.');
+                }
+            });
+        });
+
+
+
         $('#returnButton').click(function() {
             // Collect selected IDs
             var selectedIds = [];
@@ -230,7 +284,7 @@ th {
             });
 
             var memo = $('#memo').val();
-            var returnDate = $('#returnDate').val();
+            var newDate = $('#newDate').val();
 
 
             // Send an AJAX request to insert data into the stockin table
@@ -240,7 +294,7 @@ th {
                 data: {
                     ids: selectedIds,
                     memo: memo,
-                    returnDate: returnDate
+                    returnDate: newDate
                 }, // Send the selectedIds array with the key 'ids'
                 success: function(response) {
                     Swal.fire({
@@ -248,9 +302,9 @@ th {
                         text: 'Stock has been updated successfully.',
                         icon: 'success',
                         showCancelButton: true,
-                        confirmButtonText: '<i class="fa-solid fa-folder-plus"></i> on this page',
+                        confirmButtonText: '<i class="fa-solid fa-check"></i> OK',
                         cancelButtonText: '<i class="fa-solid fa-arrow-right-to-bracket"></i> History StockIn',
-                        confirmButtonColor: '#28a745', // Custom color for confirm button
+                        confirmButtonColor: 'gray', // Custom color for confirm button
                         cancelButtonColor: 'orange' // Custom color for cancel button
                     }).then((result) => {
                         // If user clicks "Move to Other Page" button
@@ -276,6 +330,8 @@ th {
 
 
         $('#previewPRSelectedBtn').click(function() {
+            $('#makePR').prop('hidden', false);
+            $('#returnButton').prop('hidden', true);
             // Collect selected IDs
             var selectedIds = [];
             $('input[name="selected_ids[]"]:checked').each(function() {

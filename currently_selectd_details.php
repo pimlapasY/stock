@@ -49,7 +49,7 @@ if (isset($_POST['ids'])) {
         $output .= "<td>" . htmlspecialchars($product['p_hands']) . "</td>";
         $output .= "<td>" . htmlspecialchars($product['p_color']) . "</td>";
         $output .= "<td>" . htmlspecialchars($product['p_size']) . "</td>";
-        $output .= "<td class='text-end'>" . htmlspecialchars($product['o_out_qty']) . "</td>";
+        $output .= "<td class='text-end text-success'>" . htmlspecialchars($product['o_out_qty']) . "</td>";
         $output .= "<td class='text-center'>" . date('d/m/Y', strtotime($product['o_out_date'])) . "</td>";
         $output .= "<td class='text-center'>" . ($data_reasons[3]!= null ? $data_reasons[3] : $data_reasons[0]) . "</td>";
         $output .=  "<td class='text-center'>";

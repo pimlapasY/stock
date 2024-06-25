@@ -43,3 +43,7 @@ $sale = 'Sale';
 $paid_by = 'paid by';
 $choose = 'Choose';
 $cus_name = 'Customer Name';
+$coming = '(Coming Soon) ';
+$currentDateText = 'Current date is ';
+$coming_sub = 'Every 20th of the month, the system will carry forward any unpaid invoices to the next month. Please update your payment <a href="#pr-table" class="alert-link">Here</a>.';
+$updatePayment_des = 'Every 20th of the month, the system will carry forward any unpaid invoices to the next month. You can check for updates in month ';

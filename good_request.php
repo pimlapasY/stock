@@ -1,3 +1,4 @@
+<?php include('navbar.php') ;  ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -67,8 +68,7 @@ function validateInput(input) {
 
 <body>
 
-    <?php include('navbar.php') ;
-    
+    <?php 
     // Fetch product names from the database
     $stmt_code = $pdo->query("SELECT DISTINCT p_product_code FROM product");
     $products_code = $stmt_code->fetchAll(PDO::FETCH_COLUMN); 

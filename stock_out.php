@@ -480,7 +480,13 @@ function updateQuantityInput() {
             if (store == '2') {
                 var stockQuantity = parseInt(data.sub_qty);
             } else {
-                var stockQuantity = parseInt(data.s_qty) - parseInt(data.sub_qty);
+                //ถ้า สต็อก sakaba ไม่มี ไม่ต้องลบออก 
+                // If sub_qty is not defined or is null, use s_qty directly
+                if (data.sub_qty === undefined || data.sub_qty === null) {
+                    var stockQuantity = parseInt(data.s_qty);
+                } else {
+                    var stockQuantity = parseInt(data.s_qty) - parseInt(data.sub_qty);
+                }
                 console.log("Stock Quantity: " + stockQuantity);
             }
             var productCost = parseFloat(data.p_cost_price);

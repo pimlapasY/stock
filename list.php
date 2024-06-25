@@ -23,7 +23,7 @@
         </h1>
         <br>
 
-        <div class="d-flex justify-content-center">
+        <div class="d-flex justify-content-start">
             <ul class="nav nav-tabs">
                 <li class="nav-item">
                     <?php 

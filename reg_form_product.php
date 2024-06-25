@@ -1,10 +1,12 @@
 <?php
 include('connect.php');
+$stmt_supplier = $pdo->query("SELECT DISTINCT sup_name FROM suppliers");
+$supplier = $stmt_supplier->fetchAll(PDO::FETCH_COLUMN);  
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Prepare an SQL statement
-    $sql = "INSERT INTO product (p_product_code, p_collection, p_product_name, p_hands, p_color, p_size, p_unit, p_cost_price, p_sale_price, p_usercode_add, p_date_add) 
-            VALUES (:p_product_code, :p_collection, :p_product_name, :p_hands, :p_color, :p_size, :p_unit, :p_cost_price, :p_sale_price, :p_usercode_add, now())";
+    $sql = "INSERT INTO product (p_product_code, p_collection, p_product_name, p_hands, p_color, p_size, p_unit, p_cost_price, p_sale_price, p_usercode_add, p_supplier, p_date_add) 
+            VALUES (:p_product_code, :p_collection, :p_product_name, :p_hands, :p_color, :p_size, :p_unit, :p_cost_price, :p_sale_price, :p_usercode_add, :p_supplier, now())";
     $stmt = $pdo->prepare($sql);
 
     // Bind parameters to statement
@@ -18,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt->bindParam(':p_cost_price', $_POST['p_cost_price']);
     $stmt->bindParam(':p_sale_price', $_POST['p_sale_price']);
     $stmt->bindParam(':p_usercode_add',  $_POST['p_usercode_add']);
+    $stmt->bindParam(':p_supplier',  $_POST['supplier_name']);
 
     // Execute the statement
     try {
@@ -155,6 +158,17 @@ th {
                 <th>Holding location</th>
                 <td>
                     <input class="form-control" value="SAMT" disabled />
+                </td>
+            </tr>
+            <tr>
+                <th>Supplier</th>
+                <td>
+                    <input class="form-control" type="text" id="supplier" name="supplier_name" list="new_supplier_name">
+                    <datalist id="new_supplier_name">
+                        <?php foreach ($supplier as $supplier_name): ?>
+                        <option value="<?php echo $supplier_name; ?>">
+                            <?php endforeach; ?>
+                    </datalist>
                 </td>
             </tr>
             <tr>

@@ -115,6 +115,7 @@
                             <thead class="text-center">
                                 <tr class="table-light" style="vertical-align: middle;">
                                     <th rowspan="2">No</th>
+                                    <th rowspan="2">Code</th>
                                     <th rowspan="2">Collection</th>
                                     <th rowspan="2">Name</th>
                                     <th rowspan="2">Hands</th>
@@ -132,25 +133,24 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="d-flex justify-content-end">
-                        <textarea class="form-control" name="memo" placeholder="memo" style="width: 300px;"></textarea>
-                    </div>
-                    <div class="d-flex justify-content-end">
-                        <div class="form-check m-3">
+                    <div class="d-flex justify-content-start m-3">
+                        <div class="form-check me-4">
                             <input class="form-check-input" type="radio" name="reason" id="flexRadioDefault1" value="1"
                                 checked>
                             <label class="form-check-label" for="flexRadioDefault1">
                                 Purchased
                             </label>
                         </div>
-                        <div class="form-check m-3">
+                        <div class="form-check me-4">
                             <input class="form-check-input" type="radio" name="reason" id="flexRadioDefault2" value="2">
                             <label class="form-check-label" for="flexRadioDefault2">
                                 Returned
                             </label>
                         </div>
                     </div>
-
+                    <div class="d-flex justify-content-start m-3">
+                        <textarea class="form-control w-50" name="memo" placeholder="memo"></textarea>
+                    </div>
                 </div>
 
                 <div class="modal-footer">
@@ -180,7 +180,7 @@ function toggleInput(checkbox, reason) {
         inputField.removeEventListener('input', handleInputChange);
         inputField.addEventListener('input', handleInputChange);
 
-        updatePreview(inputId); // Update the preview with the reason
+        //updatePreview(inputId); // Update the preview with the reason
     } else {
         inputField.style.display = 'none'; // Hide the input field
         inputField.value = ''; // Clear input value
@@ -271,6 +271,7 @@ function updatePreviewDisplay() {
         row.innerHTML = `
             <td style="display: none;">${product.p_product_id}</td> <!-- Hidden to send ID for update -->
             <td>${index + 1}</td>
+            <td>${product.p_product_code}</td>
             <td>${product.p_collection}</td>
             <td>${product.p_product_name}</td>
             ${product.p_hands ? `<td>${product.p_hands}</td>` : `<td></td>`}

@@ -19,13 +19,13 @@ if(isset($_POST['reasons'])) {
             $stmt = $pdo->prepare("SELECT o.*, p.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
-                                   WHERE o.o_return IS NULL AND (o.o_reasons LIKE '%sale%' AND o.o_reasons NOT LIKE '%sale sample%')
+                                   WHERE o.o_return IS NULL AND o_pr_code IS NULL AND (o.o_reasons LIKE '%sale%' AND o.o_reasons NOT LIKE '%sale sample%')
                                    ORDER BY o_reasons, o.o_mg_code DESC");
         } else {
             $stmt = $pdo->prepare("SELECT o.*, p.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
-                                   WHERE o.o_return IS NULL AND o.o_reasons NOT LIKE '%out to%'
+                                   WHERE o.o_return IS NULL AND o_pr_code IS NULL AND o.o_reasons NOT LIKE '%out to%'
                                    ORDER BY o_reasons, o.o_mg_code DESC");
         }
 
@@ -70,17 +70,17 @@ if(isset($_POST['reasons'])) {
              
              echo "</td>";  
              if($product['o_payment'] == 2 || $product['o_payment'] == null){
-                echo "<td class='text-center' style='background:#FCF3CF;'>" . '<a class="btn btn-outline-warning btn-sm btn-floating"><i class="fa-solid fa-hourglass-half"></i></a>' . "</td>";
+                echo "<td class='text-center'>" . '<a class="btn btn-outline-secondary btn-sm btn-floating"><i class="fa-solid fa-hourglass-half"></i></a>' . "</td>";
              }else if($product['o_payment'] == 1){
-                echo "<td class='text-center' style='background:#FCF3CF;'>" . '<a class="btn btn-success btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
+                echo "<td class='text-center'>" . '<a class="btn btn-primary btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
              }
              if($product['o_delivery'] == null || $product['o_delivery'] == 2){
-                echo "<td class='text-center' style='background:#FCF3CF;'>" . '<a class="btn btn-outline-warning btn-sm btn-floating"><i class="fa-solid fa-hourglass-half"></i></a>' . "</td>";
+                echo "<td class='text-center'>" . '<a class="btn btn-outline-secondary btn-sm btn-floating"><i class="fa-solid fa-hourglass-half"></i></a>' . "</td>";
              }else if($product['o_delivery'] == 1){
-                echo "<td class='text-center' style='background:#FCF3CF;'>" . '<a class="btn btn-success btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
+                echo "<td class='text-center'>" . '<a class="btn btn-primary btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
              }
              /* echo "<td class='text-center' style='text-transform: uppercase; background:#FCF3CF;'>" . $data_reasons[0] . "</td>"; */
-             echo "<td class='text-center' style='background:#FCF3CF; color:".($product['o_req_no'] !== null ? 'green;' : 'red;')."'>" . ($product['o_req_no'] !== null ? 'issued' : 'unissue') . "</td>";
+             echo "<td class='text-center' style='color:".($product['o_pr_code'] !== null ? 'green;' : 'red;')."'>" . ($product['o_pr_code'] !== null ? 'issued' : 'unissue') . "</td>";
              /* echo "<td class='text-center' style='background:#FCF3CF;'>" . '' . "</td>"; */
             
             

@@ -13,21 +13,24 @@ if(isset($_POST['store'])) {
 
         // Prepare SQL statement based on store
         if($store == 'samt') {
-            $stmt = $pdo->prepare("SELECT o.*, p.*
+            $stmt = $pdo->prepare("SELECT o.*, p.*, pr.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
+                                    LEFT JOIN pr ON o.o_mg_code = pr.pr_mg_code
                                    WHERE o.o_reasons NOT LIKE '%sale,2%'
                                    ORDER BY o.o_mg_code DESC");
         } elseif($store == 'sakaba') {
-            $stmt = $pdo->prepare("SELECT o.*, p.*
+            $stmt = $pdo->prepare("SELECT o.*, p.*, pr.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
+                                    LEFT JOIN pr ON o.o_mg_code = pr.pr_mg_code
                                    WHERE o.o_reasons LIKE '%sale,2%'
                                    ORDER BY o.o_mg_code DESC");
         } else {
-            $stmt = $pdo->prepare("SELECT o.*, p.*
+            $stmt = $pdo->prepare("SELECT o.*, p.*, pr.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
+                                    LEFT JOIN pr ON o.o_mg_code = pr.pr_mg_code
                                    ORDER BY o.o_mg_code DESC");
         }
 
@@ -98,7 +101,10 @@ if(isset($_POST['store'])) {
             if($data_reasons[0] == 'out to'){
                 //empty
             }else{
-            echo "<td class='text-center' style='color:".($product['o_req_no'] !== null ? 'green;' : 'red;')."'>" . ($product['o_req_no'] !== null ? 'issued' : 'unissued') . "</td>";
+             
+                echo "<td class='text-center' style='color:".($product['o_pr_code'] !== null ? 'green;' : 'red;')."'>" . ($product['o_pr_code'] !== null ? 'issued<br>' : 'unissue') ;
+                echo ($product['pr_date_add'] !== null ? substr($product['pr_date_add'], 0, 10) : '');
+                echo "</td>";
             }
             echo "<td class='text-center'>" . $product['o_memo'] . "</td>";
             echo "</tr>";
