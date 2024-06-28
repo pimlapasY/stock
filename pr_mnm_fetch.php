@@ -24,7 +24,7 @@ if(isset($_POST['store'])) {
     $nextMonth = date('m', strtotime('+1 month')); // Next month
     $startDate = "$currentYear-$previousMonth-21";
     $endDate = "$currentYear-$currentMonth-20";
-    $updateDate = "$currentYear-$nextMonth-1";
+    $updateDate = "$currentYear-$nextMonth-20";
 
 
     try {
@@ -35,7 +35,7 @@ if(isset($_POST['store'])) {
                 // Prepare the update statement
                 $stmt = $pdo->prepare("UPDATE pr
                                     LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code
-                                    SET pr.pr_date_add = :updateDate
+                                    SET pr.pr_date = :updateDate
                                     WHERE o.o_payment = 2 OR o.o_payment IS NULL");
         
                 // Bind the update date parameter
@@ -53,41 +53,41 @@ if(isset($_POST['store'])) {
         if($payment == 0){
             // Prepare SQL statement based on reasons
             if($store == 'all') {
-                $sql .= " WHERE  MONTH(pr.pr_date_add) = :month
-                                            AND YEAR(pr.pr_date_add) = :year";
+                $sql .= " WHERE  MONTH(pr.pr_date) = :month
+                                            AND YEAR(pr.pr_date) = :year";
             } elseif ($store == 'samt'){
-                $sql .= " WHERE o.o_reasons NOT LIKE '%sale,2%' AND (MONTH(pr.pr_date_add) = :month  AND YEAR(pr.pr_date_add) = :year)";
+                $sql .= " WHERE o.o_reasons NOT LIKE '%sale,2%' AND (MONTH(pr.pr_date) = :month  AND YEAR(pr.pr_date) = :year)";
             }elseif($store == 'sakaba'){
-                 $sql .= "  WHERE o.o_reasons LIKE '%sale,2%' AND (MONTH(pr.pr_date_add) = :month  AND YEAR(pr.pr_date_add) = :year)";
+                 $sql .= "  WHERE o.o_reasons LIKE '%sale,2%' AND (MONTH(pr.pr_date) = :month  AND YEAR(pr.pr_date) = :year)";
             }else{
-                 $sql .= " WHERE (MONTH(pr.pr_date_add) = :month  AND YEAR(pr.pr_date_add) = :year)";
+                 $sql .= " WHERE (MONTH(pr.pr_date) = :month  AND YEAR(pr.pr_date) = :year)";
             }
         }elseif($payment == 1){
             // Prepare SQL statement based on reasons
             if($store == 'all') {
-                 $sql .= " WHERE (MONTH(pr.pr_date_add) = :month  AND YEAR(pr.pr_date_add) = :year) AND (o.o_payment = 2 OR o.o_payment IS NULL)";
+                 $sql .= " WHERE (MONTH(pr.pr_date) = :month  AND YEAR(pr.pr_date) = :year) AND (o.o_payment = 2 OR o.o_payment IS NULL)";
             } elseif ($store == 'samt'){
-                $sql .= " WHERE o.o_reasons NOT LIKE '%sale,2%' AND (MONTH(pr.pr_date_add) = :month  AND YEAR(pr.pr_date_add) = :year)
+                $sql .= " WHERE o.o_reasons NOT LIKE '%sale,2%' AND (MONTH(pr.pr_date) = :month  AND YEAR(pr.pr_date) = :year)
                 AND (o.o_payment = 2 OR o.o_payment IS NULL)";          
             }elseif($store == 'sakaba'){
-                $sql .= " WHERE o.o_reasons LIKE '%sale,2%' AND (MONTH(pr.pr_date_add) = :month  AND YEAR(pr.pr_date_add) = :year)
+                $sql .= " WHERE o.o_reasons LIKE '%sale,2%' AND (MONTH(pr.pr_date) = :month  AND YEAR(pr.pr_date) = :year)
                 AND (o.o_payment = 2 OR o.o_payment IS NULL)";
             }else{
-                $sql .= " WHERE (MONTH(pr.pr_date_add) = :month  AND YEAR(pr.pr_date_add) = :year)
+                $sql .= " WHERE (MONTH(pr.pr_date) = :month  AND YEAR(pr.pr_date) = :year)
                 AND (o.o_payment = 2 OR o.o_payment IS NULL)";
             }
         }elseif($payment == 2){
             // Prepare SQL statement based on reasons
             if($store == 'all') {
-                $sql .= " WHERE (MONTH(pr.pr_date_add) = :month  AND YEAR(pr.pr_date_add) = :year) AND o.o_payment = 1";
+                $sql .= " WHERE (MONTH(pr.pr_date) = :month  AND YEAR(pr.pr_date) = :year) AND o.o_payment = 1";
             } elseif ($store == 'samt'){
-                $sql .= "  WHERE o.o_reasons NOT LIKE '%sale,2%' AND (MONTH(pr.pr_date_add) = :month  AND YEAR(pr.pr_date_add) = :year)
+                $sql .= " WHERE o.o_reasons NOT LIKE '%sale,2%' AND (MONTH(pr.pr_date) = :month  AND YEAR(pr.pr_date) = :year)
                 AND o.o_payment = 1";
             }elseif($store == 'sakaba'){
-                $sql .="  WHERE o.o_reasons LIKE '%sale,2%' AND (MONTH(pr.pr_date_add) = :month  AND YEAR(pr.pr_date_add) = :year)
+                $sql .=" WHERE o.o_reasons LIKE '%sale,2%' AND (MONTH(pr.pr_date) = :month  AND YEAR(pr.pr_date) = :year)
                 AND o.o_payment = 1";
             }else{
-                $sql .="  WHERE (MONTH(pr.pr_date_add) = :month  AND YEAR(pr.pr_date_add) = :year)
+                $sql .=" WHERE (MONTH(pr.pr_date) = :month  AND YEAR(pr.pr_date) = :year)
                 AND o.o_payment = 1";
             }
         }
@@ -103,8 +103,8 @@ if(isset($_POST['store'])) {
             $sql .= " AND (pr.pr_status = 1 OR pr.pr_status = 2 OR pr.pr_status IS NULL)";
             //ไม่สามารถใช้เครื่องหมายถึงไม่เท่ากับได้
         }
-        
-        $sql .=" ORDER BY pr.pr_date_add DESC";
+        //AND pr_exchange IS NULL
+        $sql .=" ORDER BY pr.pr_code DESC, pr.pr_date_add DESC";
         $stmt = $pdo->prepare($sql);
         $stmt->bindParam(':year', $year, PDO::PARAM_INT);
 
@@ -121,46 +121,55 @@ if(isset($_POST['store'])) {
         foreach ($products as $index => $product) {
             $data_reasons = explode(",", $product['o_reasons']);
 
-       
+        if($product['pr_exchange'] == null){
             echo '<tr>';
-        
-        if($product['pr_status'] == null){
-            echo '<td>
-            <a class="btn btn-outline-secondary btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_code'] . '\')">'
-               . $product['pr_code'] .
-            '</a></td>';
-            /* echo '<td>
-            <a class="btn btn-outline-secondary btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_code'] . '\')">'
-               . '<i class="fa-solid fa-circle-info"></i> Details' .
-            '</a></td>'; */
-            /* echo '<td>
 
-            <a class="btn btn-light btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_code'] . '\')" style="display: none;">
-                <i class="fa-solid fa-right-left"></i>
-            </a>' . $product['pr_code'] . '</td>'; */
-        }elseif($product['pr_status'] == '1'){
-            echo '<td>
-            <a class="btn btn-outline-success btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_code'] . '\')">'
-               . $product['pr_code'] .
-            '</a></td>';
-        }elseif($product['pr_status'] == '2'){
-            echo '<td>
-            <a class="btn btn-outline-warning btn-rounded  edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_code'] . '\')">'
-               . $product['pr_code'] .
-            '</a></td>';
+
+            //echo '<td><button class="btn btn-outline-light" disabled>'.$product['pr_code']. '</button></td>';    
         }else{
-            echo '<td>
-            <a class="btn btn-outline-secondary btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_code'] . '\')">'
-               . $product['pr_code'] .
-            '</a></td>';
+            echo '<tr class="table-secondary" id="exchangeID'.$product['pr_code'].'" hidden>';
+
         }
+
+       
+                if($product['pr_status'] == null && $product['pr_exchange'] == null){
+                    echo '<td>
+                    <a class="btn btn-outline-secondary btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_id'] . '\')">'
+                    . $product['pr_code'] .
+                    '</a></td>';
+                    /* echo '<td>
+                    <a class="btn btn-outline-secondary btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_code'] . '\')">'
+                    . '<i class="fa-solid fa-circle-info"></i> Details' .
+                    '</a></td>'; */
+                    /* echo '<td>
+
+                    <a class="btn btn-light btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_code'] . '\')" style="display: none;">
+                        <i class="fa-solid fa-right-left"></i>
+                    </a>' . $product['pr_code'] . '</td>'; */
+                }elseif($product['pr_status'] == '1'  && $product['pr_exchange'] == null){
+                    echo '<td>
+                    <a class="btn btn-outline-success btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_id'] . '\')">'
+                    . $product['pr_code'] .
+                    '</a></td>';
+                }elseif($product['pr_status'] == '2'  && $product['pr_exchange'] == null){
+                    echo '<td>
+                    <a class="btn btn-outline-warning btn-rounded  edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_id'] . '\')">'
+                    . $product['pr_code'] .
+                    '</a></td>';
+                }else{
+                    echo '<td>
+                    <a class="btn btn-outline-secondary btn-rounded edit-button" id="showExchange">'
+                    . $product['pr_code'] .
+                    '</a></td>';
+                }
+       
             echo  '<td>'.($data_reasons[1] == '2' ? 'SAKABA' : 'SAMT' ).'</td>';
             echo  '<td>'.$product['pr_mg_code'].'</td>';
             echo  '<td>'.$product['p_product_name'].'</td>';
             echo  '<td>'.$product['p_size'].'</td>';
             echo  '<td>'.$product['p_color'].'</td>';
             echo  '<td>'.$product['p_hands'].'</td>';
-            echo  '<td class="text-center bg-success-subtle">'.$product['o_out_qty'].'</td>';
+            echo  '<td class="text-center bg-success-subtle">'.$product['pr_qty'].'</td>';
             echo  '<td>'.$product['o_out_date'].'</td>';
             echo  '<td>'.$data_reasons[3].'</td>';
             echo "<td class='text-center'>";
@@ -216,9 +225,19 @@ if(isset($_POST['store'])) {
             echo "<td class='text-center text-secondary'>".'PR pending'. "</td>";
            }
             //echo "<td class='text-center' style='color:".($product['o_pr_code'] !== null ? 'green;' : 'red;')."'>" . ($product['o_pr_code'] !== null ? 'issued' : 'unissue') . "</td>";
-            echo '<td class="text-center"><input class="select-checkbox form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['o_mg_code'] . '"></td>';
-            echo "<td class='text-center'>" . $product['o_memo'] . "</td>";
-
+            if($product['pr_exchange'] == null){
+                echo '<td class="text-center"><input class="select-checkbox form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['o_mg_code'] . '"></td>';
+            }else{
+                echo '<td></td>';
+            }
+                
+            if($product['pr_memo'] === 'Exchange'){
+            echo '<td class="text-center">
+                    <a class="btn btn-secondary btn-rounded edit-button" id="showExchange" onclick="openExchange(\'' . $product['pr_code'] . '\')"> <i class="fa-solid fa-arrow-right-arrow-left"></i> '
+                    . $product['pr_memo'] .  '</a></td>';
+            }else{
+                echo  '<td class="text-center"> ' . $product['pr_memo'] .  '</a></td>';
+            }
 
             echo '</tr>';
         }

@@ -14,7 +14,6 @@ if ($currentMonth == 12) {
 
 // Format next month to always be two digits
 $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
-
  
     // Fetch product names from the database
     $stmt_code = $pdo->query("SELECT DISTINCT p_product_code FROM product");
@@ -49,8 +48,8 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
             </h1>
         </div>
         <?php 
-        $currentDayDemo = 20;
-        if( $currentDay  == 20){
+        $currentDayDemo = 15;
+        if( $currentDayDemo  == 20){
             echo '<div class="alert alert-primary alert-dismissible fade show" role="alert">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
             <strong>'.$currentDateText.$currentDay.'/'.$currentMonth.'/'.$currentYear.'</strong> '. $updatePayment_des. $nextMonth.'/'.$currentYear.'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
@@ -59,7 +58,7 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
             <strong>(Demo)'.$currentDateText.$currentDayDemo.'/'.$currentMonth.'/'.$currentYear.'</strong> '. $updatePayment_des. $nextMonth.'/'.$currentYear.'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>'; */ 
-        }elseif($currentDay  <= 19 && $currentDays >= 15){
+        }elseif($currentDayDemo  <= 19 && $currentDayDemo >= 15){
             echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                 <use xlink:href="#info-fill" />
@@ -105,14 +104,16 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
         <div class="d-flex align-self-end  align-items-center mb-2">
             <!--  <a class="btn btn-primary btn-rounded" id="exchange" style="white-space: nowrap;"><i
                     class="fa-solid fa-right-left"></i> PR Exchange</a>&nbsp; -->
-            <a class="btn btn-info btn-rounded" style="white-space: nowrap;"><i class="fa-solid fa-circle-check"></i>
-                Purchase</a>&nbsp;
-            <a class="btn btn-success btn-rounded" style="white-space: nowrap;"><i
-                    class="fa-solid fa-boxes-stacked"></i>
-                Stockin</a>&nbsp;
+
+
+            <a class="btn btn-danger btn-rounded" style="white-space: nowrap;"><i class="fa-solid fa-circle-check"></i>
+                1 Purchase</a>&nbsp;
             <a class="btn btn-warning btn-rounded" style="white-space: nowrap;"><i
                     class="fa-solid fa-truck-ramp-box"></i>
-                Delivered</a>&nbsp;
+                2 Delivered</a>&nbsp;
+            <a class="btn btn-info btn-rounded" style="white-space: nowrap;"><i class="fa-solid fa-boxes-stacked"></i>
+                3 Stockin</a>&nbsp;
+
 
             <select class="form-select" id="months" name="months">
                 <option value="01">01 - Jan</option>
@@ -175,6 +176,7 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
             </tbody>
         </table>
 
+
         <!-- Modal for Editing Data -->
         <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
             <div class="modal-dialog modal-lg">
@@ -188,12 +190,14 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
                             <div class="d-flex justify-content-lg-start">
                                 <label for="prStatus" class="form-label">PR Status:&nbsp;</label>
                                 <h5 id="prStatus"></h5>
+                                <input id="prStatusID" hidden> </input>
                             </div>
                             <div class="d-flex justify-content-lg-end">
                                 <button class="btn btn-outline-secondary" onclick="editProduct()"><i
                                         class="fa-solid fa-pen-to-square"></i>
-                                    EDIT</button>
+                                    EDIT</button> &nbsp;
                                 <input class="form-control" id="productID" hidden>
+                                <input class="form-control" id="prID" hidden>
                             </div>
                         </div>
 
@@ -274,14 +278,18 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
                                 <i class="fa-solid fa-truck-ramp-box"></i>
                                 Delivered</button>&nbsp;
 
-                            <button type="button" class="btn  btn-success" id="stockin">
+                            <button type="button" class="btn  btn-info" id="stockin">
                                 <i class="fa-solid fa-box"></i>
                                 Stockin</button>
                         </div>
                         <!-- Fetched data will be displayed here -->
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button class="btn btn-danger" onclick="deletePr()">
+                            <i class="fa-solid fa-trash-can"></i> Delete
+                        </button>
+                        <button type="button" class="btn btn-success" id="closeModalButton" data-bs-dismiss="modal"
+                            disabled>Success</button>
                         <!-- Add additional buttons as needed -->
                     </div>
                 </div>
@@ -293,6 +301,72 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
     <!-- jQuery -->
 
     <script>
+    function deletePr() {
+        // Get data from the input field
+        var prCode = $('#prCodeInput').val();
+
+
+        // Send AJAX POST request
+        Swal.fire({
+            title: 'Are you sure?',
+            text: "Do you want to Delete?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonText: 'Yes',
+            cancelButtonText: 'No, cancel!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                // User confirmed, proceed with the AJAX request
+                $.ajax({
+                    url: 'pr_update_status.php', // Server-side script URL
+                    method: 'POST',
+                    data: {
+                        pr_code: prCode,
+                        status: '990'
+                    },
+                    success: function(response) {
+                        // Handle success response
+                        console.log('Data inserted successfully');
+
+                        // Display success message using SweetAlert
+                        Swal.fire({
+                            icon: "success",
+                            title: "Success!",
+                            showConfirmButton: true
+                        }).then(function() {
+                            // Call a function after closing the SweetAlert
+                            location.reload()
+                            // Optionally reload the page or perform additional actions
+                            // location.reload();
+
+                        });
+                    },
+                    error: function(xhr, status, error) {
+                        // Handle error response
+                        console.error('Error inserting data:', error);
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: 'Error inserting data'
+                        });
+                    }
+                });
+            } else {
+                // User cancelled, do nothing
+                console.log('User cancelled the action');
+            }
+        });
+    }
+
+    function openExchange(prCode) {
+        var element = $('#exchangeID' + prCode);
+        var isHidden = element.prop('hidden');
+
+        // สลับสถานะการซ่อนแสดง
+        element.prop('hidden', !isHidden);
+    }
+
+
     function loadData(store = null, month = formattedMonth, payment = 0, year = currentYear,
         prStatusSelected) {
 
@@ -425,13 +499,15 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
         //$('#dateAddedInput').prop('disabled', false);
         //$('#mgCode').prop('disabled', false);
         //$('#productName').prop('disabled', false);
-        $('#size').prop('disabled', false);
-        $('#color').prop('disabled', false);
-        $('#hand').prop('disabled', false);
-        $('#qty').prop('disabled', false);
-        //$('#productCode').prop('disabled', false);
-        //$('#soldDate').prop('disabled', false);
-        $('#prStatus').prop('disabled', false);
+
+        var fields = [
+            '#color', '#hand', '#qty', '#size'
+        ];
+
+        fields.forEach(function(field) {
+            var isDisabled = $(field).prop('disabled');
+            $(field).prop('disabled', !isDisabled);
+        });
     }
 
     document.addEventListener('DOMContentLoaded', function() {
@@ -449,8 +525,8 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
 
 
     $(document).ready(function() {
-        // เมื่อกดปิด modal ให้ทำการอัพเดทเพราะหากข้อมูลอัพเดท จะได้อัพเดทไปด้วยในตัว
-        $('#editModal').on('hidden.bs.modal', function() {
+        $('#closeModalButton').on('click', function() {
+            // Your code to close the modal
             location.reload();
         });
 
@@ -560,7 +636,8 @@ $(document).ready(function() {
 
     $('#delivered').click(function() {
         // Get data from the input field
-        var prCode = $('#prCodeInput').val();
+        var prID = $('#prID').val();
+
 
         // Send AJAX POST request
         Swal.fire({
@@ -577,7 +654,7 @@ $(document).ready(function() {
                     url: 'pr_update_status.php', // Server-side script URL
                     method: 'POST',
                     data: {
-                        pr_code: prCode,
+                        pr_id: prID,
                         status: '2'
                     },
                     success: function(response) {
@@ -591,9 +668,11 @@ $(document).ready(function() {
                             showConfirmButton: true
                         }).then(function() {
                             // Call a function after closing the SweetAlert
-                            openEditModal(prCode);
+                            openEditModal(prID);
+                            $('#closeModalButton').prop('disabled', false)
                             // Optionally reload the page or perform additional actions
                             // location.reload();
+
                         });
                     },
                     error: function(xhr, status, error) {
@@ -614,7 +693,8 @@ $(document).ready(function() {
     });
     $('#stockin').click(function() {
         // Get data from the input field
-        var prCode = $('#prCodeInput').val();
+        //var prCode = $('#prCodeInput').val();
+        var prID = $('#prID').val();
 
         // Send AJAX POST request
         Swal.fire({
@@ -631,7 +711,7 @@ $(document).ready(function() {
                     url: 'pr_update_status.php', // Server-side script URL
                     method: 'POST',
                     data: {
-                        pr_code: prCode,
+                        pr_id: prID,
                         status: '3'
                     },
                     success: function(response) {
@@ -644,8 +724,9 @@ $(document).ready(function() {
                             title: "Success!",
                             showConfirmButton: true
                         }).then(function() {
+                            window.location.href = 'pr_history.php';
                             // Call a function after closing the SweetAlert
-                            openEditModal(prCode);
+                            //openEditModal(prCode);
                             // Optionally reload the page or perform additional actions
                             // location.reload();
                         });
@@ -678,6 +759,10 @@ $(document).ready(function() {
         var color = $('#color').val();
         var hand = $('#hand').val();
         var qty = $('#qty').val();
+        var prMgcode = $('#mgCode').val();
+        var prDate = $('#dateAddedInput').val();
+        var prID = $('#prID').val();
+        var prStatusID = $('#prStatusID').val();
 
 
         // AJAX request to send data to server-side script for insertion
@@ -691,7 +776,11 @@ $(document).ready(function() {
                 hand: hand,
                 qty: qty,
                 pdCode: pdCode,
-                pdName: pdName
+                pdName: pdName,
+                prMgcode,
+                prDate,
+                prID,
+                prStatusID
             },
             success: function(response) {
                 // Handle success response (if needed)
@@ -704,7 +793,9 @@ $(document).ready(function() {
                     showConfirmButton: true
                     //timer: 1500
                 }).then(function() {
-                    openEditModal(prCode);
+                    console.log(response);
+                    openEditModal(prID);
+                    $('#closeModalButton').prop('disabled', false)
                     // Redirect or perform additional actions if needed
                     //location.reload();
                 });
@@ -720,9 +811,8 @@ $(document).ready(function() {
     });
 });
 
-function openEditModal(prCode) {
-    console.log(prCode); // Log prCode to verify it's received correctly
-    $('#editModalLabel').html('<i class="fa-solid fa-paste"></i> PR Management: ' + prCode);
+function openEditModal(prID) {
+    console.log(prID); // Log prCode to verify it's received correctly
     // Clear previous content and show loading state
     //$('#modal-body-content').html('<p>Loading...</p>');
 
@@ -732,12 +822,23 @@ function openEditModal(prCode) {
         method: 'POST',
         dataType: 'json',
         data: {
-            pr_code: prCode
+            pr_id: prID
         },
         success: function(data) {
             var prStatus = '';
+            $('#editModalLabel').html('<i class="fa-solid fa-paste"></i> PR Management: ' + data.pr_code);
 
-            if (data.pr_status == '3') {
+            if (data.pr_memo === 'Exchange' && data.pr_status == '2') {
+                prStatus = 'Delivered';
+                $('#submitFormExchange').prop('disabled', true);
+                $('#delivered').prop('disabled', true);
+                $('#stockin').prop('disabled', false);
+            } else if (data.pr_memo === 'Exchange' && (data.pr_status === null || data.pr_status === '')) {
+                prStatus = 'Pending';
+                $('#submitFormExchange').prop('disabled', true);
+                $('#delivered').prop('disabled', true);
+                $('#stockin').prop('disabled', true);
+            } else if (data.pr_status == '3') {
                 prStatus = 'Stock In';
                 $('#submitFormExchange').prop('disabled', true);
                 $('#delivered').prop('disabled', true);
@@ -774,7 +875,9 @@ function openEditModal(prCode) {
                 $('#productCode').val(data.p_product_code);
                 $('#soldDate').val(data.o_out_date);
                 $('#prStatus').html(prStatus);
+                $('#prStatusID').val(data.pr_status);
                 $('#productID').val(data.pr_product_id);
+                $('#prID').val(data.pr_id);
 
             } else {
                 $('#modal-body-content').html('<p>No data found</p>');
