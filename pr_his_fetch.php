@@ -28,25 +28,25 @@ if(isset($_POST['store'])) {
                     FROM pr
                     LEFT JOIN product p ON pr.pr_product_id = p.p_product_id
                     LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code
-                    WHERE MONTH(pr.pr_date_add) = :month";
+                    WHERE MONTH(pr.pr_date) = :month";
         } elseif ($store == 'samt') {
             $sql = "SELECT o.*, p.*, pr.*
                     FROM pr
                     LEFT JOIN product p ON pr.pr_product_id = p.p_product_id
                     LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code
-                    WHERE o.o_reasons NOT LIKE '%sale,2%' AND MONTH(pr.pr_date_add) = :month";
+                    WHERE o.o_reasons NOT LIKE '%sale,2%' AND MONTH(pr.pr_date) = :month";
         } elseif ($store == 'sakaba') {
             $sql = "SELECT o.*, p.*, pr.*
                     FROM pr
                     LEFT JOIN product p ON pr.pr_product_id = p.p_product_id
                     LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code
-                    WHERE o.o_reasons LIKE '%sale,2%' AND MONTH(pr.pr_date_add) = :month";
+                    WHERE o.o_reasons LIKE '%sale,2%' AND MONTH(pr.pr_date) = :month";
         } else {
             $sql = "SELECT o.*, p.*, pr.*
                     FROM pr
                     LEFT JOIN product p ON pr.pr_product_id = p.p_product_id
                     LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code
-                    WHERE MONTH(pr.pr_date_add) = :month";
+                    WHERE MONTH(pr.pr_date) = :month";
         }
 
         // Add ORDER BY clause to the SQL statement

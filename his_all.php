@@ -71,40 +71,57 @@
                 <!-- Data will be loaded here via AJAX -->
             </tbody>
         </table>
-    </div>
+        <ul id="pagination" class="pagination">
+            <!-- Pagination links will be loaded here by AJAX -->
+        </ul>
 
+    </div>
     <script>
     $(document).ready(function() {
-        // Function to load data based on button clicked
-        function loadData(store = null) {
-            // Define the URL for the AJAX request
+        function loadData(store = null, currentPage = 1) {
             var url = "his_fetch.php";
-            // Define the data to be sent
             var data = {
-                store: store
+                store: store,
+                page: currentPage
             };
-            // Perform an AJAX request
+
             $.ajax({
                 type: "POST",
                 url: url,
                 data: data,
                 success: function(response) {
-                    // Replace the content of dataTable with the new data
-                    $('#dataTable').html(response);
+                    var result = JSON.parse(response);
+                    if (result.error) {
+                        alert(result.error);
+                    } else {
+                        $('#dataTable').html(result.tableRows);
+                        updatePagination(result.pagination, currentPage);
+                    }
                 }
             });
         }
 
+        function updatePagination(totalPages, currentPage) {
+            var pagination = '';
+            for (var i = 1; i <= totalPages; i++) {
+                pagination += "<li class='page-item " + (currentPage == i ? 'active' : '') +
+                    "'><a class='page-link' href='#' data-page='" + i + "'>" + i + "</a></li>";
+            }
+            $('#pagination').html(pagination);
+        }
 
-        // Function to handle tab click events
-        function handleTabClick(tabId, store) {
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            var page = $(this).data('page');
+            var activeTab = $('.tab.active').data('store');
+            loadData(activeTab, page);
+        });
+
+        function handleTabClick(tabId, store = null) {
             $('.tab').removeClass('active');
             $(tabId).addClass('active');
             loadData(store);
         }
-
-        // Load all data when the page loads
-        handleTabClick('#productTab');
 
         // Set up click event handlers for each tab
         $('#productTab').click(function(e) {
@@ -121,6 +138,9 @@
             e.preventDefault();
             handleTabClick('#sakabaTab', 'sakaba');
         });
+
+        // Load all data when the page loads
+        handleTabClick('#productTab');
     });
     </script>
 </body>

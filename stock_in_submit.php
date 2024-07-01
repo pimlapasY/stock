@@ -15,7 +15,7 @@ if (isset($_SESSION['role'])) {
     $productCost = $_POST['productCost'];
     $productTotal = $_POST['productTotal'];
     $memo = $_POST['memo'];
-    $qtyValue = $_POST['qtyValue'];
+    $qtyValueNum = $_POST['qtyValueNum'];
     $username = $_SESSION['id'];
     $date = $_POST['date'];
     $status = $_POST['status'];
@@ -43,7 +43,7 @@ if (isset($_SESSION['role'])) {
         $stmt->bindParam(2, $productID);
         $stmt->bindParam(3, $productCode);
         $stmt->bindParam(4, $currentQTY);
-        $stmt->bindParam(5, $qtyValue);
+        $stmt->bindParam(5, $qtyValueNum);
         $stmt->bindParam(6, $productTotal);
         $stmt->bindParam(7, $status);
         $stmt->bindParam(8, $memo);
@@ -72,7 +72,7 @@ if (isset($_SESSION['role'])) {
         $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty + ?, s_return_date = NOW() WHERE s_product_id = ?");
 
         // Bind parameters for update
-        $updateStmt->bindParam(1, $qtyValue);
+        $updateStmt->bindParam(1, $qtyValueNum);
         $updateStmt->bindParam(2, $productID);
 
         // Execute SQL statement to update stock quantity
@@ -82,7 +82,7 @@ if (isset($_SESSION['role'])) {
         $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty + ?, s_date_update = NOW() WHERE s_product_id = ?");
 
         // Bind parameters for update
-        $updateStmt->bindParam(1, $qtyValue);
+        $updateStmt->bindParam(1, $qtyValueNum);
         $updateStmt->bindParam(2, $productID);
 
         // Execute SQL statement to update stock quantity

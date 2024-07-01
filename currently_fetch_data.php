@@ -80,13 +80,13 @@ if(isset($_POST['reasons'])) {
                 echo "<td class='text-center'>" . '<a class="btn btn-primary btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
              }
              /* echo "<td class='text-center' style='text-transform: uppercase; background:#FCF3CF;'>" . $data_reasons[0] . "</td>"; */
-             echo "<td class='text-center' style='color:".($product['o_pr_code'] !== null ? 'green;' : 'red;')."'>" . ($product['o_pr_code'] !== null ? 'issued' : 'unissue') . "</td>";
+             echo "<td class='text-center' style='color:".($product['o_pr_code'] !== null ? 'green;' : 'red;')."'>" . ($product['o_pr_code'] !== null ? 'issued' : 'un issue') . "</td>";
              /* echo "<td class='text-center' style='background:#FCF3CF;'>" . '' . "</td>"; */
             
             
              echo "<td class='text-center'>" . 
-             '<button class="btn btn-outline-warning btn-sm btn-floating edit-btn" data-id="' . $product['o_id'] . '" data-mg-code="' . $product['o_mg_code'] . '" data-payment="' . $product['o_payment'] . '" data-delivery="' . $product['o_delivery'] . '" onclick="showModal(' . $product['o_id'] . ', \'' . $product['o_mg_code'] . '\', \'' . $product['o_payment'] . '\', \'' . $product['o_delivery'] . '\')">
-                 <i class="fa-regular fa-pen-to-square"></i>
+             '<button class="btn btn-warning btn-sm edit-btn" data-id="' . $product['o_id'] . '" data-mg-code="' . $product['o_mg_code'] . '" data-payment="' . $product['o_payment'] . '" data-delivery="' . $product['o_delivery'] . '" onclick="showModal(' . $product['o_id'] . ', \'' . $product['o_mg_code'] . '\', \'' . $product['o_payment'] . '\', \'' . $product['o_delivery'] . '\')">
+                 <i class="fa-solid fa-gear"></i>
              </button>' . 
                 "</td>";
             echo '<td class="text-center"><input class="form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['o_mg_code'] . '"></td>';

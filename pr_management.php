@@ -116,6 +116,7 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
 
 
             <select class="form-select" id="months" name="months">
+                <option value="month">Months</option>
                 <option value="01">01 - Jan</option>
                 <option value="02">02 - Feb</option>
                 <option value="03">03 - Mar</option>
@@ -130,6 +131,7 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
                 <option value="12">12 - Dec</option>
             </select>&nbsp;
             <select class="form-select" id="years" name="year">
+                <option value="years">Years</option>
                 <option value="2023">2023</option>
                 <option value="2024">2024</option>
                 <option value="2025">2025</option>
@@ -260,7 +262,7 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
                                     </div>
                                     <div class="mb-3">
                                         <label for="qty" class="form-label">Qty:</label>
-                                        <input type="number" class="form-control" id="qty" disabled>
+                                        <input type="number" class="form-control" id="qty" min="1" disabled>
                                     </div>
                                     <div class="mb-3">
                                         <label for="soldDate" class="form-label">Sold Date:</label>
@@ -270,17 +272,18 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
                             </div>
                         </div>
                         <div class="d-flex flex-column m-4">
-                            <button type="button" class="btn  btn-primary" id="submitFormExchange"><i
-                                    class="fa-solid fa-right-left">
-                                </i>
-                                Exchange</button>&nbsp;
+                            <button type="button" class="btn  btn-primary" id="submitFormExchange">
+                                <i class="fa-solid fa-right-left"></i>
+                                Exchange
+                            </button>&nbsp;
                             <button type="button" class="btn  btn-warning" id="delivered">
                                 <i class="fa-solid fa-truck-ramp-box"></i>
-                                Delivered</button>&nbsp;
-
+                                Delivered
+                            </button>&nbsp;
                             <button type="button" class="btn  btn-info" id="stockin">
                                 <i class="fa-solid fa-box"></i>
-                                Stockin</button>
+                                Stockin
+                            </button>
                         </div>
                         <!-- Fetched data will be displayed here -->
                     </div>
@@ -289,7 +292,7 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
                             <i class="fa-solid fa-trash-can"></i> Delete
                         </button>
                         <button type="button" class="btn btn-success" id="closeModalButton" data-bs-dismiss="modal"
-                            disabled>Success</button>
+                            disabled><i class="fa-solid fa-rotate"></i> Success</button>
                         <!-- Add additional buttons as needed -->
                     </div>
                 </div>
@@ -304,7 +307,6 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
     function deletePr() {
         // Get data from the input field
         var prCode = $('#prCodeInput').val();
-
 
         // Send AJAX POST request
         Swal.fire({
@@ -828,17 +830,17 @@ function openEditModal(prID) {
             var prStatus = '';
             $('#editModalLabel').html('<i class="fa-solid fa-paste"></i> PR Management: ' + data.pr_code);
 
-            if (data.pr_memo === 'Exchange' && data.pr_status == '2') {
-                prStatus = 'Delivered';
-                $('#submitFormExchange').prop('disabled', true);
-                $('#delivered').prop('disabled', true);
-                $('#stockin').prop('disabled', false);
-            } else if (data.pr_memo === 'Exchange' && (data.pr_status === null || data.pr_status === '')) {
-                prStatus = 'Pending';
-                $('#submitFormExchange').prop('disabled', true);
-                $('#delivered').prop('disabled', true);
-                $('#stockin').prop('disabled', true);
-            } else if (data.pr_status == '3') {
+            /*   if (data.pr_memo === 'Exchange' && data.pr_status == '2') {
+                  prStatus = 'Delivered';
+                  $('#submitFormExchange').prop('disabled', true);
+                  $('#delivered').prop('disabled', true);
+                  $('#stockin').prop('disabled', false);
+              } else if (data.pr_memo === 'Exchange' && (data.pr_status === null || data.pr_status === '')) {
+                  prStatus = 'Pending';
+                  $('#submitFormExchange').prop('disabled', true);
+                  $('#delivered').prop('disabled', true);
+                  $('#stockin').prop('disabled', true); */
+            if (data.pr_status == '3') {
                 prStatus = 'Stock In';
                 $('#submitFormExchange').prop('disabled', true);
                 $('#delivered').prop('disabled', true);

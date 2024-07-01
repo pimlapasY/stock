@@ -192,15 +192,12 @@ function validateInput(input) {
                         </td>
                     </tr>
                 </table>
-                <div class="text-start">
+                <!--    <div class="text-start">
                     <p>
                         ** <i class="fa-solid fa-rectangle-xmark"></i>
                         No data available : Please register for the product. &nbsp;
                         <i class="fa-solid fa-arrow-right"></i>&nbsp;
-                        <!-- <a href="register.php">
-                            <i class="fa-solid fa-circle-plus"></i>
-                            <?php echo $register ?>
-                        </a>  -->
+
                         <button class="btn btn-sm btn-success" onclick="window.location.href = 'register.php'"
                             style="color: white;">
                             <i class="fa-solid fa-circle-plus"></i>
@@ -211,22 +208,15 @@ function validateInput(input) {
                         ** <i class="fa-solid fa-sack-xmark"></i>
                         Out of stock : Please stock more of this product. &nbsp;
                         <i class="fa-solid fa-arrow-right"></i> &nbsp;
-                        <!-- <a href="stock_in.php">
-                            <i class="fa-solid fa-inbox"></i>
-                            <?php echo $stock_in ?>
-                        </a> -->
+
                         <button class="btn btn-sm btn-info" onclick="window.location.href = 'stock_in.php'"
                             style="color: white;">
                             <i class="fa-solid fa-inbox"></i>
                             <?php echo $stock_in ?>
                         </button>**
                     </p>
-                    <!-- <p style="color:green;">
-                        <i class="fa-solid fa-check"></i>
-                        Have QTY = The product can stock out following the maximum quantity in
-                        stock.
-                    </p> -->
-                </div>
+
+                </div> -->
             </div>
             <div class="card-body">
 
@@ -306,13 +296,15 @@ function validateInput(input) {
 
                             </td>
                             <td>
-                                <div class="input-group">
+                                <!--  <div class="input-group">
                                     <button type="button" class="btn btn-outline-secondary"
                                         onclick="decrementQty()">-</button>
-                                    <span class="input-group-text" id="qtyValue"></span>
+                                    
                                     <button type="button" class="btn btn-outline-secondary" onclick="incrementQty()"
                                         id="incrementBtn">+</button>
-                                </div>
+                                </div> -->
+
+                                <input type="number" min="1" id="qtyValueNum" class="form-control">
                             </td>
 
                             <td>
@@ -334,11 +326,17 @@ function validateInput(input) {
                                     });
 
                                     // Reset the quantity value to 0
-                                    $('#qtyValue').text('');
+                                    $('#qtyValueNum').val('');
+                                    $('#qtyValueText').prop('hidden', true);
                                 }
                                 </script>
                                 <button type="button" class="btn btn-warning btn-floating" data-mdb-ripple-init
                                     onclick="resetInput()"><i class="fa-solid fa-eraser"></i></button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="10">
+                                <div class="alert alert-warning" id="qtyValueText" hidden></div>
                             </td>
                         </tr>
                         <tr>
@@ -357,9 +355,6 @@ function validateInput(input) {
                             </td>
                         </tr> -->
                     </tbody>
-
-
-
                     <!-- <th colspan="8">ได้ตรวจสอบจำนวน และรายละเอียดต่างๆเรียบร้อยแล้ว</th> -->
                 </table>
             </div>
@@ -451,10 +446,10 @@ function updateQuantityInput() {
     var selectedColor = $('#colorInput').val();
     var selectedSize = $('#sizeInput').val();
     var selectedHand = $('#handInput').val();
-    var qtyInput = $('#qtyValue');
+    var qtyInputText = $('#qtyValueText');
     var incrementButton = $('#incrementBtn');
     var total_price = $('#total_price').val();
-    var qtyValue = parseInt($('#qtyValue').text());
+    var qtyValueNum = $('#qtyValueNum');
     var productCost = parseFloat($('#selectedProductCost').val());
 
     // AJAX call to get the stock quantity and product cost of the selected product, color, size, and hand
@@ -471,8 +466,13 @@ function updateQuantityInput() {
         success: function(response) {
             var data = JSON.parse(response);
             if (data.error) {
-                qtyInput.html('<b style="color: orange;">No Data</b>');
-                incrementButton.prop('disabled', true);
+                qtyValueNum.prop('disabled', true);
+                qtyInputText.prop('hidden', false);
+                qtyInputText.html(
+                    '** <i class="fa-solid fa-rectangle-xmark"></i>No data available : Please register for the product. &nbsp;<i class="fa-solid fa-arrow-right"></i><button class="btn btn-sm btn-dark" onclick="window.location.href = \'register.php\'" style="color: white;"><i class="fa-solid fa-circle-plus"></i> <?php echo $register ?></button>**'
+                );
+
+                //incrementButton.prop('disabled', true);
             }
 
 
@@ -498,19 +498,31 @@ function updateQuantityInput() {
 
 
             if (stockQuantity > 0) {
-                qtyInput.text(stockQuantity);
-                incrementButton.prop('disabled', false);
-
+                qtyValueNum.val(stockQuantity);
+                //incrementButton.prop('disabled', false);
+                qtyValueNum.prop('disabled', false);
                 var totalPrice = (stockQuantity * productCost).toFixed(2);
                 totalPrice = parseFloat(totalPrice).toLocaleString(); // Calculate the total price
 
                 $('#total_price').val(totalPrice);
                 $('#selectedProductCost').val(productCost);
                 $('#product_id').val(productID);
+                qtyInputText.prop('hidden', true);
 
             } else if (productQTY == 0) {
-                qtyInput.html('<b style="color: red;">out of stock</b>');
-                incrementButton.prop('disabled', true);
+                qtyInputText.prop('hidden', false);
+                qtyInputText.html(`
+                        ** <i class="fa-solid fa-sack-xmark"></i>
+                        Out of stock: Please stock more of this product. &nbsp;
+                        <i class="fa-solid fa-arrow-right"></i> &nbsp;
+                        <button class="btn btn-sm btn-info" onclick="window.location.href = 'stock_in.php'" style="color: white;">
+                            <i class="fa-solid fa-inbox"></i>
+                            <?php echo $stock_in; ?>
+                        </button>**
+                    `);
+
+                qtyValueNum.prop('disabled', true);
+                //incrementButton.prop('disabled', true);
                 $('#selectedProductCost').val(productCost);
                 $('#product_id').val(productID);
             }
@@ -525,7 +537,7 @@ function updateQuantityInput() {
                } */
 
             // Set the max attribute of the quantity span to the stock quantity
-            qtyInput.attr('max', stockQuantity);
+            qtyValueNum.attr('max', stockQuantity);
         },
         error: function() {
             console.error('Error fetching stock quantity and product cost.');
@@ -534,31 +546,33 @@ function updateQuantityInput() {
 }
 
 // Function to decrement quantity value
-function decrementQty() {
+/* function decrementQty() {
     var qtyValue = parseInt($('#qtyValue').text());
     if (qtyValue > 0) {
         $('#qtyValue').text(qtyValue - 1);
         updateTotalPrice(); // Call updateTotalPrice after decrementing quantity
     }
-}
+} */
 
 
 // Function to increment quantity value
-function incrementQty() {
+/* function incrementQty() {
     var qtyValue = parseInt($('#qtyValue').text());
     var maxQuantity = parseInt($('#qtyValue').attr('max'));
     if (qtyValue < maxQuantity) {
         $('#qtyValue').text(qtyValue + 1);
         updateTotalPrice(); // Call updateTotalPrice after incrementing quantity
     }
-}
-
+} */
+$('#qtyValueNum').on('change input', function() {
+    updateTotalPrice();
+});
 
 // Function to update total price
 function updateTotalPrice() {
-    var qtyValue = parseInt($('#qtyValue').text());
+    var qtyValueNum = $('#qtyValueNum').val();
     var productCost = parseFloat($('#selectedProductCost').val()); // Get the product cost
-    var totalPrice = (qtyValue * productCost).toFixed(2);
+    var totalPrice = (qtyValueNum * productCost).toFixed(2);
     totalPrice = parseFloat(totalPrice).toLocaleString(); // Calculate the total price
 
     $('#total_price').val(totalPrice); // Update the total price element
@@ -653,8 +667,8 @@ function submitStockOut() {
     var productCost = $('#selectedProductCost').val();
     var productTotal = $('#total_price').val();
     var memo = $('#memo').val();
-    var qtyValue = parseInt($('#qtyValue').text());
-    console.log(reasons_submit, qtyValue);
+    var qtyValueNum = $('#qtyValueNum').val();
+    console.log(reasons_submit, qtyValueNum);
 
     var data = {
         mgCode: mgCode,
@@ -664,13 +678,13 @@ function submitStockOut() {
         productCost: productCost,
         productTotal: productTotal,
         memo: memo,
-        qtyValue: qtyValue,
+        qtyValue: qtyValueNum,
         reasons: reasons_submit,
         date: date
     };
 
 
-    if (productID != '' && qtyValue != 0) {
+    if (productID != '' && qtyValueNum != 0) {
         Swal.fire({
             title: 'Are you sure?',
             text: 'Do you want to submit the form?',
@@ -704,7 +718,7 @@ function submitStockOut() {
                 console.log('cancel')
             }
         });
-    } else if (qtyValue == '') {
+    } else if (qtyValueNum == '') {
 
         Swal.fire({
             title: 'ERROR',

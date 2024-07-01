@@ -207,13 +207,15 @@
 
                             </td>
                             <td>
-                                <div class="input-group">
+                                <!-- <div class="input-group">
                                     <button type="button" class="btn btn-outline-secondary"
                                         id="decrementButton">-</button>
                                     <span class="input-group-text" id="qtyValue">1</span>
                                     <button type="button" class="btn btn-outline-secondary"
                                         id="incrementButton">+</button>
-                                </div>
+                                </div> -->
+
+                                <input type="number" id="qtyValueNum" class="form-control" min="1" readonly>
                             </td>
 
                             <td>
@@ -236,7 +238,7 @@
                                     });
 
                                     // Reset the quantity value to 0
-                                    $('#qtyValue').text('');
+                                    $('#qtyValueNum').val('');
                                 }
                                 </script>
                                 <button type="button" class="btn btn-warning btn-floating" data-mdb-ripple-init
@@ -291,6 +293,7 @@
 $('#mgCodeInput').on('change', function() {
     var mgCode = $('#mgCodeInput').val();
     $('#check_returned').prop('checked', true); // This will check the checkbox
+    $('#qtyValueNum').prop('readonly', true); // This will check the checkbox
 
     // Send an AJAX request to fetch the product name
     $.ajax({
@@ -333,7 +336,7 @@ $('#mgCodeInput').on('change', function() {
                 $('#selectedProductUnit').val(productUnit);
                 $('#product').val(productCode);
                 $('#product_id').val(productID);
-                $('#qtyValue').text(qtyOut);
+                $('#qtyValueNum').val(qtyOut);
                 $('#decrementButton').addClass('disabled');
                 $('#incrementButton').addClass('disabled');
                 $('#selectedProductCost').val(cost);
@@ -420,7 +423,7 @@ $('#product').on('input', function() {
     });
 }); // Function to update quantity input based on product, color, or size changes
 // Function to update quantity input based on product, color, or size changes
-$('#product, #colorInput, #sizeInput, #handInput').on('change', function() {
+$('#product, #colorInput, #sizeInput, #handInput, #qtyValueNum').on('change', function() {
     updateQuantityInput();
 });
 
@@ -430,10 +433,9 @@ function updateQuantityInput() {
     var selectedColor = $('#colorInput').val();
     var selectedSize = $('#sizeInput').val();
     var selectedHand = $('#handInput').val();
-    var qtyInput = $('#qtyValue');
     var incrementButton = $('#incrementBtn');
     var total_price = $('#total_price').val();
-    var qtyValue = parseInt($('#qtyValue').text());
+    var qtyValueNum = $('#qtyValueNum'); // Assuming the element has an ID of 'qtyValueNum'
     var productCost = parseFloat($('#selectedProductCost').val());
 
     // AJAX call to get the stock quantity and product cost of the selected product, color, size, and hand
@@ -449,8 +451,8 @@ function updateQuantityInput() {
         success: function(response) {
             var data = JSON.parse(response);
             if (data.error) {
-                qtyInput.html('<b style="color: orange;">No Data</b>');
-                incrementButton.prop('disabled', true);
+                //qtyValueNum.prop('disabled', true);
+                //incrementButton.prop('disabled', true);
             }
 
 
@@ -465,7 +467,8 @@ function updateQuantityInput() {
 
 
             if (stockQuantity > 0 || productQTY == 0) {
-                qtyInput.text(1);
+                qtyValueNum.prop('readonly', false);
+
                 incrementButton.prop('disabled', false);
 
                 //var totalPrice = (stockQuantity * productCost).toFixed(2);
@@ -477,13 +480,13 @@ function updateQuantityInput() {
                 $('#selectedProductCost').val(productCost);
                 $('#product_id').val(productID);
                 if (stockQuantity > 0) {
-                    $('#total_price').val(totalPrice);
+                    $('#total_price').val(totalPrice * parseInt($('#qtyValueNum').val()));
                     $('#currentQTY').val(stockQuantity);
-                    $('#totalQTY').val(stockQuantity + parseInt($('#qtyValue').text()));
+                    $('#totalQTY').val(stockQuantity + parseInt($('#qtyValueNum').val()));
                 } else {
                     $('#total_price').val(productCost);
-                    $('#currentQTY').val(0);
-                    $('#totalQTY').val(stockQuantity + parseInt($('#qtyValue').text()));
+                    $('#currentQTY').val();
+                    $('#totalQTY').val(stockQuantity + parseInt($('#qtyValueNum').val()));
 
                 }
             }
@@ -512,41 +515,42 @@ function updateQuantityInput() {
     });
 }
 
+
 var interval; // Variable to store the interval
 
 // Function to decrement quantity value
-function decrementQty() {
-    var qtyValue = parseInt($('#qtyValue').text());
-    if (qtyValue > 1) {
-        $('#qtyValue').text(qtyValue - 1);
+/* function decrementQty() {
+    var qtyValueNum = parseInt($('#qtyValueNum').val());
+    if (qtyValueNum > 1) {
+        $('#qtyValueNum').val(qtyValue - 1);
         updateTotalPrice(); // Call updateTotalPrice after decrementing quantity
     }
-}
+} */
 
 // Function to increment quantity value
-function incrementQty() {
-    var qtyValue = parseInt($('#qtyValue').text());
-    $('#qtyValue').text(qtyValue + 1);
+/* function incrementQty() {
+    var qtyValueNum = parseInt($('#qtyValueNum').val());
+    $('#qtyValueNum').val(qtyValue + 1);
     updateTotalPrice(); // Call updateTotalPrice after incrementing quantity
-}
+} */
 
 // Start continuous decrement
-function startDecrement() {
+/* function startDecrement() {
     interval = setInterval(decrementQty, 100);
-}
+} */
 
 // Start continuous increment
-function startIncrement() {
+/* function startIncrement() {
     interval = setInterval(incrementQty, 100);
-}
+} */
 
 // Stop the continuous change
-function stopChange() {
+/* function stopChange() {
     clearInterval(interval);
-}
+} */
 
 // Attach event handlers for increment and decrement buttons
-$(document).ready(function() {
+/* $(document).ready(function() {
     $('#decrementButton').mousedown(startDecrement);
     $('#decrementButton').mouseup(stopChange);
     $('#decrementButton').mouseleave(stopChange); // Also stop when mouse leaves the button
@@ -554,22 +558,22 @@ $(document).ready(function() {
     $('#incrementButton').mousedown(startIncrement);
     $('#incrementButton').mouseup(stopChange);
     $('#incrementButton').mouseleave(stopChange); // Also stop when mouse leaves the button
-});
+}); */
 
 
 
 // Function to update total price
 function updateTotalPrice() {
-    var qtyValue = parseInt($('#qtyValue').text());
+    var qtyValueNum = $('#qtyValueNum').val();
     var productCost = parseFloat($('#selectedProductCost').val().replace(/,/g,
         '')); // Get the product cost and remove commas
 
-    var totalPrice = (qtyValue * productCost).toFixed(2);
+    var totalPrice = (qtyValueNum * productCost).toFixed(2);
     totalPrice = parseFloat(totalPrice).toLocaleString(); // Calculate the total price and format it with commas
 
     $('#total_price').val(totalPrice); // Update the total price element
     var currentQTY = parseInt($('#currentQTY').val() || 0);
-    $('#totalQTY').val(currentQTY + qtyValue);
+    $('#totalQTY').val(currentQTY + qtyValueNum);
 }
 
 
@@ -582,12 +586,12 @@ function submitStockin() {
     var productCost = $('#selectedProductCost').val();
     var productTotal = $('#total_price').val();
     var memo = $('#memo').val();
-    var qtyValue = parseInt($('#qtyValue').text());
+    var qtyValueNum = $('#qtyValueNum').val();
     var date = $('#dateStockIn').val();
     var currentQTY = $('#currentQTY').val();
     var mgCode = $('#mgCodeInput').val();
 
-    let status;
+    let status = '';
 
     if ($('#check_purchased').is(':checked')) {
         status = 1;
@@ -603,7 +607,7 @@ function submitStockin() {
         productCost: productCost,
         productTotal: productTotal,
         memo: memo,
-        qtyValue: qtyValue,
+        qtyValueNum: qtyValueNum,
         date: date,
         status: status,
         currentQTY: currentQTY,
@@ -611,7 +615,7 @@ function submitStockin() {
     };
 
 
-    if (productID != '' && qtyValue != 0) {
+    if (productID != '' && qtyValueNum != 0 && status != '') {
         Swal.fire({
             title: 'Are you sure?',
             text: 'Do you want to submit the form?',
@@ -634,7 +638,7 @@ function submitStockin() {
                             result) => {
                             if (result.isConfirmed) {
                                 window.location.href =
-                                'stock_in_his.php'; // Redirect to stock_in_his.php
+                                    'stock_in_his.php'; // Redirect to stock_in_his.php
                             }
                         });
                     },
@@ -649,10 +653,10 @@ function submitStockin() {
                 console.log('cancel')
             }
         });
-    } else if (qtyValue == '') {
+    } else if (qtyValueNum == '') {
         Swal.fire({
             title: 'ERROR',
-            text: 'Please stock in or add QTY of product',
+            text: 'Please select stock in or add QTY of product',
             icon: 'error',
             confirmButtonColor: '#3085d6',
             confirmButtonText: 'OK'

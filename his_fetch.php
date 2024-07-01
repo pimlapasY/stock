@@ -1,6 +1,9 @@
 <?php
 // Include database connection
 include 'connect.php';
+// Variables for pagination
+$rowsPerPage = 10; // Number of rows per page
+$current_page = isset($_POST['page']) ? (int)$_POST['page'] : 1; // Current page number, default is 1
 
 // Check if store is set
 if(isset($_POST['store'])) {
@@ -11,34 +14,46 @@ if(isset($_POST['store'])) {
         // Set the PDO error mode to exception
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
+        $offset = ($current_page - 1) * $rowsPerPage; // Calculate offset
+
         // Prepare SQL statement based on store
         if($store == 'samt') {
-            $stmt = $pdo->prepare("SELECT o.*, p.*, pr.*
+            $stmt = $pdo->prepare("SELECT SQL_CALC_FOUND_ROWS o.*, p.*, pr.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
                                     LEFT JOIN pr ON o.o_mg_code = pr.pr_mg_code
                                    WHERE o.o_reasons NOT LIKE '%sale,2%'
-                                   ORDER BY o.o_mg_code DESC");
+                                   ORDER BY o.o_mg_code DESC LIMIT :rowsPerPage OFFSET :offset");
         } elseif($store == 'sakaba') {
-            $stmt = $pdo->prepare("SELECT o.*, p.*, pr.*
+            $stmt = $pdo->prepare("SELECT SQL_CALC_FOUND_ROWS o.*, p.*, pr.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
                                     LEFT JOIN pr ON o.o_mg_code = pr.pr_mg_code
                                    WHERE o.o_reasons LIKE '%sale,2%'
-                                   ORDER BY o.o_mg_code DESC");
+                                   ORDER BY o.o_mg_code DESC LIMIT :rowsPerPage OFFSET :offset");
         } else {
-            $stmt = $pdo->prepare("SELECT o.*, p.*, pr.*
+            $stmt = $pdo->prepare("SELECT SQL_CALC_FOUND_ROWS o.*, p.*, pr.*
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
                                     LEFT JOIN pr ON o.o_mg_code = pr.pr_mg_code
-                                   ORDER BY o.o_mg_code DESC");
+                                   ORDER BY o.o_mg_code DESC LIMIT :rowsPerPage OFFSET :offset");
         }
 
+        $stmt->bindParam(':rowsPerPage', $rowsPerPage, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
         // Execute the statement
         $stmt->execute();
 
         // Fetch all rows as an associative array
         $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        
+        // Get total rows
+        $total_rows = $pdo->query("SELECT FOUND_ROWS()")->fetchColumn();
+
+        // Start output buffering
+        ob_start();
+        
 
         // Output the table rows
         foreach ($products as $index => $product) {
@@ -109,6 +124,17 @@ if(isset($_POST['store'])) {
             echo "<td class='text-center'>" . $product['o_memo'] . "</td>";
             echo "</tr>";
         }
+         // Capture table rows
+         $tableRows = ob_get_clean();
+
+         // Calculate total pages
+         $total_pages = ceil($total_rows / $rowsPerPage);
+ 
+         // Output the table rows and pagination links as JSON
+         echo json_encode([
+             'tableRows' => $tableRows,
+             'pagination' => $total_pages
+         ]);
 
     } catch(PDOException $e) {
         // If an error occurs, output it

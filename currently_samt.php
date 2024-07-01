@@ -162,8 +162,8 @@ th {
                     $currentDate = date('Y-m-d');
                     ?>
                 <div class="modal-body">
-                    <label for="returnDate">Date: </label>
-                    <input id="returnDate" type="date" class="form-control w-50"
+                    <label for="newDate">Date: </label>
+                    <input id="newDate" type="date" class="form-control w-50 ms-1"
                         value="<?php echo $currentDate; ?>"><br>
                     <label for="memo">Memo: </label>
                     <textarea id="memo" class="form-control w-50" placeholder="memo"></textarea>
@@ -237,7 +237,7 @@ th {
             });
 
             var memo = $('#memo').val();
-            var returnDate = $('#returnDate').val();
+            var newDate = $('#newDate').val();
 
 
             // Send an AJAX request to insert data into the stockin table
@@ -247,7 +247,7 @@ th {
                 data: {
                     ids: selectedIds,
                     memo: memo,
-                    returnDate: returnDate
+                    returnDate: newDate
                 }, // Send the selectedIds array with the key 'ids'
                 success: function(response) {
                     Swal.fire({
@@ -279,7 +279,55 @@ th {
             });
         });
 
+        $('#makePR').click(function() {
+            // Collect selected IDs
+            var selectedIds = [];
+            $('input[name="selected_ids[]"]:checked').each(function() {
+                selectedIds.push($(this).val());
+            });
 
+            var memo = $('#memo').val();
+            var newDate = $('#newDate').val();
+
+
+            // Send an AJAX request to insert data into the stockin table
+            $.ajax({
+                url: 'currently_pr.php', // Update the URL to your PHP script
+                type: 'POST',
+                data: {
+                    ids: selectedIds,
+                    memo: memo,
+                    prDate: newDate
+                }, // Send the selectedIds array with the key 'ids'
+                success: function(response) {
+                    Swal.fire({
+                        title: 'PR Create!',
+                        text: 'PR has been create successfully.',
+                        icon: 'success',
+                        showCancelButton: true,
+                        confirmButtonText: 'OK',
+                        cancelButtonText: 'Go to PR page...',
+                        confirmButtonColor: 'gray', // Custom color for confirm button
+                        cancelButtonColor: '#8AD4D9' // Custom color for cancel button
+                    }).then((result) => {
+                        // If user clicks "Move to Other Page" button
+                        if (!result.isConfirmed) {
+                            // Redirect to other page
+                            window.location.href = 'pr_management.php';
+                        } else {
+                            location.reload();
+                        }
+                    });
+                    // Handle the success response
+                    console.log(response); // Log the response
+                    // You can add further actions here if needed, such as displaying a success message or updating the UI
+                },
+                error: function() {
+                    // Handle the error
+                    alert('Error inserting data into stockin table. Please try again.');
+                }
+            });
+        });
 
 
         $('#previewPRSelectedBtn').click(function() {
@@ -417,6 +465,8 @@ function updateData() {
 
 <script>
 $(document).ready(function() {
+
+
     // Function to load data based on button clicked
     function loadData(reasons = null) {
         // Define the URL for the AJAX request
