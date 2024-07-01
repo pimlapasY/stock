@@ -18,24 +18,31 @@
                 ?>
             </h1>
         </div>
-        <div class="d-flex justify-content-start p-4">
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link tab" href="#" id="productTab" style="font-size: 20px;">
-                        <i class="fa-solid fa-box fa-lg"></i> All Store
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link tab" href="#" id="samtTab" style="font-size: 20px;">
-                        <i class="fa-solid fa-store fa-lg"></i> SAMT Store
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link tab" href="#" id="sakabaTab" style="font-size: 20px;">
-                        <i class="fa-solid fa-store fa-lg"></i> SAKABA Store
-                    </a>
-                </li>
-            </ul>
+        <div class="d-flex justify-content-between">
+            <div class="d-flex justify-content-start">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="productTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-box fa-lg"></i> All Store
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="samtTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-store fa-lg"></i> SAMT Store
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="sakabaTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-store fa-lg"></i> SAKABA Store
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="d-flex justify-content-end">
+                <ul id="pagination" class="pagination">
+                    <!-- Pagination links will be loaded here by AJAX -->
+                </ul>
+            </div>
         </div>
         <table class="table table-hover mx-auto">
             <thead class="text-center table-secondary" style="text-transform: uppercase;">
@@ -61,30 +68,50 @@
                 <!-- Data will be loaded here via AJAX -->
             </tbody>
         </table>
+
     </div>
 
     <script>
     $(document).ready(function() {
-        // Function to load data based on button clicked
-        function loadData(store = null) {
-            // Define the URL for the AJAX request
+        function loadData(store = null, currentPage = 1) {
             var url = "his_fetch.php";
-            // Define the data to be sent
             var data = {
-                store: store
+                store: store,
+                page: currentPage
             };
-            // Perform an AJAX request
+
             $.ajax({
                 type: "POST",
                 url: url,
                 data: data,
                 success: function(response) {
-                    // Replace the content of dataTable with the new data
-                    $('#dataTable').html(response);
+                    var result = JSON.parse(response);
+                    if (result.error) {
+                        alert(result.error);
+                    } else {
+                        $('#dataTable').html(result.tableRows);
+                        updatePagination(result.totalPages, currentPage, store);
+                    }
                 }
             });
         }
 
+        function updatePagination(totalPages, currentPage, store) {
+            var pagination = '';
+            for (var i = 1; i <= totalPages; i++) {
+                pagination += "<li class='page-item " + (currentPage == i ? 'active' : '') +
+                    "'><a class='page-link' href='#' data-page='" + i + "' data-store='" + store + "'>" + i +
+                    "</a></li>";
+            }
+            $('#pagination').html(pagination);
+        }
+
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            var page = $(this).data('page');
+            var store = $(this).data('store');
+            loadData(store, page);
+        });
 
         // Function to handle tab click events
         function handleTabClick(tabId, store) {

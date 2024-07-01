@@ -28,24 +28,32 @@
                 ?>
             </h1>
         </div>
-        <div class="d-flex justify-content-start p-4">
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link tab" href="#" id="productTab" style="font-size: 20px;">
-                        <i class="fa-solid fa-box fa-lg"></i> All Store
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link tab" href="#" id="samtTab" style="font-size: 20px;">
-                        <i class="fa-solid fa-store fa-lg"></i> SAMT Store
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link tab" href="#" id="sakabaTab" style="font-size: 20px;">
-                        <i class="fa-solid fa-store fa-lg"></i> SAKABA Store
-                    </a>
-                </li>
-            </ul>
+        <div class="d-flex justify-content-between">
+
+            <div class="d-flex justify-content-start">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="productTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-box fa-lg"></i> All Store
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="samtTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-store fa-lg"></i> SAMT Store
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="sakabaTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-store fa-lg"></i> SAKABA Store
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="d-flex justify-content-end">
+                <ul id="pagination" class="pagination">
+                    <!-- Pagination links will be loaded here by AJAX -->
+                </ul>
+            </div>
         </div>
         <table class="table table-hover mx-auto">
             <thead class="text-center table-secondary" style="text-transform: uppercase;">
@@ -71,13 +79,11 @@
                 <!-- Data will be loaded here via AJAX -->
             </tbody>
         </table>
-        <ul id="pagination" class="pagination">
-            <!-- Pagination links will be loaded here by AJAX -->
-        </ul>
 
     </div>
     <script>
     $(document).ready(function() {
+
         function loadData(store = null, currentPage = 1) {
             var url = "his_fetch.php";
             var data = {
@@ -95,17 +101,18 @@
                         alert(result.error);
                     } else {
                         $('#dataTable').html(result.tableRows);
-                        updatePagination(result.pagination, currentPage);
+                        updatePagination(result.totalPages, currentPage, store);
                     }
                 }
             });
         }
 
-        function updatePagination(totalPages, currentPage) {
+        function updatePagination(totalPages, currentPage, store) {
             var pagination = '';
             for (var i = 1; i <= totalPages; i++) {
                 pagination += "<li class='page-item " + (currentPage == i ? 'active' : '') +
-                    "'><a class='page-link' href='#' data-page='" + i + "'>" + i + "</a></li>";
+                    "'><a class='page-link' href='#' data-page='" + i + "' data-store='" + store + "'>" + i +
+                    "</a></li>";
             }
             $('#pagination').html(pagination);
         }
@@ -113,9 +120,10 @@
         $(document).on('click', '.page-link', function(e) {
             e.preventDefault();
             var page = $(this).data('page');
-            var activeTab = $('.tab.active').data('store');
-            loadData(activeTab, page);
+            var store = $(this).data('store');
+            loadData(store, page);
         });
+
 
         function handleTabClick(tabId, store = null) {
             $('.tab').removeClass('active');
