@@ -29,7 +29,7 @@ if (isset($_POST['pr_code'])) {
 
         // ตรวจสอบผลลัพธ์
         if ($id) {
-            echo "ID PRODUCT: " . $id;
+            //echo "ID PRODUCT: " . $id;
 
            
             // Prepare SQL statement for updating pr_exchange using PDO

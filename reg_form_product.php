@@ -95,16 +95,16 @@ th {
     <form id="registerForm" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
         <table class="table table-borderless table-hover" style="width: 700px;">
             <tr>
-                <th>Product Code</th>
+                <th>Product Code:</th>
                 <td>
                     <input class="form-control" name="p_product_code" required />
                 </td>
             </tr>
             <tr>
-                <th>Collection</th>
+                <th>Collection:</th>
                 <td>
                     <select class="form-select" name="p_collection">
-                        <option selected></option>
+                        <option selected disabled>choose...</option>
                         <option value="it">IT</option>
                         <option value="sport">Sport</option>
                         <option value="home">Home</option>
@@ -113,66 +113,66 @@ th {
                 </td>
             </tr>
             <tr>
-                <th>Product Name</th>
+                <th>Product Name:</th>
                 <td>
                     <input class="form-control" name="p_product_name" required />
                 </td>
             </tr>
             <tr>
-                <th>Hands</th>
+                <th>Hands:</th>
                 <td>
                     <input class="form-control" name="p_hands" required />
                 </td>
             </tr>
             <tr>
-                <th>Color</th>
+                <th>Color:</th>
                 <td>
                     <input class="form-control" name="p_color" required />
                 </td>
             </tr>
             <tr>
-                <th>Size</th>
+                <th>Size:</th>
                 <td>
                     <input class="form-control" name="p_size" required />
                 </td>
             </tr>
             <tr>
-                <th>Unit</th>
+                <th>Unit:</th>
                 <td>
                     <input class="form-control" name="p_unit" required />
                 </td>
             </tr>
             <tr>
-                <th>Cost Price</th>
+                <th>Cost Price:</th>
                 <td>
                     <input type="number" min="1" class="form-control" name="p_cost_price" required />
                 </td>
             </tr>
             <tr>
-                <th>Sale Price</th>
+                <th>Sale Price:</th>
                 <td>
                     <input type="number" min="1" class="form-control" name="p_sale_price" required />
                 </td>
             </tr>
             <tr>
-                <th>Holding location</th>
+                <th>Holding location:</th>
                 <td>
                     <input class="form-control" value="SAMT" disabled />
                 </td>
             </tr>
             <tr>
-                <th>Supplier</th>
+                <th>Supplier:</th>
                 <td>
-                    <input class="form-control" type="text" id="supplier" name="supplier_name" list="new_supplier_name">
-                    <datalist id="new_supplier_name">
+                    <select class="form-select" id="supplier" name="supplier_name" required>
+                        <option value="" disabled selected>Select a supplier</option>
                         <?php foreach ($supplier as $supplier_name): ?>
-                        <option value="<?php echo $supplier_name; ?>">
-                            <?php endforeach; ?>
-                    </datalist>
+                        <option value="<?php echo $supplier_name; ?>"><?php echo $supplier_name; ?></option>
+                        <?php endforeach; ?>
+                    </select>
                 </td>
             </tr>
             <tr>
-                <th>Memo</th>
+                <th>Memo:</th>
                 <td>
                     <textarea type="text" class="form-control" name="memo" placeholder="Note"></textarea>
                 </td>

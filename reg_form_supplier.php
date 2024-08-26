@@ -5,8 +5,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>REGISTER</title>
-    <script src="js/sweetalert2.all.min.js"></script>
-    <script src="js/jquery-3.6.0.min.js"></script>
     <script>
     // Function to show confirmation dialog and submit form via AJAX
     function confirmSubmit() {
@@ -68,30 +66,31 @@
 
 <body>
     <form id="registerSupForm" method="POST">
+        <input type="hidden" name="form_type" value="registerSupForm">
         <table class="table table-borderless table-hover" style="width: 700px;">
             <tr>
-                <th>Name</th>
+                <th>Name:</th>
                 <td><input type="text" class="form-control" name="sup_name" /></td>
             </tr>
             <tr>
-                <th>Address</th>
+                <th>Address:</th>
                 <td><input type="address" class="form-control" name="sup_addr" /></td>
             </tr>
             <tr>
-                <th>Tel</th>
+                <th>Tel:</th>
                 <td><input type="phone" class="form-control" name="sup_tel" /></td>
             </tr>
             <tr>
-                <th>Email</th>
+                <th>Email:</th>
                 <td><input type="email" class="form-control" placeholder="example@mail.com" name="sup_email" required />
                 </td>
             </tr>
             <tr>
-                <th>Mainly product</th>
+                <th>Mainly product:</th>
                 <td><input type="text" class="form-control" name="sup_main_product" /></td>
             </tr>
             <tr>
-                <th>Memo</th>
+                <th>Memo:</th>
                 <td><textarea class="form-control" name="sup_memo"></textarea></td>
             </tr>
             <tr>

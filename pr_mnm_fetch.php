@@ -41,19 +41,21 @@ if (isset($_POST['store'])) {
             $stmt->execute();
         }
 
-        $sql = "SELECT o.*, p.*, pr.*
+        $sql = "SELECT o.*, p.*, pr.*, store.*
                 FROM pr
                 LEFT JOIN product p ON pr.pr_product_id = p.p_product_id
-                LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code";
+                LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code
+                LEFT JOIN store ON o.o_store = store.st_id
+                ";
 
         // Adding conditions based on payment status
         if ($payment == 0) {
             if ($store == 'all') {
                 $sql .= " WHERE (o.o_payment IS NOT NULL OR o.o_payment IS NULL)";
             } elseif ($store == 'samt') {
-                $sql .= " WHERE o.o_reasons NOT LIKE '%sale,2%'";
+                $sql .= " WHERE o.o_store = '1'";
             } elseif ($store == 'sakaba') {
-                $sql .= " WHERE o.o_reasons LIKE '%sale,2%'";
+                $sql .= " WHERE o.o_store != '1'";
             } else {
                 $sql .= " WHERE (o.o_payment IS NOT NULL OR o.o_payment IS NULL)";
             }
@@ -61,9 +63,9 @@ if (isset($_POST['store'])) {
             if ($store == 'all') {
                 $sql .= " WHERE (o.o_payment = 2 OR o.o_payment IS NULL)";
             } elseif ($store == 'samt') {
-                $sql .= " WHERE o.o_reasons NOT LIKE '%sale,2%' AND (o.o_payment = 2 OR o.o_payment IS NULL)";
+                $sql .= " WHERE o.o_store = '1' AND (o.o_payment = 2 OR o.o_payment IS NULL)";
             } elseif ($store == 'sakaba') {
-                $sql .= " WHERE o.o_reasons LIKE '%sale,2%' AND (o.o_payment = 2 OR o.o_payment IS NULL)";
+                $sql .= " WHERE o.o_store != '1' AND (o.o_payment = 2 OR o.o_payment IS NULL)";
             } else {
                 $sql .= " WHERE (o.o_payment = 2 OR o.o_payment IS NULL)";
             }
@@ -71,9 +73,9 @@ if (isset($_POST['store'])) {
             if ($store == 'all') {
                 $sql .= " WHERE o.o_payment = 1";
             } elseif ($store == 'samt') {
-                $sql .= " WHERE o.o_reasons NOT LIKE '%sale,2%' AND o.o_payment = 1";
+                $sql .= " WHERE o.o_store = '1' AND o.o_payment = 1";
             } elseif ($store == 'sakaba') {
-                $sql .= " WHERE o.o_reasons LIKE '%sale,2%' AND o.o_payment = 1";
+                $sql .= " WHERE o.o_store != '1' AND o.o_payment = 1";
             } else {
                 $sql .= " WHERE o.o_payment = 1";
             }
@@ -134,6 +136,12 @@ if (isset($_POST['store'])) {
                     echo '<tr class="table-secondary" id="exchangeID' . $product['pr_code'] . '" hidden>';
                 }
 
+                if ($product['pr_exchange'] == null) {
+                    echo '<td class="text-center"><input class="select-checkbox form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['pr_id'] . '"></td>';
+                } else {
+                    echo '<td></td>';
+                }
+
                 if ($product['pr_status'] == null && $product['pr_exchange'] == null) {
                     echo '<td>
                     <a class="btn btn-outline-secondary btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_id'] . '\')">'
@@ -156,7 +164,7 @@ if (isset($_POST['store'])) {
                         '</a></td>';
                 }
 
-                echo '<td>' . ($data_reasons[1] == '2' ? 'SAKABA' : 'SAMT') . '</td>';
+                echo '<td>' . $product['st_name']  . '</td>';
                 echo '<td>' . $product['pr_mg_code'] . '</td>';
                 echo '<td>' . $product['p_product_name'] . '</td>';
                 echo '<td>' . $product['p_size'] . '</td>';
@@ -164,24 +172,23 @@ if (isset($_POST['store'])) {
                 echo '<td>' . $product['p_hands'] . '</td>';
                 echo '<td class="text-center bg-success-subtle">' . $product['pr_qty'] . '</td>';
                 echo '<td>' . $product['o_out_date'] . '</td>';
-                echo '<td>' . $data_reasons[3] . '</td>';
+                echo '<td>' . $data_reasons[2] . '</td>';
                 echo "<td class='text-center'>";
 
-                if ($data_reasons[2] == 1) {
-                    echo '<i class="fa-solid fa-money-bill" style="color: green;"></i><br>cash';
-                } elseif ($data_reasons[2] == 2) {
-                    echo "<i class='fa-solid fa-qrcode' style='color: blue;'></i><br>QR";
-                } elseif ($data_reasons[2] == 3) {
-                    echo "<i class='fa-solid fa-cart-shopping' style='color: orange;'></i><br>shopify";
-                } elseif ($data_reasons[0] == 'out to') {
-                    //empty
+                if ($data_reasons[1] == 1) {
+                    echo '<span class="badge badge-success rounded-pill d-inline">cash</span>';
+                } elseif ($data_reasons[1] == 2) {
+                    echo  '<span class="badge badge-primary rounded-pill d-inline">QR</span>';
+                } elseif ($data_reasons[1] == 3) {
+                    echo  '<span class="badge badge-warning rounded-pill d-inline">shopify</span>';
                 } else {
-                    echo "<p style='color: red;'>FREE</p>"; // Default case
-                }
+                   echo  '<span class="badge badge-danger rounded-pill d-inline">sale sample</span>';
+    
+               }
                 echo "</td>";
                 echo '<td class="text-center">';
 
-                if ($data_reasons[0] == 'out to') {
+                if ($data_reasons[0] == 'out to' || $product['pr_mg_code'] == null) {
                     // Do nothing or handle the case where $data_reasons[0] is 'out to'
                 } elseif ($product['o_payment'] == 1) {
                     echo '<a class="btn btn-success btn-sm btn-floating update-payment" onclick="updatePayment(\'' . $product['o_mg_code'] . '\', ' . $product['o_payment'] . ')"><i class="fa-solid fa-check"></i></a>';
@@ -208,12 +215,6 @@ if (isset($_POST['store'])) {
                     echo "<td class='text-center text-warning'>*delivered*</td>";
                 } else {
                     echo "<td class='text-center text-secondary'>PR pending</td>";
-                }
-
-                if ($product['pr_exchange'] == null) {
-                    echo '<td class="text-center"><input class="select-checkbox form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['o_mg_code'] . '"></td>';
-                } else {
-                    echo '<td></td>';
                 }
 
                 if ($product['pr_memo'] === 'Exchange' && $product['pr_exchange'] == null) {

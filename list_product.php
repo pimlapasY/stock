@@ -18,9 +18,10 @@
 <body>
     <div class="d-flex justify-content-end m-3">
         <a href="register.php" class="btn btn-success"><i class="fa-solid fa-plus"></i> NEW</a>&nbsp;
-        <button type="button" class="btn btn-primary" onclick="openPreviewModal()"><i class="fa-solid fa-inbox"></i>
+        <button type="button" class="btn btn-outline-primary" onclick="openPreviewModal()"><i
+                class="fa-solid fa-inbox"></i>
             Stock in</button>&nbsp;
-        <button class="btn btn-info"><i class="fa-solid fa-clipboard-list"></i> add PR</button>
+        <button class="btn btn-outline-info" disabled><i class="fa-solid fa-clipboard-list"></i> add PR</button>
     </div>
 
     <table class="table table-bordered table-hover mx-auto" style="width: 100%;">

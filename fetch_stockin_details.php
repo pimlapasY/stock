@@ -68,7 +68,7 @@ if (isset($_POST['i_no'])) {
             $total_price += ($product['p_cost_price']*$product['i_qty']);
             echo "<tr class='text-center'>";
             //echo "<td>" . htmlspecialchars($product['i_product_id']) . "</td>";
-            echo "<td>" . htmlspecialchars($product['i_product_code']) . "</td>";
+            echo "<td>" . htmlspecialchars($product['p_product_code']) . "</td>";
             echo "<td>" . htmlspecialchars($product['p_product_name']) . "</td>";
             echo "<td>" . htmlspecialchars($product['p_color']) . "</td>";
             echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";

@@ -2,8 +2,6 @@
 // Include database connection
 include 'connect.php';
 
-
-
 // Check if reasons is set
 if(isset($_POST['reasons'])) {
     // Get reasons value
@@ -16,17 +14,19 @@ if(isset($_POST['reasons'])) {
 
         // Prepare SQL statement based on reasons
         if($reasons == 'sale') {
-            $stmt = $pdo->prepare("SELECT o.*, p.*
+            $stmt = $pdo->prepare("SELECT o.*, p.*, store.st_name, store.st_id
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
-                                   WHERE o.o_return IS NULL AND o_pr_code IS NULL AND (o.o_reasons LIKE '%sale%' AND o.o_reasons NOT LIKE '%sale sample%')
-                                   ORDER BY o_reasons, o.o_mg_code DESC");
+                                   LEFT JOIN store ON store.st_id = o.o_store
+                                   WHERE o.o_return IS NULL AND o.o_pr_code IS NULL AND (o.o_reasons LIKE '%sale%' AND o.o_reasons NOT LIKE '%sale sample%')
+                                   ORDER BY o.o_mg_code DESC");
         } else {
-            $stmt = $pdo->prepare("SELECT o.*, p.*
+            $stmt = $pdo->prepare("SELECT o.*, p.*, store.st_name, store.st_id
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
-                                   WHERE o.o_return IS NULL AND o_pr_code IS NULL AND o.o_reasons NOT LIKE '%out to%'
-                                   ORDER BY o_reasons, o.o_mg_code DESC");
+                                   LEFT JOIN store ON store.st_id = o.o_store
+                                   WHERE o.o_return IS NULL AND o.o_pr_code IS NULL AND o.o_reasons NOT LIKE '%out to%'
+                                   ORDER BY o.o_mg_code DESC");
         }
 
         // Execute the statement
@@ -42,33 +42,38 @@ if(isset($_POST['reasons'])) {
                 $data_reasons = explode(",", $product['o_reasons']);
 
              echo "<tr data-id='" . htmlspecialchars($product['o_id']) . "'>";
+             echo '<td class="text-center"><input class="form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['o_mg_code'] . '"></td>';
+
              echo "<td>" . ($index + 1) . "</td>"; // Display No starting from 1
-             echo "<td>" .    
-             ($data_reasons[1] == 1 ? 'SAMT' : 
-             ($data_reasons[1] == 2 ? 'SAKABA' : 'SAMT')) .
-                 "</td>";
+             echo "<td>" . 
+                    (($product['st_id'] == 1) ? '<p class="text-primary">'.$product['st_name'] .'</p>' :  $product['st_name'] ) .
+                   
+                    "</td>";
+
              echo "<td>" . htmlspecialchars($product['o_mg_code']) . "</td>";
              echo "<td>" . htmlspecialchars($product['o_product_code']) . "</td>";
              /* echo "<td>" . htmlspecialchars('Nipponrika') . "</td>"; */
              echo "<td>" . htmlspecialchars($product['p_hands']) . "</td>";
              echo "<td>" . htmlspecialchars($product['p_color']) . "</td>";
              echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";
-             echo "<td class='text-end'>" . $product['o_out_qty'] . "</td>";
+             echo "<td class='text-end text-warning'>" . $product['o_out_qty'] . "</td>";
              echo "<td class='text-end'>" . date('d/m/Y', strtotime($product['o_out_date'])) . "</td>";
-             echo "<td class='text-center'>" . ($data_reasons[3]!= null ? $data_reasons[3] : $data_reasons[0]) . "</td>";
+             echo "<td class='text-center'>" . $data_reasons[2] . "</td>";
+             
              echo "<td class='text-center'>";
-             
-             if ($data_reasons[2] == 1) {
-                 echo '<i class="fa-solid fa-money-bill" style="color: green;"></i><br>cash';
-             } elseif ($data_reasons[2] == 2) {
-                 echo "<i class='fa-solid fa-qrcode' style='color: blue;'></i><br>QR";
-             } elseif ($data_reasons[2] == 3) {
-                 echo "<i class='fa-solid fa-cart-shopping' style='color: orange;''></i><br>shopify";
-             } else {
-                 echo "<p style='color: red;'>FREE</p>"; // กรณีที่ค่าไม่ตรงกับเงื่อนไขที่กำหนด
-             }
-             
+             if ($data_reasons[1] == 1) {
+                echo '<span class="badge badge-success rounded-pill d-inline">cash</span>';
+            } elseif ($data_reasons[1] == 2) {
+                echo  '<span class="badge badge-primary rounded-pill d-inline">QR</span>';
+            } elseif ($data_reasons[1] == 3) {
+                echo  '<span class="badge badge-warning rounded-pill d-inline">shopify</span>';
+            } else {
+               echo  '<span class="badge badge-danger rounded-pill d-inline">sale sample</span>';
+
+           }
+            
              echo "</td>";  
+             
              if($product['o_payment'] == 2 || $product['o_payment'] == null){
                 echo "<td class='text-center'>" . '<a class="btn btn-outline-secondary btn-sm btn-floating"><i class="fa-solid fa-hourglass-half"></i></a>' . "</td>";
              }else if($product['o_payment'] == 1){
@@ -80,16 +85,14 @@ if(isset($_POST['reasons'])) {
                 echo "<td class='text-center'>" . '<a class="btn btn-primary btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
              }
              /* echo "<td class='text-center' style='text-transform: uppercase; background:#FCF3CF;'>" . $data_reasons[0] . "</td>"; */
-             echo "<td class='text-center' style='color:".($product['o_pr_code'] !== null ? 'green;' : 'red;')."'>" . ($product['o_pr_code'] !== null ? 'issued' : 'un issue') . "</td>";
+             echo "<td class='text-center'><span class='badge ".($product['o_pr_code'] !== null ? 'badge-success' : 'badge-secondary')."'>" . ($product['o_pr_code'] !== null ? 'issued' : 'pending') . "</span></td>";
              /* echo "<td class='text-center' style='background:#FCF3CF;'>" . '' . "</td>"; */
             
-            
              echo "<td class='text-center'>" . 
-             '<button class="btn btn-warning btn-sm edit-btn" data-id="' . $product['o_id'] . '" data-mg-code="' . $product['o_mg_code'] . '" data-payment="' . $product['o_payment'] . '" data-delivery="' . $product['o_delivery'] . '" onclick="showModal(' . $product['o_id'] . ', \'' . $product['o_mg_code'] . '\', \'' . $product['o_payment'] . '\', \'' . $product['o_delivery'] . '\')">
+             '<button class="btn btn-outline-warning btn-sm edit-btn" data-id="' . $product['o_id'] . '" data-mg-code="' . $product['o_mg_code'] . '" data-payment="' . $product['o_payment'] . '" data-delivery="' . $product['o_delivery'] . '" onclick="showModal(' . $product['o_id'] . ', \'' . $product['o_mg_code'] . '\', \'' . $product['o_payment'] . '\', \'' . $product['o_delivery'] . '\')">
                  <i class="fa-solid fa-gear"></i>
              </button>' . 
                 "</td>";
-            echo '<td class="text-center"><input class="form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['o_mg_code'] . '"></td>';
             echo "<td class='text-center'>" . $product['o_memo'] . "</td>";
             echo "</tr>";
                 

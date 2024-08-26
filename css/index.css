@@ -2,11 +2,10 @@
     font-family: "Inter", sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
+    
 }
 
-th {
-    font-weight: bold !important;
-}
+
 
 .uppercase {
     text-transform: uppercase;
@@ -15,7 +14,17 @@ th {
 .text-uppercase-first {
     text-transform: capitalize;
 }
+@media (min-width: 768px) and (max-width: 1199.98px) {
+    .container {
+      width: 90%;
+    }
+  }
 
-body {
-    margin-top: 150px !important;
+@keyframes slideIn {
+    0% {
+      transform: translateY(-10px); /* เลื่อนขึ้นขึ้นเล็กน้อยที่สุด */
+      opacity: 0.8;
+    }
+    100% {
+    }
 }

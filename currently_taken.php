@@ -1,4 +1,3 @@
-<?php include('navbar.php') ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,27 +22,106 @@ th {
 .modal-body {
     overflow-y: auto;
 }
-
-.custom-modal-size {
-    max-width: 70%;
-    /* Adjust the width as needed */
-}
-
-.table-responsive {
-    overflow-x: auto;
-}
-
-@media (max-width: 576px) {
-    .table-responsive {
-        overflow-x: auto;
-    }
-}
 </style>
 
 <body>
+    <div class="d-flex flex-wrap">
+        <?php include('navbar.php') ?>
+        <div class="container pt-5 col-10">
+            <h1><i class="fa-solid fa-database fa-xl"></i> Currently Taken</h1><br>
+            <div class="d-flex justify-content-between">
+                <div class="btn-group mb-2">
+                    <input type="radio" class="btn-check" name="options" id="allBtn" autocomplete="off" checked />
+                    <label class="btn btn-secondary" for="allBtn">
+                        <i class="fa-solid fa-bars"></i> All
+                    </label>
+
+                    <input type="radio" class="btn-check" name="options" id="partSaleBtn" autocomplete="off" />
+                    <label class="btn btn-secondary" for="partSaleBtn">
+                        <i class="fa-solid fa-file-invoice-dollar"></i> Part Sale
+                    </label>
+                </div>
+
+                <div class="mb-2">
+                    <a href="#" id="previewPRSelectedBtn" class="btn btn-outline-info rounded-8"><i
+                            class="fa-solid fa-file-lines"></i> PR
+                        create</a>
+                    <a href="#" id="previewReturnedSelectedBtn" class="btn btn-outline-warning rounded-8"><i
+                            class="fa-solid fa-right-left"></i> Returned</a>
+                    <a href="his_all.php" class="btn btn-success rounded-8"><i
+                            class="fa-solid fa-file-circle-check"></i>
+                        Completed</a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mx-auto table-sm">
+                    <thead class="text-center table-secondary" style="text-transform: uppercase;">
+                        <th><?php echo $select; ?></th>
+                        <th>#</th>
+                        <th><?php echo $store; ?></th>
+                        <th><?php echo $code; ?></th>
+                        <!-- <th>Stock out</th> -->
+                        <th><?php echo $product; ?></th>
+                        <!-- <th>Receipt date</th> -->
+                        <!-- <th>Supplier</th> -->
+                        <th><?php echo $size; ?></th>
+                        <th><?php echo $color; ?></th>
+                        <th><?php echo $hand; ?></th>
+                        <th><?php echo $qty; ?></th>
+                        <th><?php echo $soldDate; ?></th>
+                        <th><?php echo $customer; ?></th>
+                        <th><?php echo $paidBy; ?></th>
+                        <th><?php echo $payment; ?></th>
+                        <th><?php echo $delivery; ?></th>
+                        <th><?php echo $prPo; ?></th>
+                        <!-- <th>PO status</th> -->
+                        <th><?php echo $update; ?></th>
+                        <th><?php echo $memo; ?></th>
+                    </thead>
+                    <tbody id="dataTable" class="table-group-divider table-divider-color">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <!------------------------ Preview Modal -------------------------------------------------------------------->
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+        <div class="modal-dialog mx-auto modal-xl">
+            <div class="modal-content">
+                <div class="modal-header text-center" id="previewModalHeader">
+                    <h5 class="modal-title" id="previewModalLabel">Preview Selected Items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <?php
+                    // กำหนดวันที่ปัจจุบันในรูปแบบ 'Y-m-d'
+                    $currentDate = date('Y-m-d');
+                    ?>
+                <div class="modal-body m-3">
+                    <label for="newDate">Date: </label>
+                    <input id="newDate" type="date" class="form-control w-50 ms-1"
+                        value="<?php echo $currentDate; ?>"><br>
+                    <label for="memo">Memo: </label>
+                    <textarea id="memo" class="form-control w-50 ms-1" placeholder="memo"></textarea>
+                </div>
+                <div class="modal-body m-3" id="previewModalBody">
+                    <!-- Details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-info" id="makePR" hidden>PR CREATE</button>
+                    <button type="button" class="btn btn-warning" id="returnButton" hidden>RETURN</button>
+                    <div class="spinner-border" role="status" hidden>
+                        <span class="visually-hidden">Loading...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- ------------------------------------------------------------------------------- -->
     <!-- Bootstrap Modal -->
     <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered ">
             <div class="modal-content">
                 <div class="modal-header" style="background-color: wheat;">
                     <h5 class="modal-title" id="updateModalLabel"><i class="fa-solid fa-pen-to-square fa-lg"></i>
@@ -97,84 +175,7 @@ th {
             </div>
         </div>
     </div>
-
-
-    <div class="container-fluid">
-        <h1><i class="fa-solid fa-database fa-xl"></i> Currently Taken</h1><br>
-        <div class="d-flex justify-content-between">
-            <div class="mb-2">
-                <a href="#" class="btn btn-primary" id="allBtn"><i class="fa-solid fa-bars"></i> All</a>
-                <a href="#" class="btn btn-danger" id="partSaleBtn"><i class="fa-solid fa-file-invoice-dollar"></i> Part
-                    Sale</a>
-            </div>
-            <div class="mb-2">
-                <a href="#" id="previewPRSelectedBtn" class="btn btn-info rounded-8"><i
-                        class="fa-solid fa-file-lines"></i> PR
-                    create</a>
-                <a href="#" id="previewReturnedSelectedBtn" class="btn btn-warning rounded-8"><i
-                        class="fa-solid fa-right-left"></i> Returned</a>
-                <a href="his_all.php" class="btn btn-success rounded-8"><i class="fa-solid fa-file-circle-check"></i>
-                    Completed</a>
-            </div>
-        </div>
-        <table class="table table-hover mx-auto">
-            <thead class="text-center table-secondary" style="text-transform: uppercase;">
-                <th>#</th>
-                <th>store</th>
-                <th>CODE</th>
-                <!-- <th>Stock out</th> -->
-                <th>product</th>
-                <!-- <th>Receipt date</th> -->
-                <!-- <th>Supplier</th> -->
-                <th>size</th>
-                <th>color</th>
-                <th>hand</th>
-                <th>qty</th>
-                <th>Sold date</th>
-                <th>customer</th>
-                <th>paid by</th>
-                <th>payment</th>
-                <th>Delivery</th>
-                <th>PR/PO</th>
-                <!-- <th>PO status</th> -->
-                <th>Update</th>
-                <th>select</th>
-                <th>Memo</th>
-            </thead>
-            <tbody id="dataTable" class="table-group-divider table-divider-color">
-            </tbody>
-        </table>
-    </div>
-    <!------------------------ Preview Modal -------------------------------------------------------------------->
-    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-        <div class="modal-dialog custom-modal-size mx-auto">
-            <div class="modal-content">
-                <div class="modal-header text-center" id="previewModalHeader">
-                    <h5 class="modal-title" id="previewModalLabel">Preview Selected Items</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <?php
-                    // กำหนดวันที่ปัจจุบันในรูปแบบ 'Y-m-d'
-                    $currentDate = date('Y-m-d');
-                    ?>
-                <div class="modal-body m-3">
-                    <label for="newDate">Date: </label>
-                    <input id="newDate" type="date" class="form-control w-50 ms-1"
-                        value="<?php echo $currentDate; ?>"><br>
-                    <label for="memo">Memo: </label>
-                    <textarea id="memo" class="form-control w-50 ms-1" placeholder="memo"></textarea>
-                </div>
-                <div class="modal-body m-3" id="previewModalBody">
-                    <!-- Details will be populated here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-info" id="makePR" hidden>PR CREATE</button>
-                    <button type="button" class="btn btn-warning" id="returnButton" hidden>RETURN</button>
-                </div>
-            </div>
-        </div>
-    </div>
+    <!-- ------------------------------------------------------------------------------------------------------------------------------- -->
     <script>
     $(document).ready(function() {
         // Other code...
@@ -196,8 +197,8 @@ th {
                         ids: selectedIds
                     },
                     success: function(response) {
-                        $('#previewModalHeader').removeClass('text-bg-info').addClass(
-                            'text-bg-warning');
+                        $('#previewModalHeader').removeClass('text-info').addClass(
+                            'text-warning');
                         // Populate the modal body with the response
                         $('#previewModalBody').html(response);
 
@@ -234,6 +235,9 @@ th {
             var memo = $('#memo').val();
             var newDate = $('#newDate').val();
 
+            $('.spinner-border').removeAttr('hidden');
+            $('#returnButton').hide();
+            $('#makePR').hide();
 
             // Send an AJAX request to insert data into the stockin table
             $.ajax({
@@ -255,6 +259,8 @@ th {
                         confirmButtonColor: 'gray', // Custom color for confirm button
                         cancelButtonColor: '#8AD4D9' // Custom color for cancel button
                     }).then((result) => {
+                        $('.spinner-border').attr('hidden');
+
                         // If user clicks "Move to Other Page" button
                         if (!result.isConfirmed) {
                             // Redirect to other page
@@ -273,8 +279,6 @@ th {
                 }
             });
         });
-
-
 
         $('#returnButton').click(function() {
             // Collect selected IDs
@@ -347,8 +351,8 @@ th {
                         ids: selectedIds
                     },
                     success: function(response) {
-                        $('#previewModalHeader').removeClass('text-bg-warning').addClass(
-                            'text-bg-info');
+                        $('#previewModalHeader').removeClass('text-warning').addClass(
+                            'text-info');
                         // Populate the modal body with the response
                         $('#previewModalBody').html(response);
                         $('#previewModalLabel').html('Preview Selected Items (PR Create)');
@@ -501,14 +505,12 @@ $(document).ready(function() {
     loadData();
 
     // Event listener for all button
-    $('#allBtn').click(function(e) {
-        e.preventDefault();
+    $('#allBtn').click(function() {
         loadData();
     });
 
     // Event listener for part sale button
-    $('#partSaleBtn').click(function(e) {
-        e.preventDefault();
+    $('#partSaleBtn').click(function() {
         loadData('sale');
     });
 });

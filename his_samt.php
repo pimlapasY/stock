@@ -9,7 +9,6 @@
 </head>
 
 <body>
-    <?php include('navbar.php') ?>
     <div class="container-fluid">
         <div class="d-flex justify-content-start p-2">
             <h1 id="head_list">

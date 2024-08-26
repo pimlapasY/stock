@@ -1,4 +1,3 @@
-<?php include('navbar.php') ;  ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -69,6 +68,7 @@ function validateInput(input) {
 <body>
 
     <?php 
+    include('connect.php');
     // Fetch product names from the database
     $stmt_code = $pdo->query("SELECT DISTINCT p_product_code FROM product");
     $products_code = $stmt_code->fetchAll(PDO::FETCH_COLUMN); 
@@ -83,94 +83,97 @@ function validateInput(input) {
     $productNames_hands = $stmt_hands->fetchAll(PDO::FETCH_COLUMN);   
     
 ?>
-    <div class="container">
-        <div class="card border border-secondary text-center m-5">
-            <div class="card-header ">
-                <table class="table table-borderless">
-                    <tr>
-                        <th class="text-center" colspan="6">
-                            <h3 class="card-title"><button type="button" class="btn btn-secondary btn-lg w-50"
-                                    data-mdb-ripple-init data-mdb-ripple-color="dark">SHIPPO ASAHI MOULDS(THAILAND)
-                                    CO.,LTD.</button>
-                            </h3><br>
-                            <h3 class="card-title" style="text-transform: uppercase;"><?php echo $request ?></h3>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th class="text-start" colspan="3">
-                            <h5><?php echo $mat_goods ?></h5>
-                        </th>
-                        <th class="text-end" colspan="3">
-                            <h5><?php echo "Date: " . date("d-m-y") ;?></h5>
-                        </th>
-                    </tr>
-                    <tr>
-                        <th class="text-start" colspan="6">
-                            <button type="button" class="btn btn-secondary btn-rounded btn-lg" data-mdb-ripple-init>
-                                <?php echo $department. ' : '. $row['u_department'] ?>
-                            </button>
-                        </th>
-                    </tr>
-                </table>
-            </div>
-            <div class="card-body">
-                <table class="table">
-                    <thead>
-                        <tr class="table-primary uppercase" style="text-align:center; white-space: nowrap;">
-                            <th>No.</th>
-                            <th><?php echo $product_code ?></th>
-                            <th><?php echo $description ?></th>
-                            <th><?php echo $qty ?></th>
-                            <th><?php echo $unit ?></th>
-                            <th><?php echo $purpose  ?></th>
-                            <th><?php echo $reset  ?></th>
+    <div class="d-flex flex-wrap">
+        <?php include('navbar.php') ;  ?>
+
+        <div class="container pt-5 col-10">
+            <div class="card border border-secondary text-center m-5">
+                <div class="card-header">
+                    <table class="table table-borderless">
+                        <tr>
+                            <th class="text-center" colspan="6">
+                                <h3 class="card-title"><button type="button" class="btn btn-secondary btn-lg w-50"
+                                        data-mdb-ripple-init data-mdb-ripple-color="dark">SHIPPO ASAHI MOULDS(THAILAND)
+                                        CO.,LTD.</button>
+                                </h3><br>
+                                <h3 class="card-title" style="text-transform: uppercase;"><?php echo $request ?></h3>
+                            </th>
                         </tr>
-                    </thead>
-                    <tbody class="table-group-divider table-divider-color">
-                        <?php
+                        <tr>
+                            <th class="text-start" colspan="3">
+                                <h5><?php echo $mat_goods ?></h5>
+                            </th>
+                            <th class="text-end" colspan="3">
+                                <h5><?php echo "Date: " . date("d-m-y") ;?></h5>
+                            </th>
+                        </tr>
+                        <tr>
+                            <th class="text-start" colspan="6">
+                                <button type="button" class="btn btn-secondary btn-rounded btn-lg" data-mdb-ripple-init>
+                                    <?php echo $department. ' : '. $row['u_department'] ?>
+                                </button>
+                            </th>
+                        </tr>
+                    </table>
+                </div>
+                <div class="card-body">
+                    <table class="table">
+                        <thead>
+                            <tr class="table-primary uppercase" style="text-align:center; white-space: nowrap;">
+                                <th>No.</th>
+                                <th><?php echo $product_code ?></th>
+                                <th><?php echo $description ?></th>
+                                <th><?php echo $qty ?></th>
+                                <th><?php echo $unit ?></th>
+                                <th><?php echo $purpose  ?></th>
+                                <th><?php echo $reset  ?></th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider table-divider-color">
+                            <?php
                          for ($i = 0; $i < 5; $i++) : 
                          ?>
-                        <tr>
-                            <th scope="row"><?php echo $i+1; ?></th>
-                            <td>
-                                <input class="form-control product-input" type="text" id="product<?php echo $i; ?>"
-                                    list="product_code<?php echo $i; ?>" onchange="validateInput(this)">
-                                <!-- Populate datalist with product names -->
-                                <datalist id="product_code<?php echo $i; ?>">
-                                    <?php foreach ($products_code as $product_code_item) : ?>
-                                    <option value="<?php echo $product_code_item; ?>">
-                                        <?php endforeach; ?>
-                                </datalist>
-                            </td>
-                            <!-- Replace the input field with a readonly input -->
-                            <td>
-                                <input type="text" class="form-control product-name-input badge-warning"
-                                    id="p_name<?php echo $i; ?>" <?php if ($value == '') { ?> <?php } ?> readonly>
-                            </td>
-                            <td>
-                                <div class="input-group">
-                                    <button type="button" class="btn btn-outline-secondary decrement-btn"
-                                        onclick="decrementQty(<?php echo $i; ?>)">-</button>
-                                    <input type="number" class="input-group-text qty-value"
-                                        id="qtyValue<?php echo $i; ?>">
-                                    <button type="button" class="btn btn-outline-secondary increment-btn"
-                                        onclick="incrementQty(<?php echo $i; ?>)">+</button>
-                                </div>
-                            </td>
-                            <td>
-                                <input type="text" class="form-control unit-input badge-warning"
-                                    id="unit<?php echo $i; ?>" readonly>
-                            </td>
-                            <td>
-                                <input type="text" class="form-control target-input" id="target<?php echo $i; ?>">
-                            </td>
-                            <td style="white-space: nowrap;">
-                                <button type="button" class="btn btn-warning btn-floating reset-btn"
-                                    onclick="resetInput(<?php echo $i; ?>)"><i class="fas fa-eraser"></i></button>
-                            </td>
-                        </tr>
-                        <?php endfor; ?>
-                        <!-- <tr>
+                            <tr>
+                                <th scope="row"><?php echo $i+1; ?></th>
+                                <td>
+                                    <input class="form-control product-input" type="text" id="product<?php echo $i; ?>"
+                                        list="product_code<?php echo $i; ?>" onchange="validateInput(this)">
+                                    <!-- Populate datalist with product names -->
+                                    <datalist id="product_code<?php echo $i; ?>">
+                                        <?php foreach ($products_code as $product_code_item) : ?>
+                                        <option value="<?php echo $product_code_item; ?>">
+                                            <?php endforeach; ?>
+                                    </datalist>
+                                </td>
+                                <!-- Replace the input field with a readonly input -->
+                                <td>
+                                    <input type="text" class="form-control product-name-input badge-warning"
+                                        id="p_name<?php echo $i; ?>" <?php if ($value == '') { ?> <?php } ?> readonly>
+                                </td>
+                                <td>
+                                    <div class="input-group">
+                                        <button type="button" class="btn btn-outline-secondary decrement-btn"
+                                            onclick="decrementQty(<?php echo $i; ?>)">-</button>
+                                        <input type="number" class="input-group-text qty-value"
+                                            id="qtyValue<?php echo $i; ?>">
+                                        <button type="button" class="btn btn-outline-secondary increment-btn"
+                                            onclick="incrementQty(<?php echo $i; ?>)">+</button>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control unit-input badge-warning"
+                                        id="unit<?php echo $i; ?>" readonly>
+                                </td>
+                                <td>
+                                    <input type="text" class="form-control target-input" id="target<?php echo $i; ?>">
+                                </td>
+                                <td style="white-space: nowrap;">
+                                    <button type="button" class="btn btn-warning btn-floating reset-btn"
+                                        onclick="resetInput(<?php echo $i; ?>)"><i class="fas fa-eraser"></i></button>
+                                </td>
+                            </tr>
+                            <?php endfor; ?>
+                            <!-- <tr>
                             <td colspan="10" class="text-center">
                                 <button type="button" class="btn btn-primary" id="addRowBtn"><i
                                         class="fa-solid fa-plus"></i> Add Row</button>
@@ -180,78 +183,79 @@ function validateInput(input) {
                             </td>
                         </tr> -->
 
-                    </tbody>
+                        </tbody>
 
-                    <!-- <th colspan="8">ได้ตรวจสอบจำนวน และรายละเอียดต่างๆเรียบร้อยแล้ว</th> -->
-                </table>
-                <table class="table table-borderless">
-                    <thead>
-                        <tr>
-                            <td>
-                                <div class="d-flex justify-content-start">
-                                    <span class="rounded-pill badge-warning">
-                                        <h6>ได้ตรวจสอบจำนวน
-                                            และรายละเอียดต่างๆเรียบร้อยแล้ว</h6>
-                                    </span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th colspan="3">
-                                <div class="input-group mb-3">
-                                    <button class="btn btn-outline-secondary" type="button" id="rq_name"
-                                        data-mdb-ripple-init data-mdb-ripple-color="dark">
-                                        <?php echo $REQUEST_NAME ?>
-                                        :</button>
-                                    <input value="<?php echo $row['u_username'] ?>" class="form-control" name="rq_name"
-                                        aria-describedby="rq_name" required readonly />
-                                    <div class="invalid-feedback">
-                                        ** <?php echo $require ?>
+                        <!-- <th colspan="8">ได้ตรวจสอบจำนวน และรายละเอียดต่างๆเรียบร้อยแล้ว</th> -->
+                    </table>
+                    <table class="table table-borderless">
+                        <thead>
+                            <tr>
+                                <td>
+                                    <div class="d-flex justify-content-start">
+                                        <span class="rounded-pill badge-warning">
+                                            <h6>ได้ตรวจสอบจำนวน
+                                                และรายละเอียดต่างๆเรียบร้อยแล้ว</h6>
+                                        </span>
                                     </div>
-                                </div>
-                            </th>
-                            <th class="text-end">
-                                <div class="input-group mb-3">
-                                    <button class="btn btn-outline-secondary" type="button" id="ap_by"
-                                        data-mdb-ripple-init data-mdb-ripple-color="dark">
-                                        <?php echo $APPROVED_BY ?>
-                                        :</button>
-                                    <input class="form-control" name="ap_by" value="@everyone" aria-describedby="ap_by"
-                                        disabled />
-                                </div>
-                            </th>
-                        </tr>
-                        <tr>
-                            <th colspan="3">
-                                <div class="input-group mb-3">
-                                    <button class="btn btn-outline-secondary" type="button" id="st_keeper"
-                                        data-mdb-ripple-init data-mdb-ripple-color="dark">
-                                        <?php echo $STORE_KEEPER ?>
-                                        :</button>
-                                    <input class="form-control" name="st_keeper" aria-describedby="st_keeper"
-                                        required />
-                                    <div class="invalid-feedback">
-                                        ** <?php echo $require ?>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th colspan="3">
+                                    <div class="input-group mb-3">
+                                        <button class="btn btn-outline-secondary" type="button" id="rq_name"
+                                            data-mdb-ripple-init data-mdb-ripple-color="dark">
+                                            <?php echo $REQUEST_NAME ?>
+                                            :</button>
+                                        <input value="<?php echo $row['u_username'] ?>" class="form-control"
+                                            name="rq_name" aria-describedby="rq_name" required readonly />
+                                        <div class="invalid-feedback">
+                                            ** <?php echo $require ?>
+                                        </div>
                                     </div>
-                                </div>
-                            </th>
-                            <th class="text-end">
-                                <div class="input-group mb-3">
-                                    <button class="btn btn-outline-secondary" type="button" id="gr_by"
-                                        data-mdb-ripple-init data-mdb-ripple-color="dark">
-                                        <?php echo $GOODS_RECEIVED_BY ?> :</button>
-                                    <input class="form-control" name="gr_by" aria-describedby="gr_by" required />
-                                    <div class="invalid-feedback">
-                                        ** <?php echo $require ?>
+                                </th>
+                                <th class="text-end">
+                                    <div class="input-group mb-3">
+                                        <button class="btn btn-outline-secondary" type="button" id="ap_by"
+                                            data-mdb-ripple-init data-mdb-ripple-color="dark">
+                                            <?php echo $APPROVED_BY ?>
+                                            :</button>
+                                        <input class="form-control" name="ap_by" value="@everyone"
+                                            aria-describedby="ap_by" disabled />
                                     </div>
-                                </div>
-                            </th>
-                        </tr>
-                    </thead>
-                </table>
-            </div>
-            <div class="card-footer text-end">
-                <button type="button" class="btn btn-success btn-lg" onclick="submitForm()">Submit</button>
+                                </th>
+                            </tr>
+                            <tr>
+                                <th colspan="3">
+                                    <div class="input-group mb-3">
+                                        <button class="btn btn-outline-secondary" type="button" id="st_keeper"
+                                            data-mdb-ripple-init data-mdb-ripple-color="dark">
+                                            <?php echo $STORE_KEEPER ?>
+                                            :</button>
+                                        <input class="form-control" name="st_keeper" aria-describedby="st_keeper"
+                                            required />
+                                        <div class="invalid-feedback">
+                                            ** <?php echo $require ?>
+                                        </div>
+                                    </div>
+                                </th>
+                                <th class="text-end">
+                                    <div class="input-group mb-3">
+                                        <button class="btn btn-outline-secondary" type="button" id="gr_by"
+                                            data-mdb-ripple-init data-mdb-ripple-color="dark">
+                                            <?php echo $GOODS_RECEIVED_BY ?> :</button>
+                                        <input class="form-control" name="gr_by" aria-describedby="gr_by" required />
+                                        <div class="invalid-feedback">
+                                            ** <?php echo $require ?>
+                                        </div>
+                                    </div>
+                                </th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+                <div class="card-footer text-end">
+                    <button type="button" class="btn btn-success btn-lg" onclick="submitForm()">Submit</button>
+                </div>
             </div>
         </div>
     </div>

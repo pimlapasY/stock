@@ -48,3 +48,47 @@ $currentDateText = 'ขณะนี้วันที่ ';
 $coming_sub = 'ทุกวันที่ 20 ของทุกเดือนระบบจะมีการอัพเดทยกยอดที่ยังไม่ได้ชำระเงินเข้ามา ไปไว้ในเดือนหน้า
             โปรดอัพเดท Payment <a href="#pr-table" class="alert-link">ที่นี่</a>';
 $updatePayment_des ='ทุกวันที่ 20 ของทุกเดือนระบบจะมีการอัพเดทยกยอดที่ยังไม่ได้ชำระเงินเข้ามา ไปไว้ในเดือนถัดไป คุณสามารถตรวจสอบอัพเดทได้ในเดือนที่ ';
+$cr_taken = 'การส่งออกสินค้า';
+$all = 'ทั้งหมด';
+$other = 'อื่นๆ';
+
+//table
+
+$store = 'ที่ตั้ง';
+$code = 'รหัส';
+$product = 'สินค้า';
+$size = 'ขนาด';
+$color = 'สี';
+$hand = 'มือ';
+$qty = 'จำนวน';
+$soldDate = 'วันที่ขาย';
+$customer = 'ลูกค้า';
+$paidBy = 'ชำระโดย';
+$payment = 'การชำระเงิน';
+$delivery = 'การจัดส่ง';
+$prPo = 'PR/PO';
+$update = 'อัพเดต';
+$select = 'เลือก';
+$memo = 'บันทึก';
+$prStatus = 'สถานะ PR';
+$prCode = 'รหัส PR';
+$mgCode = 'รหัส MG';
+$prDate = 'วันที่ PR';
+$productName = 'ชื่อสินค้า:';
+$costPrice = 'ราคาทุน:';
+$salePrice = 'ราคาขาย:';
+$holdingLocation = 'สถานที่จัดเก็บ:';
+$supplier = 'ผู้จัดจำหน่าย:';
+$supplierPlaceholder = 'เลือกผู้จัดจำหน่าย';
+$memoPlaceholder = 'หมายเหตุ';
+$holdingLocationValue = 'SAMT';
+$userCodeAdd = 'รหัสผู้ใช้เพิ่ม:';
+$productCode = 'รหัสสินค้า:';
+$collection = 'คอลเลกชัน:';
+$choosePlaceholder = 'เลือก...';
+$collectionOptions = [
+    'it' => 'IT',
+    'sport' => 'กีฬา',
+    'home' => 'บ้าน',
+    'other' => 'อื่นๆ'
+];

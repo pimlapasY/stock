@@ -19,71 +19,77 @@
 </style>
 
 <body>
-    <?php include('navbar.php') ?>
-    <div class="container-fluid">
-        <div class="d-flex justify-content-start p-2">
-            <h1 id="head_list">
-                <?php
+    <div class="d-flex flex-wrap">
+        <?php include('navbar.php'); ?>
+        <div class="container pt-5 col-10">
+            <div class="d-flex justify-content-start p-2">
+                <h1 id="head_list">
+                    <?php
                 echo ' <i class="fa-solid fa-laptop-medical fa-lg"></i> ' . $history;
                 ?>
-            </h1>
-        </div>
-        <div class="d-flex justify-content-between">
-
-            <div class="d-flex justify-content-start">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link tab" href="#" id="productTab" style="font-size: 20px;">
-                            <i class="fa-solid fa-box fa-lg"></i> All Store
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link tab" href="#" id="samtTab" style="font-size: 20px;">
-                            <i class="fa-solid fa-store fa-lg"></i> SAMT Store
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link tab" href="#" id="sakabaTab" style="font-size: 20px;">
-                            <i class="fa-solid fa-store fa-lg"></i> SAKABA Store
-                        </a>
-                    </li>
-                </ul>
+                </h1>
             </div>
-            <div class="d-flex justify-content-end">
-                <ul id="pagination" class="pagination">
-                    <!-- Pagination links will be loaded here by AJAX -->
-                </ul>
+            <hr>
+            <div class="d-flex justify-content-between">
+                <div class="d-flex justify-content-start">
+                    <ul class="nav nav-tabs">
+                        <li class="nav-item">
+                            <a class="nav-link tab" href="#" id="productTab" style="font-size: 20px;">
+                                <i class="fa-solid fa-box fa-lg"></i> All Store
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link tab" href="#" id="samtTab" style="font-size: 20px;">
+                                <i class="fa-solid fa-store fa-lg"></i> SAMT Store
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link tab" href="#" id="sakabaTab" style="font-size: 20px;">
+                                <i class="fa-solid fa-store fa-lg"></i> Other Store
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="d-flex justify-content-end">
+                    <ul id="pagination" class="pagination">
+                        <!-- Pagination links will be loaded here by AJAX -->
+                    </ul>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mx-auto table-sm">
+                    <thead class="text-center table-primary" style="text-transform: uppercase;">
+                        <tr>
+                            <th>#</th>
+                            <th><?php echo $store; ?></th>
+                            <th><?php echo $code; ?></th>
+                            <!-- <th>Stock out</th> -->
+                            <th><?php echo $product; ?></th>
+                            <!-- <th>Receipt date</th> -->
+                            <!-- <th>Supplier</th> -->
+                            <th><?php echo $size; ?></th>
+                            <th><?php echo $color; ?></th>
+                            <th><?php echo $hand; ?></th>
+                            <th><?php echo $qty; ?></th>
+                            <th><?php echo $soldDate; ?></th>
+                            <th><?php echo $customer; ?></th>
+                            <th><?php echo $paidBy; ?></th>
+                            <th><?php echo $payment; ?></th>
+                            <th><?php echo $delivery; ?></th>
+                            <th><?php echo $prPo; ?></th>
+                            <!-- <th>PO status</th> -->
+                            <th><?php echo $memo; ?></th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTable" class="table-group-divider table-divider-color">
+                        <!-- Data will be loaded here via AJAX -->
+                    </tbody>
+                </table>
             </div>
         </div>
-        <table class="table table-hover mx-auto">
-            <thead class="text-center table-secondary" style="text-transform: uppercase;">
-                <tr>
-                    <th>#</th>
-                    <th>store</th>
-                    <th>CODE</th>
-                    <th>product</th>
-                    <th>size</th>
-                    <th>color</th>
-                    <th>hand</th>
-                    <th>qty</th>
-                    <th>Sold date</th>
-                    <th>customer</th>
-                    <th>paid by</th>
-                    <th>payment</th>
-                    <th>Delivery</th>
-                    <th>PR/PO</th>
-                    <th>Memo</th>
-                </tr>
-            </thead>
-            <tbody id="dataTable" class="table-group-divider table-divider-color">
-                <!-- Data will be loaded here via AJAX -->
-            </tbody>
-        </table>
-
     </div>
     <script>
     $(document).ready(function() {
-
         function loadData(store = null, currentPage = 1) {
             var url = "his_fetch.php";
             var data = {

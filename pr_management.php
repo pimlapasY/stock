@@ -1,4 +1,5 @@
-<?php include('navbar.php');
+<?php 
+include('connect.php'); 
 $currentDay = date('d');
 $currentMonth = date('m');
 $currentYear = date('Y');
@@ -39,39 +40,41 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
 </head>
 
 <body>
-    <div class="container-fluid">
-        <div class="d-flex justify-content-start m-5">
-            <h1 id="head_list">
-                <?php
+    <div class="d-flex flex-wrap">
+        <?php include('navbar.php'); ?>
+        <div class="container pt-5 col-10">
+            <div class="d-flex justify-content-start m-5">
+                <h1 id="head_list">
+                    <?php
                 echo '<i class="fa-solid fa-paste fa-xl"></i> ' . $pr_manage;
                 ?>
-            </h1>
-        </div>
-        <?php 
-        $currentDayDemo = 15;
-        if( $currentDayDemo  == 20){
-            echo '<div class="alert alert-primary alert-dismissible fade show" role="alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
-            <strong>'.$currentDateText.$currentDay.'/'.$currentMonth.'/'.$currentYear.'</strong> '. $updatePayment_des. $nextMonth.'/'.$currentYear.'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>'; 
-            /* echo '<div class="alert alert-primary alert-dismissible fade show" role="alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
-            <strong>(Demo)'.$currentDateText.$currentDayDemo.'/'.$currentMonth.'/'.$currentYear.'</strong> '. $updatePayment_des. $nextMonth.'/'.$currentYear.'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>'; */ 
-        }elseif($currentDayDemo  <= 19 && $currentDayDemo >= 15){
-            echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
-                <use xlink:href="#info-fill" />
-            </svg>
-            <strong>'.$coming.$currentDateText.$currentDay.'</strong> '.$coming_sub.'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>';  
+                </h1>
+            </div>
+            <?php 
+                $currentDayDemo = 15;
+                if( $currentDayDemo  == 20){
+                    echo '<div class="alert alert-primary alert-dismissible fade show" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                    <strong>'.$currentDateText.$currentDay.'/'.$currentMonth.'/'.$currentYear.'</strong> '. $updatePayment_des. $nextMonth.'/'.$currentYear.'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>'; 
+                    /* echo '<div class="alert alert-primary alert-dismissible fade show" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
+                    <strong>(Demo)'.$currentDateText.$currentDayDemo.'/'.$currentMonth.'/'.$currentYear.'</strong> '. $updatePayment_des. $nextMonth.'/'.$currentYear.'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>'; */ 
+                }elseif($currentDayDemo  <= 19 && $currentDayDemo >= 15){
+                    echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
+                        <use xlink:href="#info-fill" />
+                    </svg>
+                    <strong>'.$coming.$currentDateText.$currentDay.'</strong> '.$coming_sub.'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>';  
            /*  echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                 <use xlink:href="#info-fill" />
             </svg>
             <strong>(Demo)'.$coming.$currentDateText.$currentDayDemo.'</strong> '.$coming_sub.'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>';  */ 
-        }
+                    }
            /*  echo '<div class="alert alert-warning alert-dismissible fade show" role="alert">
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Info:">
                 <use xlink:href="#info-fill" />
@@ -82,227 +85,236 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
             <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Success:"><use xlink:href="#check-circle-fill"/></svg>
             <strong>'.$currentDateText.$currentDay.'/'.$currentMonth.'/'.$currentYear.'</strong> '. $updatePayment_des. $nextMonth.'/'.$currentYear.'<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>'; */      ?>
-        <div class="d-flex align-self-center mb-2">
-            <ul class="nav nav-tabs">
-                <li class="nav-item">
-                    <a class="nav-link tab" href="#" id="productTab" style="font-size: 20px;">
-                        <i class="fa-solid fa-box fa-lg"></i> All Store
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link tab" href="#" id="samtTab" style="font-size: 20px;">
-                        <i class="fa-solid fa-store fa-lg"></i> SAMT Store
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link tab" href="#" id="sakabaTab" style="font-size: 20px;">
-                        <i class="fa-solid fa-store fa-lg"></i> SAKABA Store
-                    </a>
-                </li>
-            </ul>
-        </div>
-        <div class="d-flex align-self-end  align-items-center mb-2">
-            <!--  <a class="btn btn-primary btn-rounded" id="exchange" style="white-space: nowrap;"><i
+            <div class="d-flex align-self-center mb-2">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="productTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-box fa-lg"></i> All Store
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="samtTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-store fa-lg"></i> SAMT Store
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="sakabaTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-store fa-lg"></i> SAKABA Store
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="d-flex align-self-end  align-items-center mb-2">
+                <!--  <a class="btn btn-primary btn-rounded" id="exchange" style="white-space: nowrap;"><i
                     class="fa-solid fa-right-left"></i> PR Exchange</a>&nbsp; -->
 
+                <?php  if ($currentDay >= 18 && $currentDay <= 20) { ?>
+                <a class="btn btn-danger btn-rounded" style="white-space: nowrap;" id="purchaseSelected">
+                    <i class="fa-solid fa-circle-check"></i> 1 Purchase
+                </a>&nbsp;
+                <?php } else { ?>
+                <button class="btn btn-danger btn-rounded" style="white-space: nowrap;" id="purchaseSelected" disabled>
+                    <i class="fa-solid fa-circle-check"></i> 1 Purchase
+                </button>&nbsp;
+                <?php } ?>
 
-            <a class="btn btn-danger btn-rounded" style="white-space: nowrap;"><i class="fa-solid fa-circle-check"></i>
-                1 Purchase</a>&nbsp;
-            <a class="btn btn-warning btn-rounded" style="white-space: nowrap;"><i
-                    class="fa-solid fa-truck-ramp-box"></i>
-                2 Delivered</a>&nbsp;
-            <a class="btn btn-info btn-rounded" style="white-space: nowrap;"><i class="fa-solid fa-boxes-stacked"></i>
-                3 Stockin</a>&nbsp;
-
-
-            <select class="form-select" id="months" name="months">
-                <option value="month">Months</option>
-                <option value="01">01 - Jan</option>
-                <option value="02">02 - Feb</option>
-                <option value="03">03 - Mar</option>
-                <option value="04">04 - Apr</option>
-                <option value="05">05 - May</option>
-                <option value="06">06 - Jun</option>
-                <option value="07">07 - Jul</option>
-                <option value="08">08 - Aug</option>
-                <option value="09">09 - Sep</option>
-                <option value="10">10 - Oct</option>
-                <option value="11">11 - Nov</option>
-                <option value="12">12 - Dec</option>
-            </select>&nbsp;
-            <select class="form-select" id="years" name="year">
-                <option value="years">Years</option>
-                <option value="2023">2023</option>
-                <option value="2024">2024</option>
-                <option value="2025">2025</option>
-                <option value="2026">2026</option>
-                <option value="2027">2027</option>
-            </select>&nbsp;
-            <select class="form-select" id="paymentStatus" name="paymentStatus">
-                <option value="all">All payment</option>
-                <option value="1">- Pending Payment</option>
-                <option value="2">- Payment Successful</option>
-            </select>&nbsp;
-            <select class="form-select" id="prStatusSelected" name="prStatusSelected">
-                <option value="all">All status</option>
-                <option value="99">- Pending</option>
-                <option value="1">- Issue PR/PO</option>
-                <option value="2">- Delivered</option>
-            </select>
-        </div>
+                <a class="btn btn-warning btn-rounded" style="white-space: nowrap;" id="deliveredSelected"><i
+                        class="fa-solid fa-truck-ramp-box"></i>
+                    2 Delivered</a>&nbsp;
+                <a class="btn btn-info btn-rounded" style="white-space: nowrap;" id="stockinSelected"><i
+                        class="fa-solid fa-boxes-stacked"></i>
+                    3 Stockin</a>&nbsp;
 
 
-        <table class="table table-hover mx-auto" id="pr-table">
-            <thead class="text-center table-info" style="text-transform: uppercase;">
-                <tr>
-                    <th>PR CODE</th>
-                    <th>store</th>
-                    <th>mg CODE</th>
-                    <th>product</th>
-                    <th>size</th>
-                    <th>color</th>
-                    <th>hand</th>
-                    <th>qty</th>
-                    <th>Sold date</th>
-                    <th>customer</th>
-                    <th>paid by</th>
-                    <th>payment</th>
-                    <th>PR Status</th>
-                    <!-- <th>Delivery</th> -->
-                    <th><input class="form-check-input" type="checkbox" id="select-all"></th>
-                    <th>Memo</th>
-                </tr>
-            </thead>
-            <tbody id="dataTable" class="table-group-divider table-divider-color">
-                <!-- Data will be loaded here via AJAX -->
-            </tbody>
-        </table>
+                <select class="form-select" id="months" name="months">
+                    <option value="month">Months</option>
+                    <option value="01">01 - Jan</option>
+                    <option value="02">02 - Feb</option>
+                    <option value="03">03 - Mar</option>
+                    <option value="04">04 - Apr</option>
+                    <option value="05">05 - May</option>
+                    <option value="06">06 - Jun</option>
+                    <option value="07">07 - Jul</option>
+                    <option value="08">08 - Aug</option>
+                    <option value="09">09 - Sep</option>
+                    <option value="10">10 - Oct</option>
+                    <option value="11">11 - Nov</option>
+                    <option value="12">12 - Dec</option>
+                </select>&nbsp;
+                <select class="form-select" id="years" name="year">
+                    <option value="years">Years</option>
+                    <option value="2023">2023</option>
+                    <option value="2024">2024</option>
+                    <option value="2025">2025</option>
+                    <option value="2026">2026</option>
+                    <option value="2027">2027</option>
+                </select>&nbsp;
+                <select class="form-select" id="paymentStatus" name="paymentStatus">
+                    <option value="all">All payment</option>
+                    <option value="1">- Pending Payment</option>
+                    <option value="2">- Payment Successful</option>
+                </select>&nbsp;
+                <select class="form-select" id="prStatusSelected" name="prStatusSelected">
+                    <option value="all">All status</option>
+                    <option value="99">- Pending</option>
+                    <option value="1">- Issue PR/PO</option>
+                    <option value="2">- Delivered</option>
+                </select>
+            </div>
 
 
-        <!-- Modal for Editing Data -->
-        <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-lg">
-                <div class="modal-content">
-                    <div class="modal-header text-bg-light">
-                        <h5 class="modal-title" id="editModalLabel">Edit Modal Title</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body" id="modal-body-content">
-                        <div class="row">
-                            <div class="d-flex justify-content-lg-start">
-                                <label for="prStatus" class="form-label">PR Status:&nbsp;</label>
-                                <h5 id="prStatus"></h5>
-                                <input id="prStatusID" hidden> </input>
-                            </div>
-                            <div class="d-flex justify-content-lg-end">
-                                <button class="btn btn-outline-secondary" onclick="editProduct()"><i
-                                        class="fa-solid fa-pen-to-square"></i>
-                                    EDIT</button> &nbsp;
-                                <input class="form-control" id="productID" hidden>
-                                <input class="form-control" id="prID" hidden>
-                            </div>
+            <table class="table table-hover mx-auto table-sm" id="pr-table">
+                <thead class="text-center table-info" style="text-transform: uppercase;">
+                    <tr>
+                        <th><input class="form-check-input" type="checkbox" id="select-all"></th>
+                        <th><?php echo $prCode; ?></th>
+                        <th><?php echo $store; ?></th>
+                        <th><?php echo $mgCode; ?></th>
+                        <th><?php echo $product; ?></th>
+                        <th><?php echo $size; ?></th>
+                        <th><?php echo $color; ?></th>
+                        <th><?php echo $hand; ?></th>
+                        <th><?php echo $qty; ?></th>
+                        <th><?php echo $soldDate; ?></th>
+                        <th><?php echo $customer; ?></th>
+                        <th><?php echo $paidBy; ?></th>
+                        <th><?php echo $payment; ?></th>
+                        <th><?php echo $prStatus; ?></th>
+                        <!-- <th>Delivery</th> -->
+                        <th><?php echo $memo; ?></th>
+                    </tr>
+                </thead>
+                <tbody id="dataTable" class="table-group-divider table-divider-color">
+                    <!-- Data will be loaded here via AJAX -->
+                </tbody>
+            </table>
+
+
+            <!-- Modal for Editing Data -->
+            <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header text-bg-light">
+                            <h5 class="modal-title" id="editModalLabel">Edit Modal Title</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
+                        <div class="modal-body" id="modal-body-content">
+                            <div class="row">
+                                <div class="d-flex justify-content-lg-start">
+                                    <label for="prStatus" class="form-label">PR Status:&nbsp;</label>
+                                    <h5 id="prStatus"></h5>
+                                    <input id="prStatusID" hidden> </input>
+                                </div>
+                                <div class="alert alert-danger" role="alert" id="alertExchange" hidden>
+                                </div><br>
+                                <div class="d-flex justify-content-lg-end">
+                                    <button class="btn btn-outline-secondary" onclick="editProduct()"><i
+                                            class="fa-solid fa-pen-to-square"></i>
+                                        EDIT</button> &nbsp;
+                                    <input class="form-control" id="productID" hidden>
+                                    <input class="form-control" id="prID" hidden>
+                                </div>
+                            </div>
 
-                        <div class="row ms-4 me-4">
-                            <div class="col-md-6">
-                                <form id="editForm">
-                                    <div class="mb-3">
-                                        <label for="prCodeInput" class="form-label">PR Code:</label>
-                                        <input type="text" class="form-control" id="prCodeInput" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="dateAddedInput" class="form-label">PR Date:</label>
-                                        <input type="text" class="form-control" id="dateAddedInput" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="mgCode" class="form-label">MG Code:</label>
-                                        <input type="text" class="form-control" id="mgCode" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="productCode" class="form-label">Product Code:</label>
-                                        <input type="text" class="form-control" id="productCode" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="productName" class="form-label">Product Name:</label>
-                                        <input type="text" class="form-control" id="productName" disabled>
-                                    </div>
-                                </form>
+                            <div class="row ms-4 me-4">
+                                <div class="col-md-6">
+                                    <form id="editForm">
+                                        <div class="mb-3">
+                                            <label for="prCodeInput" class="form-label">PR Code:</label>
+                                            <input type="text" class="form-control" id="prCodeInput" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="dateAddedInput" class="form-label">PR Date:</label>
+                                            <input type="text" class="form-control" id="dateAddedInput" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="mgCode" class="form-label">MG Code:</label>
+                                            <input type="text" class="form-control" id="mgCode" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="productCode" class="form-label">Product Code:</label>
+                                            <input type="text" class="form-control" id="productCode" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="productName" class="form-label">Product Name:</label>
+                                            <input type="text" class="form-control" id="productName" disabled>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="col-md-6">
+                                    <form id="editForm">
+                                        <div class="mb-3">
+                                            <label for="size" class="form-label">Size:</label>
+                                            <input type="search" class="form-control" id="size" list="product_size"
+                                                disabled>
+                                            <datalist id="product_size">
+                                                <?php foreach ($productNames_size as $productName_size): ?>
+                                                <option value="<?php echo $productName_size; ?>">
+                                                    <?php endforeach; ?>
+                                            </datalist>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="color" class="form-label">Color:</label>
+                                            <input type="search" class="form-control" id="color"
+                                                list="product_names_color" disabled>
+                                            <datalist id="product_names_color">
+                                                <?php foreach ($productNames_color as $productName_color): ?>
+                                                <option value="<?php echo $productName_color; ?>">
+                                                    <?php endforeach; ?>
+                                            </datalist>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="hand" class="form-label">Hand:</label>
+                                            <input type="search" class="form-control" id="hand" list="product_hand"
+                                                disabled>
+                                            <datalist id="product_hand">
+                                                <?php foreach ($productNames_hands as $productName_hand): ?>
+                                                <option value="<?php echo $productName_hand; ?>">
+                                                    <?php endforeach; ?>
+                                            </datalist>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="qty" class="form-label">Qty:</label>
+                                            <input type="number" class="form-control" id="qty" min="1" disabled>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="soldDate" class="form-label">Sold Date:</label>
+                                            <input type="text" class="form-control" id="soldDate" disabled>
+                                        </div>
+                                    </form>
+                                </div>
                             </div>
-                            <div class="col-md-6">
-                                <form id="editForm">
-                                    <div class="mb-3">
-                                        <label for="size" class="form-label">Size:</label>
-                                        <input type="search" class="form-control" id="size" list="product_size"
-                                            disabled>
-                                        <datalist id="product_size">
-                                            <?php foreach ($productNames_size as $productName_size): ?>
-                                            <option value="<?php echo $productName_size; ?>">
-                                                <?php endforeach; ?>
-                                        </datalist>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="color" class="form-label">Color:</label>
-                                        <input type="search" class="form-control" id="color" list="product_names_color"
-                                            disabled>
-                                        <datalist id="product_names_color">
-                                            <?php foreach ($productNames_color as $productName_color): ?>
-                                            <option value="<?php echo $productName_color; ?>">
-                                                <?php endforeach; ?>
-                                        </datalist>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="hand" class="form-label">Hand:</label>
-                                        <input type="search" class="form-control" id="hand" list="product_hand"
-                                            disabled>
-                                        <datalist id="product_hand">
-                                            <?php foreach ($productNames_hands as $productName_hand): ?>
-                                            <option value="<?php echo $productName_hand; ?>">
-                                                <?php endforeach; ?>
-                                        </datalist>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="qty" class="form-label">Qty:</label>
-                                        <input type="number" class="form-control" id="qty" min="1" disabled>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="soldDate" class="form-label">Sold Date:</label>
-                                        <input type="text" class="form-control" id="soldDate" disabled>
-                                    </div>
-                                </form>
+                            <div class="d-flex flex-column m-4">
+                                <button type="button" class="btn  btn-primary" id="submitFormExchange">
+                                    <i class="fa-solid fa-right-left"></i>
+                                    Exchange
+                                </button>&nbsp;
+                                <button type="button" class="btn  btn-warning" id="delivered">
+                                    <i class="fa-solid fa-truck-ramp-box"></i>
+                                    Delivered
+                                </button>&nbsp;
+                                <button type="button" class="btn  btn-info" id="stockin">
+                                    <i class="fa-solid fa-box"></i>
+                                    Stockin
+                                </button>
                             </div>
+                            <!-- Fetched data will be displayed here -->
                         </div>
-                        <div class="d-flex flex-column m-4">
-                            <button type="button" class="btn  btn-primary" id="submitFormExchange">
-                                <i class="fa-solid fa-right-left"></i>
-                                Exchange
-                            </button>&nbsp;
-                            <button type="button" class="btn  btn-warning" id="delivered">
-                                <i class="fa-solid fa-truck-ramp-box"></i>
-                                Delivered
-                            </button>&nbsp;
-                            <button type="button" class="btn  btn-info" id="stockin">
-                                <i class="fa-solid fa-box"></i>
-                                Stockin
+                        <div class="modal-footer">
+                            <button class="btn btn-danger" onclick="deletePr()">
+                                <i class="fa-solid fa-trash-can"></i> Delete
                             </button>
+                            <button type="button" class="btn btn-success" id="closeModalButton" data-bs-dismiss="modal"
+                                disabled><i class="fa-solid fa-rotate"></i> Refresh</button>
+                            <!-- Add additional buttons as needed -->
                         </div>
-                        <!-- Fetched data will be displayed here -->
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn btn-danger" onclick="deletePr()">
-                            <i class="fa-solid fa-trash-can"></i> Delete
-                        </button>
-                        <button type="button" class="btn btn-success" id="closeModalButton" data-bs-dismiss="modal"
-                            disabled><i class="fa-solid fa-rotate"></i> Success</button>
-                        <!-- Add additional buttons as needed -->
                     </div>
                 </div>
             </div>
+            <!-- EXCHANGE MODAL FOR PR MANAGE-->
         </div>
-        <!-- EXCHANGE MODAL FOR PR MANAGE-->
-
+        <!-- jQuery -->
     </div>
-    <!-- jQuery -->
-
     <script>
     function deletePr() {
         // Get data from the input field
@@ -534,8 +546,6 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
 
         ///////////////////////////////////////////////////////
 
-
-
         var currentDate = new Date();
 
         ///////////////////////
@@ -578,7 +588,6 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
         // Load data with default values on page load
         var paymentStatus = $('#paymentStatus').val();
         var prStatusSelected = $('#prStatusSelected').val();
-
         /* 
                 function alertMothChange() {
                     $('#months').val(formattedNextMonth);
@@ -625,16 +634,97 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
         });
         ///////////////////////////////////////
 
-
-
     });
     </script>
+
 </body>
 
 </html>
 
 <script>
 $(document).ready(function() {
+
+    function handleSelectedUpdate(action, status, successMessage, errorMessage) {
+        var selectedIds = [];
+        $('input[name="selected_ids[]"]:checked').each(function() {
+            selectedIds.push($(this).val());
+        });
+
+        if (selectedIds.length > 0) {
+            Swal.fire({
+                title: 'Are you sure?',
+                text: `You are about to update the status for ${selectedIds.length} selected items.`,
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonText: 'Yes, update it!',
+                cancelButtonText: 'No, cancel!'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $.ajax({
+                        url: 'pr_update_status.php',
+                        type: 'POST',
+                        data: {
+                            ids: selectedIds,
+                            status: status
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                title: 'Success',
+                                text: successMessage,
+                                icon: 'success',
+                                confirmButtonText: 'OK'
+                            }).then(() => {
+                                location.reload();
+                            });
+                        },
+                        error: function() {
+                            Swal.fire({
+                                title: 'Error',
+                                text: errorMessage,
+                                icon: 'error',
+                                confirmButtonText: 'OK'
+                            });
+                        }
+                    });
+                }
+            });
+        } else {
+            Swal.fire({
+                title: 'No Data',
+                text: 'No items selected.',
+                icon: 'info',
+                confirmButtonText: 'OK'
+            });
+        }
+    }
+
+    $('#purchaseSelected').click(function() {
+        handleSelectedUpdate(
+            'purchaseSelected',
+            1,
+            'Purchase request status updated successfully.',
+            'Error updating purchase request status. Please try again.'
+        );
+    });
+
+    $('#deliveredSelected').click(function() {
+        handleSelectedUpdate(
+            'deliveredSelected',
+            2,
+            'Delivered request status updated successfully.',
+            'Error updating delivery request status. Please try again.'
+        );
+    });
+
+    $('#stockinSelected').click(function() {
+        handleSelectedUpdate(
+            'stockinSelected',
+            3,
+            'StockIn request status updated successfully.',
+            'Error updating StockIn request status. Please try again.'
+        );
+    });
+
 
     $('#delivered').click(function() {
         // Get data from the input field
@@ -753,6 +843,7 @@ $(document).ready(function() {
 
     //////////////////////////////////
     $('#submitFormExchange').click(function() {
+
         // Get data from both forms
         var prCode = $('#prCodeInput').val(); // Example: Fetch PR Code from first form
         var pdCode = $('#productCode').val(); // Example: Fetch PR Code from first form
@@ -787,20 +878,48 @@ $(document).ready(function() {
             success: function(response) {
                 // Handle success response (if needed)
                 console.log('Data inserted successfully');
+                var jsonResponse = JSON.parse(response);
 
-                Swal.fire({
-                    icon: "success",
-                    title: "Success!",
-                    //text: response,
-                    showConfirmButton: true
-                    //timer: 1500
-                }).then(function() {
-                    console.log(response);
-                    openEditModal(prID);
-                    $('#closeModalButton').prop('disabled', false)
-                    // Redirect or perform additional actions if needed
-                    //location.reload();
-                });
+                // Check if the response indicates success or error
+                if (jsonResponse.hasOwnProperty('success')) {
+                    // Handle success case
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success!',
+                        text: jsonResponse.success,
+                        showConfirmButton: true
+                    }).then(function() {
+                        // Additional actions if needed
+                        console.log(response);
+                        openEditModal(prID);
+
+                        $('#alertExchange').removeClass('alert-danger').addClass(
+                            'alert-success').html(
+                            'Successfully Exchange please <a id="closeModalButton" data-bs-dismiss="modal" style="cursor: pointer;"><i class="fa-solid fa-rotate"></i> Refresh</a>'
+                        ).prop('hidden', false);
+
+                        // Attach a click event to the refresh button
+                        $('#closeModalButton').click(function() {
+                            location.reload(); // Refresh the page
+                        });
+
+                        $('#closeModalButton').prop('disabled', false);
+                    });
+                } else if (jsonResponse.hasOwnProperty('error')) {
+                    // Handle error case
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error!',
+                        text: jsonResponse.error,
+                        showConfirmButton: true
+                    }).then(function() {
+                        $('#alertExchange').removeClass('alert-success').addClass(
+                            'alert-danger').prop('hidden', false).html(
+                            ' Product not found, please check your fill or <a href="register.php">Register Here</a>'
+                        ); // Show the alert
+                        return; // Exit the function
+                    });
+                }
                 //alert(response);
                 // Optionally, clear form fields or reset form state
             },

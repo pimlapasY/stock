@@ -42,7 +42,7 @@ echo '<table class="table table-bordered table-hover">
                 <th rowspan="2">Size</th>
                 <th rowspan="2">Cost price</th>
                 <th rowspan="2">Sale price</th>
-                <th rowspan="2">All Qty</th>
+                <th rowspan="2">Total Qty</th>
                 <th class="text-center" colspan="2">Store</th>
             </tr>
             <tr>

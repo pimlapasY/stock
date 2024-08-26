@@ -47,3 +47,46 @@ $coming = '(Coming Soon) ';
 $currentDateText = 'Current date is ';
 $coming_sub = 'Every 20th of the month, the system will carry forward any unpaid invoices to the next month. Please update your payment <a href="#pr-table" class="alert-link">Here</a>.';
 $updatePayment_des = 'Every 20th of the month, the system will carry forward any unpaid invoices to the next month. You can check for updates in month ';
+$cr_taken = 'Currently Taken';
+$all = 'All';
+$other = 'Other';
+
+//table
+$store = 'Store';
+$code = 'Code';
+$product = 'Product';
+$size = 'Size';
+$color = 'Color';
+$hand = 'Hand';
+$qty = 'Quantity';
+$soldDate = 'Sold Date';
+$customer = 'Customer';
+$paidBy = 'Paid By';
+$payment = 'Payment';
+$delivery = 'Delivery';
+$prPo = 'PR/PO';
+$update = 'Update';
+$select = 'Select';
+$memo = 'Memo';
+$prStatus = 'PR Status';
+$prCode = 'PR Code';
+$mgCode = 'MG Code';
+$prDate = 'PR Date';
+$productName = 'Product Name:';
+$costPrice = 'Cost Price:';
+$salePrice = 'Sale Price:';
+$holdingLocation = 'Holding location:';
+$supplierTitle = 'Supplier:';
+$supplierPlaceholder = 'Select a supplier';
+$memoPlaceholder = 'Note';
+$holdingLocationValue = 'SAMT';
+$userCodeAdd = 'User Code Add:';
+$productCode = 'Product Code:';
+$collection = 'Collection:';
+$choosePlaceholder = 'choose...';
+$collectionOptions = [
+    'it' => 'IT',
+    'sport' => 'Sport',
+    'home' => 'Home',
+    'other' => 'Other'
+];

@@ -1,5 +1,3 @@
-<?php include('navbar.php') ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -10,26 +8,31 @@
 </head>
 
 <body>
-    <div class="container">
-        <h1><i class="fa-solid fa-folder-plus fa-2x"></i> History</h1> <br>
-        <div class="d-flex justify-content-start mb-2">
-            <a class="btn btn-info rounded-8" href="stock_in.php"><i class="fa-solid fa-inbox fa-xl"></i> Stock In</a>
-        </div>
-        <table class="table table-hover">
-            <thead class="table-warning text-center">
-                <tr style="vertical-align: middle;">
-                    <th rowspan="2">#</th>
-                    <th rowspan="2">Stockin No.</th>
-                    <th rowspan="2">List Amount</th>
-                    <th rowspan="2">User Add</th>
-                    <th rowspan="2">Memo</th>
-                    <th rowspan="2">Date</th>
-                    <th rowspan="2">Reason</th>
-                    <th rowspan="2">Mg Code</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
+    <div class="d-flex flex-wrap">
+        <?php include('navbar.php') ?>
+
+        <div class="container pt-5 col-10">
+            <h1><i class="fa-solid fa-folder-plus fa-2x"></i> History</h1> <br>
+            <hr>
+            <div class="d-flex justify-content-start mb-2">
+                <a class="btn btn-info rounded-8" href="stock_in.php"><i class="fa-solid fa-inbox fa-xl"></i> Stock
+                    In</a>
+            </div>
+            <table class="table table-hover">
+                <thead class="table-warning text-center">
+                    <tr style="vertical-align: middle;">
+                        <th rowspan="2">#</th>
+                        <th rowspan="2">Stockin No.</th>
+                        <th rowspan="2">List Amount</th>
+                        <th rowspan="2">User Add</th>
+                        <th rowspan="2">Memo</th>
+                        <th rowspan="2">Date</th>
+                        <th rowspan="2">Reason</th>
+                        <th rowspan="2">Mg Code</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
 
 
                 $stmt = $pdo->prepare("SELECT i.*, u.u_username, COUNT(*) AS count 
@@ -59,10 +62,10 @@
              }
             
             ?>
-            </tbody>
-        </table>
+                </tbody>
+            </table>
+        </div>
     </div>
-
 
     <!-- Modal Structure -->
     <div id="stockinModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="stockinModalLabel"

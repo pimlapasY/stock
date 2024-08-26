@@ -1,4 +1,3 @@
-<?php include('navbar.php') ?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -41,140 +40,91 @@ th {
 </style>
 
 <body>
-    <!-- Bootstrap Modal -->
-    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header" style="background-color: wheat;">
-                    <h5 class="modal-title" id="updateModalLabel"><i class="fa-solid fa-pen-to-square fa-lg"></i>
-                        Payment and
-                        Delivery</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="d-flex flex-wrap">
+
+        <?php include('navbar.php') ?>
+
+        <div class="container pt-5 col-10">
+            <h1><i class="fa-solid fa-database fa-xl"></i> Currently Taken (SAMT)</h1><br>
+            <div class="d-flex justify-content-between">
+                <div class="btn-group mb-2">
+                    <input type="radio" class="btn-check" name="options" id="allBtn" autocomplete="off" checked />
+                    <label class="btn btn-secondary" for="allBtn" data-mdb-ripple-init>
+                        <i class="fa-solid fa-bars"></i> All
+                    </label>
+
+                    <input type="radio" class="btn-check" name="options" id="partSaleBtn" autocomplete="off" />
+                    <label class="btn btn-secondary" for="partSaleBtn" data-mdb-ripple-init>
+                        <i class="fa-solid fa-file-invoice-dollar"></i> Part Sale
+                    </label>
                 </div>
-                <form id="update-form">
-                    <div class="modal-body">
-                        <div class="mb-3">
-                            <input type="hidden" id="product-id" name="product-id">
-                            <label for="mg-code" class="form-label"><i class="fa-solid fa-barcode"></i> MG CODE:</label>
-                            <input class="form-control" type="text" id="mg-code" name="mg-code" disabled>
-                        </div>
-                        <!-- Hidden field to store product ID -->
-                        <div class="mb-3">
-                            <div class="mb-3">
-                                <label for="o_payment" class="form-label"><i
-                                        class="fa-solid fa-hand-holding-dollar"></i> Payment Status:</label><br>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="o_payment" id="paymentSuccess"
-                                        value="1">
-                                    <label class="form-check-label" for="paymentSuccess">Payment Successful</label>
-                                </div>
-                                <div class="form-check form-check-inline">
-                                    <input class="form-check-input" type="radio" name="o_payment" id="paymentPending"
-                                        value="2">
-                                    <label class="form-check-label" for="paymentPending">Payment Pending</label>
-                                </div>
-                            </div>
-
-                            <!-- Add more options as needed -->
-                        </div>
-                        <div class="mb-3">
-                            <label for="o_delivery" class="form-label"><i class="fa-solid fa-cart-flatbed"></i> Delivery
-                                Status:</label><br>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="o_delivery" id="deliveryDelivered"
-                                    value="1">
-                                <label class="form-check-label" for="deliveryDelivered">Successfully Delivered</label>
-                            </div>
-                            <div class="form-check form-check-inline">
-                                <input class="form-check-input" type="radio" name="o_delivery" id="deliveryNotDelivered"
-                                    value="2">
-                                <label class="form-check-label" for="deliveryNotDelivered">Delivery Pending</label>
-                            </div>
-                        </div>
-
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="submit" class="btn btn-primary" onclick="updateData()">Update</button>
-                    </div>
-                </form>
+                <div class="mb-2">
+                    <a href="#" id="previewPRSelectedBtn" class="btn btn-outline-info  rounded-8"><i
+                            class="fa-solid fa-file-lines"></i> PR
+                        create</a>
+                    <a href="#" id="previewReturnedSelectedBtn" class="btn btn-outline-warning  rounded-8"><i
+                            class="fa-solid fa-right-left"></i> Returned</a>
+                    <a href="his_all.php" class="btn btn-success  rounded-8"><i
+                            class="fa-solid fa-file-circle-check"></i>
+                        Completed</a>
+                </div>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover mx-auto table-sm">
+                    <thead class="text-center table-secondary" style="text-transform: uppercase;">
+                        <th><?php echo $select; ?></th>
+                        <th>#</th>
+                        <th><?php echo $code; ?></th>
+                        <!-- <th>Stock out</th> -->
+                        <th><?php echo $product; ?></th>
+                        <!-- <th>Receipt date</th> -->
+                        <!-- <th>Supplier</th> -->
+                        <th><?php echo $size; ?></th>
+                        <th><?php echo $color; ?></th>
+                        <th><?php echo $hand; ?></th>
+                        <th><?php echo $qty; ?></th>
+                        <th><?php echo $soldDate; ?></th>
+                        <th><?php echo $customer; ?></th>
+                        <th><?php echo $paidBy; ?></th>
+                        <th><?php echo $payment; ?></th>
+                        <th><?php echo $delivery; ?></th>
+                        <th><?php echo $prPo; ?></th>
+                        <!-- <th>PO status</th> -->
+                        <th><?php echo $update; ?></th>
+                        <th><?php echo $memo; ?></th>
+                    </thead>
+                    <tbody id="dataTable">
+                    </tbody>
+                </table>
             </div>
         </div>
-    </div>
-
-
-    <div class="container-fluid">
-        <h1><i class="fa-solid fa-database fa-xl"></i> Currently Taken (SAMT)</h1><br>
-        <div class="d-flex justify-content-between">
-            <div class="mb-2">
-                <a href="#" class="btn btn-primary" id="allBtn"><i class="fa-solid fa-bars"></i> All</a>
-                <a href="#" class="btn btn-danger" id="partSaleBtn"><i class="fa-solid fa-file-invoice-dollar"></i> Part
-                    Sale</a>
-            </div>
-            <div class="mb-2">
-                <a href="#" id="previewPRSelectedBtn" class="btn btn-info  rounded-8"><i
-                        class="fa-solid fa-file-lines"></i> PR
-                    create</a>
-                <a href="#" id="previewReturnedSelectedBtn" class="btn btn-warning  rounded-8"><i
-                        class="fa-solid fa-right-left"></i> Returned</a>
-                <a href="his_all.php" class="btn btn-success  rounded-8"><i class="fa-solid fa-file-circle-check"></i>
-                    Completed</a>
-            </div>
-        </div>
-        <table class="table table-hover mx-auto">
-            <thead class="text-center table-secondary" style="text-transform: uppercase;">
-                <th>#</th>
-                <th>store</th>
-                <th>CODE</th>
-                <!-- <th>Stock out</th> -->
-                <th>product</th>
-                <!-- <th>Receipt date</th> -->
-                <!-- <th>Supplier</th> -->
-                <th>size</th>
-                <th>color</th>
-                <th>hand</th>
-                <th>qty</th>
-                <th>Sold date</th>
-                <th>customer</th>
-                <th>paid by</th>
-                <th>payment</th>
-                <th>Delivery</th>
-                <th>PR/PO</th>
-                <!-- <th>PO status</th> -->
-                <th>Update</th>
-                <th>select</th>
-                <th>Memo</th>
-            </thead>
-            <tbody id="dataTable">
-            </tbody>
-        </table>
-    </div>
-    <!------------------------ Preview Modal -------------------------------------------------------------------->
-    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-        <div class="modal-dialog custom-modal-size mx-auto">
-            <div class="modal-content">
-                <div class="modal-header text-center" id="previewModalHeader">
-                    <h5 class="modal-title" id="previewModalLabel">Preview Selected Items</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <?php
+        <!------------------------ Preview Modal -------------------------------------------------------------------->
+        <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-xl mx-auto">
+                <div class="modal-content">
+                    <div class="modal-header text-center" id="previewModalHeader">
+                        <h5 class="modal-title" id="previewModalLabel">Preview Selected Items</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <?php
                     // กำหนดวันที่ปัจจุบันในรูปแบบ 'Y-m-d'
                     $currentDate = date('Y-m-d');
                     ?>
-                <div class="modal-body">
-                    <label for="newDate">Date: </label>
-                    <input id="newDate" type="date" class="form-control w-50 ms-1"
-                        value="<?php echo $currentDate; ?>"><br>
-                    <label for="memo">Memo: </label>
-                    <textarea id="memo" class="form-control w-50" placeholder="memo"></textarea>
-                </div>
-                <div class="modal-body" id="previewModalBody">
-                    <!-- Details will be populated here -->
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-info" id="makePR" hidden>PR CREATE</button>
-                    <button type="button" class="btn btn-warning" id="returnButton" hidden>RETURN</button>
+                    <div class="modal-body">
+                        <label for="newDate">Date: </label>
+                        <input id="newDate" type="date" class="form-control w-50 ms-1"
+                            value="<?php echo $currentDate; ?>"><br>
+                        <label for="memo">Memo: </label>
+                        <textarea id="memo" class="form-control w-50" placeholder="memo"></textarea>
+                    </div>
+                    <div class="modal-body" id="previewModalBody">
+                        <!-- Details will be populated here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-info" id="makePR" hidden>PR CREATE</button>
+                        <button type="button" class="btn btn-warning" id="returnButton" hidden>RETURN</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -201,12 +151,14 @@ th {
                         ids: selectedIds
                     },
                     success: function(response) {
-                        $('#previewModalHeader').removeClass('text-bg-info').addClass(
-                            'text-bg-warning');
+                        $('#previewModalHeader').removeClass('text-info')
+                            .addClass(
+                                'text-warning');
                         // Populate the modal body with the response
                         $('#previewModalBody').html(response);
 
-                        $('#previewModalLabel').html('Preview Selected Items (Returned)');
+                        $('#previewModalLabel').html(
+                            'Preview Selected Items (Returned)');
 
                         // Show the modal
                         var modal = new bootstrap.Modal(document.getElementById(
@@ -274,7 +226,9 @@ th {
                 },
                 error: function() {
                     // Handle the error
-                    alert('Error inserting data into stockin table. Please try again.');
+                    alert(
+                        'Error inserting data into stockin table. Please try again.'
+                    );
                 }
             });
         });
@@ -324,7 +278,9 @@ th {
                 },
                 error: function() {
                     // Handle the error
-                    alert('Error inserting data into stockin table. Please try again.');
+                    alert(
+                        'Error inserting data into stockin table. Please try again.'
+                    );
                 }
             });
         });
@@ -348,11 +304,13 @@ th {
                         ids: selectedIds
                     },
                     success: function(response) {
-                        $('#previewModalHeader').removeClass('text-bg-warning').addClass(
-                            'text-bg-info');
+                        $('#previewModalHeader').removeClass('text-warning')
+                            .addClass(
+                                'text-info');
                         // Populate the modal body with the response
                         $('#previewModalBody').html(response);
-                        $('#previewModalLabel').html('Preview Selected Items (PR Create)');
+                        $('#previewModalLabel').html(
+                            'Preview Selected Items (PR Create)');
 
                         // Show the modal
                         var modal = new bootstrap.Modal(document.getElementById(
@@ -385,7 +343,73 @@ th {
         });
     });
     </script>
+
     <!------------------------ Preview Modal -------------------------------------------------------------------->
+    <!-- Bootstrap Modal -->
+    <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" style="background-color: wheat;">
+                    <h5 class="modal-title" id="updateModalLabel"><i class="fa-solid fa-pen-to-square fa-lg"></i>
+                        Payment and
+                        Delivery</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <form id="update-form">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <input type="hidden" id="product-id" name="product-id">
+                            <label for="mg-code" class="form-label"><i class="fa-solid fa-barcode"></i> MG
+                                CODE:</label>
+                            <input class="form-control" type="text" id="mg-code" name="mg-code" disabled>
+                        </div>
+                        <!-- Hidden field to store product ID -->
+                        <div class="mb-3">
+                            <div class="mb-3">
+                                <label for="o_payment" class="form-label"><i
+                                        class="fa-solid fa-hand-holding-dollar"></i> Payment Status:</label><br>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="o_payment" id="paymentSuccess"
+                                        value="1">
+                                    <label class="form-check-label" for="paymentSuccess">Payment
+                                        Successful</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="o_payment" id="paymentPending"
+                                        value="2">
+                                    <label class="form-check-label" for="paymentPending">Payment Pending</label>
+                                </div>
+                            </div>
+
+                            <!-- Add more options as needed -->
+                        </div>
+                        <div class="mb-3">
+                            <label for="o_delivery" class="form-label"><i class="fa-solid fa-cart-flatbed"></i>
+                                Delivery
+                                Status:</label><br>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="o_delivery" id="deliveryDelivered"
+                                    value="1">
+                                <label class="form-check-label" for="deliveryDelivered">Successfully
+                                    Delivered</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="radio" name="o_delivery" id="deliveryNotDelivered"
+                                    value="2">
+                                <label class="form-check-label" for="deliveryNotDelivered">Delivery
+                                    Pending</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary" onclick="updateData()">Update</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- -------------------------------------------------------------------------------------------------------------------- -->
 </body>
 
 </html>
@@ -491,14 +515,12 @@ $(document).ready(function() {
     loadData();
 
     // Event listener for all button
-    $('#allBtn').click(function(e) {
-        e.preventDefault();
+    $('#allBtn').click(function() {
         loadData();
     });
 
     // Event listener for part sale button
-    $('#partSaleBtn').click(function(e) {
-        e.preventDefault();
+    $('#partSaleBtn').click(function() {
         loadData('sale');
     });
 });
