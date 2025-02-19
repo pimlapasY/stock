@@ -15,6 +15,8 @@
                 <th>Name</th>
                 <th>Address</th>
                 <th>Tel</th>
+                <th>Edit</th>
+                <th>Delete</th>
             </tr>
         </thead>
         <tbody>
@@ -37,6 +39,8 @@
                     echo "<td>" . htmlspecialchars($store['st_name']) . "</td>";
                     echo "<td>" . htmlspecialchars($store['st_addr']) . "</td>";
                     echo "<td>" . htmlspecialchars($store['st_tel']) . "</td>";
+                    echo "<td>" . "<button id='edit' class='btn btn-outline-warning'><i class='fa-solid fa-pen-to-square'></i></button>" . "</td>";
+                    echo "<td>" . "<button id='delete' class='btn btn-outline-danger btn-rounded delete-btn' data-mdb-ripple-init><i class='fa-regular fa-trash-can'></i></button>" . "</td>";
                     echo "</tr>";
                 }
             } catch (PDOException $e) {

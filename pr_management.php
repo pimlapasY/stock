@@ -42,7 +42,7 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
 <body>
     <div class="d-flex flex-wrap">
         <?php include('navbar.php'); ?>
-        <div class="container pt-5 col-10">
+        <div class="container-fluid pt-5 col-10 mt-5">
             <div class="d-flex justify-content-start m-5">
                 <h1 id="head_list">
                     <?php
@@ -50,6 +50,7 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
                 ?>
                 </h1>
             </div>
+            <hr>
             <?php 
                 $currentDayDemo = 15;
                 if( $currentDayDemo  == 20){
@@ -171,9 +172,9 @@ $nextMonth = str_pad($nextMonth, 2, '0', STR_PAD_LEFT);
                         <th><?php echo $store; ?></th>
                         <th><?php echo $mgCode; ?></th>
                         <th><?php echo $product; ?></th>
-                        <th><?php echo $size; ?></th>
-                        <th><?php echo $color; ?></th>
-                        <th><?php echo $hand; ?></th>
+                        <th><?php echo $options1_label; ?></th>
+                        <th><?php echo $options2_label; ?></th>
+                        <th><?php echo $options3_label; ?></th>
                         <th><?php echo $qty; ?></th>
                         <th><?php echo $soldDate; ?></th>
                         <th><?php echo $customer; ?></th>
@@ -939,7 +940,7 @@ function openEditModal(prID) {
 
     // AJAX request to fetch data based on pr_code
     $.ajax({
-        url: 'pr_fetch_exchange.php',
+        url: 'ajax_POST/pr_modal_exchange.php',
         method: 'POST',
         dataType: 'json',
         data: {

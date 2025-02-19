@@ -11,9 +11,9 @@
     <div class="d-flex flex-wrap">
         <?php include('navbar.php'); ?>
 
-        <div class="container pt-5 col-10">
-            <h1>
-                <i class="fa-solid fa-file-lines fa-xl"></i> Register
+        <div class="container-fluid pt-5  mt-5 col-10">
+            <h1 class="mt-5">
+                <i class="fa-solid fa-file-lines fa-xl"></i> <?php echo $register ?>
             </h1>
             <br>
             <hr>
@@ -23,16 +23,16 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#" id="productTab"
                             style="font-size: 20px;">
-                            <i class="fa-solid fa-box fa-lg"></i> Product</a>
+                            <i class="fa-solid fa-box fa-lg"></i> <?php echo $product ?></a>
                     </li>
                     <!-- Line break after the first list item -->
                     <li class="nav-item">
                         <a class="nav-link" href="#" id="supplierTab" style="font-size: 20px;">
-                            <i class="fa-solid fa-user fa-lg"></i> Supplier</a>
+                            <i class="fa-solid fa-user fa-lg"></i> <?php echo $supplier ?></a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link" href="#" id="storeTab" style="font-size: 20px;">
-                            <i class="fa-solid fa-store"></i> Store</a>
+                            <i class="fa-solid fa-store"></i> <?php echo $store ?></a>
                     </li>
                 </ul>
             </div>
@@ -50,6 +50,44 @@
 </html>
 
 <script>
+$(document).ready(function() {
+    const $rows = $('#optionsTable tr[hidden]');
+    let currentIndex = 0;
+
+    $('#addRowButton').click(function() {
+        if (currentIndex < $rows.length) {
+            $rows.eq(currentIndex).removeAttr('hidden');
+            currentIndex++;
+        }
+        if (currentIndex > 0) {
+            $('#deleteRowButton').prop('disabled', false);
+        }
+
+        // Disable the button if all rows are shown
+        if (currentIndex >= $rows.length) {
+            $('#addRowButton').prop('disabled', true);
+        }
+    });
+
+    $('#deleteRowButton').click(function() {
+        if (currentIndex > 0) {
+            currentIndex--;
+            $rows.eq(currentIndex).attr('hidden', true);
+        }
+
+        // Disable the delete button if no rows are visible
+        if (currentIndex <= 0) {
+            $('#deleteRowButton').prop('disabled', true);
+        }
+
+        // Re-enable the add button if rows can be added again
+        if (currentIndex < $rows.length) {
+            $('#addRowButton').prop('disabled', false);
+        }
+    });
+});
+
+
 // Add click event listeners to tab links
 $('#productTab').click(function(e) {
     e.preventDefault(); // Prevent default link behavior

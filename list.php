@@ -15,13 +15,13 @@
 <body>
     <div class="d-flex flex-wrap">
         <?php include('navbar.php'); ?>
-        <div class="container pt-5 col-10">
+        <div class="container-fluid mt-5 pt-5 col-10">
             <h1 id="head_list">
                 <?php
             echo ' <i class="fa-solid fa-box fa-lg"></i> Product List'; 
             ?>
             </h1>
-            <br>
+            <hr>
 
             <div class="d-flex justify-content-start">
                 <ul class="nav nav-tabs">
@@ -35,7 +35,7 @@
                     style="font-size: 20px;">';
                 } 
                 ?>
-                        <i class="fa-solid fa-box fa-lg"></i> Product List</a>
+                        <i class="fa-solid fa-box fa-lg"></i> <?php echo $listProduct ?></a>
                     </li>
                     <!-- Line break after the first list item -->
                     <li class="nav-item">
@@ -46,7 +46,7 @@
                     echo '<a class="nav-link" href="#supList" id="supplierTab" style="font-size: 20px;">';
                 } 
                 ?>
-                        <i class="fa-solid fa-user fa-lg"></i> Supplier List</a>
+                        <i class="fa-solid fa-user fa-lg"></i> <?php echo $listSuplier ?></a>
                     </li>
                     <li class="nav-item">
                         <?php 
@@ -56,7 +56,7 @@
                     echo '<a class="nav-link" href="#storeList" id="storeTab" style="font-size: 20px;">';
                 } 
                 ?>
-                        <i class="fa-solid fa-store fa-xl"></i> Store List</a>
+                        <i class="fa-solid fa-store fa-xl"></i> <?php echo $listStore ?></a>
                     </li>
                 </ul>
             </div>
@@ -69,8 +69,7 @@
                         include("list_suppliers.php");
                     }elseif(isset($_GET['page']) && $_GET['page'] === 'register_store'){
                         include("list_store.php");
-                    }
-                    else{
+                    } else{
                         include("list_product.php"); 
                     }
                 ?>

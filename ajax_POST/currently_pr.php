@@ -1,6 +1,6 @@
 <?php
 // Include database connection
-include 'connect.php';
+include '../connect.php';
 
 if (isset($_POST['ids'])) {
   
@@ -36,8 +36,8 @@ $currentDate = date("ymd");
 /////////////////////////////////////////////////////////////////////////////////////////////
 
   // Prepare the insert statement for stockin table (outside the loop)
-  $sql_pr = "INSERT INTO pr (pr_product_id, pr_mg_code, pr_product_code, pr_product_name, pr_qty, pr_user_add, pr_date, pr_code, pr_memo, pr_date_add) 
-  VALUES (?,?,?,?,?,?,?,?,?, now())";
+  $sql_pr = "INSERT INTO pr (pr_product_id, pr_mg_code, pr_product_code, pr_product_name, pr_cost, pr_total_cost, pr_vat, pr_qty, pr_user_add, pr_date, pr_code, pr_memo, pr_date_add) 
+  VALUES (?,?,?,?,?,?,?,?,?,?,?,?, now())";
   $stmt_pr = $pdo->prepare($sql_pr);
 
   //update pr at stockout
@@ -59,16 +59,21 @@ $currentDate = date("ymd");
 
     $pr_code = 'PR'.$currentDate . $count; //ต้องอยู่นอกลูปเพราะว่าต้องการให้เป็น ID เดียวกันก่อน insert 1 ครั้ง
 
+    $cost_total_price = floatval($product['p_cost_price']*$product['o_out_qty']);
     // Bind value for each insert
     $stmt_pr->bindValue(1, $product['o_product_id']);
     $stmt_pr->bindValue(2, $product['o_mg_code']);
     $stmt_pr->bindValue(3, $product['o_product_code']);
     $stmt_pr->bindValue(4, $product['p_product_name']);
-    $stmt_pr->bindValue(5, $product['o_out_qty']);
-    $stmt_pr->bindValue(6, $usercode_add);
-    $stmt_pr->bindValue(7, $prDate);    
-    $stmt_pr->bindValue(8, $pr_code);
-    $stmt_pr->bindValue(9, $memo);
+    $stmt_pr->bindValue(5, $product['p_cost_price']);
+    $stmt_pr->bindValue(6, $cost_total_price);
+    $stmt_pr->bindValue(7, $product['p_vat']);
+    $stmt_pr->bindValue(8, $product['o_out_qty']);
+    $stmt_pr->bindValue(9, $usercode_add);
+    $stmt_pr->bindValue(10, $prDate);
+    $stmt_pr->bindValue(11, $pr_code);
+    $stmt_pr->bindValue(12, $memo);
+
 
 
 

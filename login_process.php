@@ -1,10 +1,10 @@
 <?php
 session_start();
 
-$dbHost = "192.168.100.122";
-$dbUser = "samt";
+$dbHost = "27.254.134.24";
+$dbUser = "system_saiko";
 $dbPass = "samtadmin12";
-$dbName = "Saiko2";
+$dbName = "system_saiko";
 $port = "3306";
 
 try {
@@ -35,6 +35,15 @@ try {
         $_SESSION['lang'] = "en";// Language
         $_SESSION['role'] = $user['u_status'];  // User role (assuming u_status contains role)
         $_SESSION['id'] = $user['u_userid'];    // User ID (assuming u_userid contains user ID)
+        $ID =  $_SESSION['id'];
+        // Prepare the SQL query to update the logout date in the user table
+        $stmt = $pdo->prepare("UPDATE user SET u_login_date = NOW() WHERE u_userid = :id");
+        
+        // Bind the ID parameter to the query
+        $stmt->bindParam(':id', $ID, PDO::PARAM_INT);
+        
+        // Execute the query to update the database
+        $stmt->execute();
 
         // Login successful
         echo json_encode(['success' => true]);

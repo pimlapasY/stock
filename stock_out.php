@@ -5,7 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Stock Out</title>
+
 </head>
+
 <style>
 .valid {
     border-color: green;
@@ -45,6 +47,7 @@ function validateInput(input) {
 
 
 <body>
+
     <div class="d-flex flex-wrap">
 
         <?php include('navbar.php') ;
@@ -69,15 +72,15 @@ function validateInput(input) {
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
     $count = $row['count'];
 
-     // Fetch store IDs and names from the database
-     $stmt_store = $pdo->query("SELECT st_id, st_name FROM store WHERE st_id != 1");
-     $store_options = $stmt_store->fetchAll(PDO::FETCH_ASSOC);
+    // Fetch store IDs and names from the database
+    $stmt_store = $pdo->query("SELECT st_id, st_name FROM store WHERE st_id != 1");
+    $store_options = $stmt_store->fetchAll(PDO::FETCH_ASSOC);
 
     // Construct MG_CODE
     $MG_CODE = 'M' . $dateNow . str_pad($count + 1, STR_PAD_LEFT);
-    
 ?>
-        <div class="container pt-5 col-10 pb-5">
+
+        <div class="container-fluid pt-5 col-10 mt-5 pb-5">
             <div class="card w-75 mx-auto ">
                 <div class="card-header">
                     <table class="table table-borderless">
@@ -148,7 +151,7 @@ function validateInput(input) {
                                     <input class="form-check-input" type="radio" name="flexRadioDefault"
                                         id="flexRadioDefault3">
                                     <label class="form-check-label" for="flexRadioDefault3">
-                                        <?php echo 'Sale sample' ?></label>
+                                        <?php echo $saleSample ?></label>
                                 </div>
                             </td>
                         </tr>
@@ -202,6 +205,8 @@ function validateInput(input) {
                                     placeholder="Enter Other">
                             </td>
                         </tr>
+
+
                     </table>
                     <!--    <div class="text-start">
                     <p>
@@ -230,93 +235,122 @@ function validateInput(input) {
                 </div> -->
                 </div>
                 <div class="card-body">
-                    <div class="alert alert-warning" id="qtyValueText" hidden></div>
+                    <div class="alert alert-warning" id="qtyValueText" hidden>
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <?php echo $alertNoStock ?>
+                    </div>
+                    <div class="alert alert-success" role="alert" id="alertSuccess" hidden>
+                        <i class="fa-solid fa-square-check"></i> <?php echo $alertFillSuccess ?>
+                    </div>
+                    <div class="alert alert-danger" role="alert" id="alertError" hidden>
+                        <i class="fa-solid fa-square-xmark"></i> <?php echo $alertNodata ?> <a
+                            href="register.php"><?php echo $register ?></a>
+                    </div>
+                    <div class="alert alert-info" role="alert" id="alertFillData" hidden>
+                        <i class="fa-solid fa-circle-info"></i> <?php echo $alertFilldata ?>
+                    </div>
+                    <form id="myForm">
+                        <table class="table w-75 mx-auto">
+                            <tbody class="">
+                                <tr>
+                                    <th><?php echo $product_code ?></th>
+                                    <!-- ไอดี product จาก product(Master) -->
+                                    <input type="text" class="form-control" id="product_id" hidden>
+                                    <td>
+                                        <input class="form-control" type="text" id="product" name="product"
+                                            list="product_names" onchange="validateInput(this)">
+                                        <!-- Populate datalist with product names -->
+                                        <datalist id="product_names">
+                                            <?php foreach ($productNames_code as $productName_code): ?>
+                                            <option value="<?php echo $productName_code; ?>">
+                                                <?php endforeach; ?>
+                                        </datalist>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $product_name?></th>
+                                    <!-- Replace the input field with a readonly input -->
+                                    <td>
+                                        <input type="text" class="form-control badge-warning" id="selectedProductName"
+                                            name="productName" readonly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $unit ?></th>
 
-                    <table class="table w-75 mx-auto">
-                        <tbody class="">
-                            <tr>
-                                <th><?php echo $product_code ?></th>
-                                <!-- ไอดี product จาก product(Master) -->
-                                <input type="text" class="form-control" id="product_id" hidden>
-                                <td>
-                                    <input class="form-control" type="text" id="product" name="product"
-                                        list="product_names" onchange="validateInput(this)">
-                                    <!-- Populate datalist with product names -->
-                                    <datalist id="product_names">
-                                        <?php foreach ($productNames_code as $productName_code): ?>
-                                        <option value="<?php echo $productName_code; ?>">
-                                            <?php endforeach; ?>
-                                    </datalist>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><?php echo $product_name?></th>
-
-                                <!-- Replace the input field with a readonly input -->
-                                <td>
-                                    <input type="text" class="form-control badge-warning" id="selectedProductName"
-                                        name="productName" readonly>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><?php echo $unit ?></th>
-
-                                <td>
-                                    <input type="text" class="form-control badge-warning" id="selectedProductUnit"
-                                        name="productUnit" readonly>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><?php echo $color ?></th>
-                                <td>
-                                    <input class="form-control" type="text" id="colorInput" name="productColor"
-                                        list="product_names_color" onchange="validateInput(this)">
-                                    <datalist id="product_names_color">
-                                        <?php foreach ($productNames_color as $productName_color): ?>
-                                        <option value="<?php echo $productName_color; ?>">
-                                            <?php endforeach; ?>
-                                    </datalist>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><?php echo $hands ?></th>
-                                <td>
-                                    <input class="form-control" type="text" id="handInput" name="productHand"
-                                        list="product_hand" onchange="validateInput(this)">
-                                    <datalist id="product_hand">
-                                        <?php foreach ($productNames_hands as $productName_hand): ?>
-                                        <option value="<?php echo $productName_hand; ?>">
-                                            <?php endforeach; ?>
-                                    </datalist>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><?php echo $size  ?></th>
-                                <td>
-                                    <input class="form-control" type="text" id="sizeInput" name="productSize"
-                                        list="product_size" onchange="validateInput(this)">
-                                    <datalist id="product_size">
-                                        <?php foreach ($productNames_size as $productName_size): ?>
-                                        <option value="<?php echo $productName_size; ?>">
-                                            <?php endforeach; ?>
-                                    </datalist>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><?php echo 'Cost Price'  ?></th>
-                                <td>
-                                    <input class="form-control text-end badge-warning" type="text"
-                                        id="selectedProductCost" readonly>
-                                    <!--  <input type="text" class="form-control" id="total_price" name="total_price"
-                                style="background:#fff8e4;" readonly> -->
-
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><?php echo $qty ?></th>
-
-                                <td>
-                                    <!--  <div class="input-group">
+                                    <td>
+                                        <input type="text" class="form-control badge-warning" id="selectedProductUnit"
+                                            name="productUnit" readonly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $options1_label ?></th>
+                                    <td>
+                                        <input class="form-control" type="text" id="colorInput" name="productColor"
+                                            list="product_names_color" onchange="validateInput(this)">
+                                        <datalist id="product_names_color">
+                                            <?php foreach ($productNames_color as $productName_color): ?>
+                                            <option value="<?php echo $productName_color; ?>">
+                                                <?php endforeach; ?>
+                                        </datalist>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $options2_label  ?></th>
+                                    <td>
+                                        <input class="form-control" type="text" id="handInput" name="productHand"
+                                            list="product_hand" onchange="validateInput(this)">
+                                        <datalist id="product_hand">
+                                            <?php foreach ($productNames_hands as $productName_hand): ?>
+                                            <option value="<?php echo $productName_hand; ?>">
+                                                <?php endforeach; ?>
+                                        </datalist>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $options3_label ?></th>
+                                    <td>
+                                        <input class="form-control" type="text" id="sizeInput" name="productSize"
+                                            list="product_size" onchange="validateInput(this)">
+                                        <datalist id="product_size">
+                                            <?php foreach ($productNames_size as $productName_size): ?>
+                                            <option value="<?php echo $productName_size; ?>">
+                                                <?php endforeach; ?>
+                                        </datalist>
+                                    </td>
+                                </tr>
+                                <!-- <tr>
+                                    <th><?php echo $salePrice ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-warning" type="text"
+                                            id="selectedProductCost" readonly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $salePrice . '(Vat)' ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-warning" type="text"
+                                            id="selectedProductCostVat" readonly>
+                                    </td>
+                                </tr> -->
+                                <tr>
+                                    <th><?php echo $salePrice ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-warning" type="text"
+                                            id="selectedProductSale" readonly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $salePrice . '(Vat)' ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-warning" type="text"
+                                            id="selectedProductSaleVat" readonly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $qty ?></th>
+                                    <td>
+                                        <!--  <div class="input-group">
                                     <button type="button" class="btn btn-outline-secondary"
                                         onclick="decrementQty()">-</button>
                                     
@@ -324,27 +358,76 @@ function validateInput(input) {
                                         id="incrementBtn">+</button>
                                 </div> -->
 
-                                    <input type="number" min="1" id="qtyValueNum" class="form-control">
-                                </td>
-                            </tr>
-                            <tr>
-                                <th><?php echo 'Total price'  ?></th>
-                                <td>
-                                    <input class="form-control text-end badge-warning" id="total_price"
-                                        readonly></input>
-                                </td>
-                            </tr>
+                                        <input type="number" min="1" id="qtyValueNum" onchange="updateTotalPrice()"
+                                            class="form-control">
+                                    </td>
+                                </tr>
+                                <!-- <tr>
+                                    <th><?php echo $total_cost ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-warning" id="total_price" readonly>
+                                        </input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $total_cost.'(Vat)' ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-warning" id="total_price_vat"
+                                            readonly>
+                                        </input>
+                                    </td>
+                                </tr> -->
+                                <tr>
+                                    <th><?php echo $total_sale ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-info" id="total_sale" readonly>
+                                        </input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $total_sale.'(Vat)' ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-info" id="total_sale_vat" readonly>
+                                        </input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="text-start" style="text-transform: uppercase;">
+                                        <span class="badge bg-success">
+                                            <i class="fa-solid fa-tags"></i>
+                                            <?php echo $discount ?>
+                                        </span>
+                                        <!-- Default checkbox -->
+                                    </td>
+                                    <td>
+                                        <div class="d-flex" id="selectedCalculateTotalSale">
+                                            <select name="disType" id="disType" class="form-select me-3"
+                                                onchange="calculateTotalSale()">
+                                                <option value="99"><?php echo $optionNone; ?></option>
+                                                <option value="2"><?php echo $optionTotal; ?></option>
+                                                <option value="3"><?php echo $optionPercentage; ?></option>
+                                                <option value="1"><?php echo $optionPerItem; ?></option>
+                                            </select>
+                                            <input type="number" id="inputDiscount" class="form-control"
+                                                onchange="calculateTotalSale()" hidden>
+                                        </div>
+                                    </td>
+                                </tr>
 
-
-
-
-                            <tr>
-                                <th class="text-end">MEMO :</th>
-                                <td>
-                                    <textarea type="text" class="form-control" id="memo" name="memo"></textarea>
-                                </td>
-                            </tr>
-                            <!--    <tr>
+                                <tr>
+                                    <th><?php echo $total_sale.'(Vat) + '. $discount ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-success" id="total_sale_dis" readonly>
+                                        </input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $memo ?></th>
+                                    <td>
+                                        <textarea type="text" class="form-control" id="memo" name="memo"></textarea>
+                                    </td>
+                                </tr>
+                                <!--    <tr>
                             <td colspan="10" class="text-center">
                                 <button type="button" class="btn btn-primary" id="addRowBtn"><i
                                         class="fa-solid fa-plus"></i> Add Row</button>
@@ -353,416 +436,21 @@ function validateInput(input) {
                                     Row</button>
                             </td>
                         </tr> -->
-                        </tbody>
-                        <!-- <th colspan="8">ได้ตรวจสอบจำนวน และรายละเอียดต่างๆเรียบร้อยแล้ว</th> -->
-                    </table>
+                            </tbody>
+                            <!-- <th colspan="8">ได้ตรวจสอบจำนวน และรายละเอียดต่างๆเรียบร้อยแล้ว</th> -->
+                        </table>
+                    </form>
                 </div>
-                <div class="card-footer text-end">
-                    <script>
-                    function resetInput() {
-                        var inputs = document.querySelectorAll(
-                            "#product, #selectedProductName, #myInput, #selectedProductUnit, #colorInput, #sizeInput, #handInput, #total_price, #selectedProductCost"
-                        );
-
-
-                        // Reset the value of the input fields
-                        inputs.forEach(function(input) {
-                            input.value = "";
-                            input.classList.remove('valid-input-red');
-                        });
-
-                        // Reset the quantity value to 0
-                        $('#qtyValueNum').val('');
-                        $('#qtyValueText').prop('hidden', true);
-                    }
-                    </script>
-                    <button type="button" class="btn btn-warning" data-mdb-ripple-init onclick="resetInput()"><i
+                <div class="card-footer d-flex justify-content-between">
+                    <button type="button" class="btn btn-outline-warning" data-mdb-ripple-init onclick="resetInput()"><i
                             class="fa-solid fa-eraser"></i> <?php echo $reset  ?></button>
-                    <button type="button" class="btn btn-success" data-mdb-ripple-init onclick="submitStockOut()"><i
-                            class="fa-solid fa-floppy-disk"></i> Submit</button>
+                    <button id="submitStockOutBtn" type="button" class="btn btn-success" data-mdb-ripple-init
+                        onclick="submitStockOut()"><i class="fa-solid fa-floppy-disk"></i> Submit</button>
                 </div>
             </div>
         </div>
     </div>
 </body>
+<script src="stock_out.js"></script>
 
 </html>
-
-<script>
-// Get references to the dropdown menu and the input field
-const stockToOption = document.getElementById('stockToOption');
-const otherInput = document.getElementById('otherInput');
-
-// Function to format the input value with commas
-function formatNumberWithCommas(number) {
-    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-}
-
-// Event listener to format the number input on keyup
-document.addEventListener('DOMContentLoaded', (event) => {
-    const inputElements = document.querySelectorAll(
-        'input[type="text"][id="selectedProductCost"], #total_price');
-    inputElements.forEach(input => {
-        input.addEventListener('keyup', (event) => {
-            let value = input.value.replace(/,/g, ''); // Remove existing commas
-            if (!isNaN(value) && value.length > 0) {
-                input.value = formatNumberWithCommas(value);
-            }
-        });
-    });
-});
-
-// Add event listener to the dropdown menu
-stockToOption.addEventListener('change', function() {
-    // Check if the selected option is "Other"
-    if (stockToOption.value == 'Other') {
-        // If "Other" is selected, show the input field
-        otherInput.style.display = 'block';
-    } else {
-        // If any other option is selected, hide the input field
-        otherInput.style.display = 'none';
-    }
-});
-
-$('#product').on('input', function() {
-
-    // Get the selected product code from the input field
-    var selectedProductCode = $(this).val();
-    console.log('Selected product code:', selectedProductCode);
-
-    // Send an AJAX request to fetch the product name
-    $.ajax({
-        url: 'ajax_GET/get_product_name.php', // URL to your PHP script that fetches the product name
-        method: 'POST',
-        data: {
-            product_code: selectedProductCode,
-        },
-        success: function(response) {
-            // Split the response into product name and unit
-            var parts = response.split('|');
-            var productName = parts[0];
-            var productUnit = parts[1];
-
-            // Update the value of the readonly input fields with the fetched product name and unit
-            $('#selectedProductName').val(productName);
-            $('#selectedProductUnit').val(productUnit);
-
-        }
-    });
-});
-
-
-// Function to update quantity input based on product, color, or size changes
-// Function to update quantity input based on product, color, or size changes
-$('#product, #colorInput, #sizeInput, #handInput').on('change', function() {
-    updateQuantityInput();
-});
-
-$('#store').on('change', updateQuantityInput);
-
-function updateQuantityInput() {
-    var store = $('#store').val();
-    var selectedProductCode = $('#product').val();
-    var selectedColor = $('#colorInput').val();
-    var selectedSize = $('#sizeInput').val();
-    var selectedHand = $('#handInput').val();
-    var qtyInputText = $('#qtyValueText');
-    var incrementButton = $('#incrementBtn');
-    var total_price = $('#total_price').val();
-    var qtyValueNum = $('#qtyValueNum');
-    var productCost = parseFloat($('#selectedProductCost').val());
-
-    // AJAX call to get the stock quantity and product cost of the selected product, color, size, and hand
-    $.ajax({
-        url: 'ajax_GET/get_stock_quantity.php',
-        method: 'POST',
-        data: {
-            product_code: selectedProductCode,
-            color: selectedColor,
-            size: selectedSize,
-            hand: selectedHand,
-            store: store
-        },
-        success: function(response) {
-            var data = JSON.parse(response);
-            if (data.error) {
-                qtyValueNum.prop('disabled', true);
-                qtyValueNum.val('')
-                qtyInputText.prop('hidden', false);
-                qtyInputText.html(
-                    '<i class="fa-solid fa-rectangle-xmark"></i>No data available : Please register for the product. &nbsp;<i class="fa-solid fa-arrow-right"></i> &nbsp;<button class="btn btn-sm btn-success" onclick="window.location.href = \'register.php\'" style="color: white;"><?php echo $register ?></button>'
-                );
-
-                //incrementButton.prop('disabled', true);
-            }
-
-
-            var productID = data.p_product_id;
-
-            if (store != '1') {
-                // If the store is not 'samt', use sub_qty directly
-                stockQuantity = parseInt(data.sub_qty);
-            } else {
-                console.log('count sub qty: ' + parseInt(data.stock_quantity));
-                stockQuantity = parseInt(data.stock_quantity);
-            }
-
-            var productCost = parseFloat(data.p_cost_price);
-            var productQTY = parseInt(data.p_qty);
-            console.log('s_qty = ' + stockQuantity);
-            console.log('p_cost_price = ' + productCost);
-            console.log('p_qty = ' + productQTY);
-            console.log('productID = ' + productID);
-
-
-            if (stockQuantity > 0) {
-                qtyValueNum.val(stockQuantity);
-                //incrementButton.prop('disabled', false);
-                qtyValueNum.prop('disabled', false);
-                var totalPrice = (stockQuantity * productCost).toFixed(2);
-                totalPrice = parseFloat(totalPrice).toLocaleString(); // Calculate the total price
-
-                $('#total_price').val(totalPrice);
-                $('#selectedProductCost').val(productCost);
-                $('#product_id').val(productID);
-                qtyInputText.prop('hidden', true);
-
-            } else if (productQTY == 0) {
-                qtyInputText.prop('hidden', false);
-                qtyInputText.html(`
-                        ** <i class="fa-solid fa-sack-xmark"></i>
-                        Out of stock: Please stock more of this product. &nbsp;
-                        <i class="fa-solid fa-arrow-right"></i> &nbsp;
-                        <button class="btn btn-sm btn-info" onclick="window.location.href = 'stock_in.php'" style="color: white;">
-                            <i class="fa-solid fa-inbox"></i>
-                            <?php echo $stock_in; ?>
-                        </button>**
-                    `);
-
-                qtyValueNum.prop('disabled', true);
-                //incrementButton.prop('disabled', true);
-                $('#selectedProductCost').val(productCost);
-                $('#product_id').val(productID);
-            }
-
-            // Handle stock quantity and product cost
-            /*    if (stockQuantity <= 0) {
-                   qtyInput.html('<b style="color: red;">Sold out</b>');
-                   incrementButton.prop('disabled', true);
-               } else {
-                   qtyInput.text(stockQuantity);
-                   incrementButton.prop('disabled', false);
-               } */
-
-            // Set the max attribute of the quantity span to the stock quantity
-            qtyValueNum.attr('max', stockQuantity);
-        },
-        error: function() {
-            console.error('Error fetching stock quantity and product cost.');
-        }
-    });
-}
-
-// Function to decrement quantity value
-/* function decrementQty() {
-    var qtyValue = parseInt($('#qtyValue').text());
-    if (qtyValue > 0) {
-        $('#qtyValue').text(qtyValue - 1);
-        updateTotalPrice(); // Call updateTotalPrice after decrementing quantity
-    }
-} */
-
-
-// Function to increment quantity value
-/* function incrementQty() {
-    var qtyValue = parseInt($('#qtyValue').text());
-    var maxQuantity = parseInt($('#qtyValue').attr('max'));
-    if (qtyValue < maxQuantity) {
-        $('#qtyValue').text(qtyValue + 1);
-        updateTotalPrice(); // Call updateTotalPrice after incrementing quantity
-    }
-} */
-$('#qtyValueNum').on('change input', function() {
-    updateTotalPrice();
-});
-
-// Function to update total price
-function updateTotalPrice() {
-    var qtyValueNum = $('#qtyValueNum').val();
-    var productCost = parseFloat($('#selectedProductCost').val()); // Get the product cost
-    var totalPrice = (qtyValueNum * productCost).toFixed(2);
-    totalPrice = parseFloat(totalPrice).toLocaleString(); // Calculate the total price
-
-    $('#total_price').val(totalPrice); // Update the total price element
-}
-
-
-// Get the radio buttons
-var saleRadio = document.getElementById('flexRadioDefault1');
-var takeOutRadio = document.getElementById('flexRadioDefault2');
-var saleSampleRadio = document.getElementById('flexRadioDefault3');
-
-// Get the select container
-var selectContainerSale = document.getElementById('selectContainerSale');
-var selectContainerTakeOut = document.getElementById('selectContainerTakeOut');
-// Function to toggle select container visibility
-function toggleSelectContainer() {
-    if (takeOutRadio.checked) {
-        selectContainerTakeOut.style.display = 'table-cell'; // Show select container
-    } else {
-        selectContainerTakeOut.style.display = 'none'; // Hide select container
-    }
-
-    if (saleRadio.checked) {
-        selectContainerSale.style.display = 'table-cell'; // Show select container
-    } else {
-        selectContainerSale.style.display = 'none'; // Hide select container
-    }
-
-    if (saleSampleRadio.checked) {
-        selectContainerSale.style.display = 'none'; // Hide select container
-        selectContainerTakeOut.style.display = 'none'; // Hide select container
-    }
-}
-
-// Call the function initially
-toggleSelectContainer();
-
-// Add event listener to the radio buttons
-saleRadio.addEventListener('change', toggleSelectContainer);
-takeOutRadio.addEventListener('change', toggleSelectContainer);
-saleSampleRadio.addEventListener('change', toggleSelectContainer);
-
-function submitStockOut() {
-
-    // Get the radio inputs
-    var saleRadio = document.getElementById("flexRadioDefault1");
-    var takeOutRadio = document.getElementById("flexRadioDefault2");
-    var saleSampleRadio = document.getElementById('flexRadioDefault3');
-    var paidOption = $('#paidOption').val();
-    var store = '';
-    var stockToOption = $('#stockToOption').val();
-    var customerName = $('#cusname').val(); // Get the value of the customer name input
-    var date = $('#dateStockOut').val(); // Get the value of the customer name input
-    var otherInput = $('#otherInput').val();
-
-    var reasons_submit; // Define reasons_submit variable
-    // Check if the sale radio is checked
-    if (saleRadio.checked) {
-
-        if (paidOption === '' || customerName === '') {
-            Swal.fire({
-                title: 'ERROR',
-                text: "Please select a payment method \nor enter the customer's name.",
-                icon: 'warning',
-                confirmButtonColor: '#3085d6',
-                confirmButtonText: 'OK'
-            });
-            return false;
-        }
-        // Update reasons_submit for 'sale' reason
-        reasons_submit = 'sale,' + paidOption + ',' + customerName;
-        store = $('#store').val();
-    }
-    // Check if the take out radio is checked
-    else if (takeOutRadio.checked) {
-        reasons_submit = 'out to'; // Update reasons_submit for 'take_out' reason
-        store = stockToOption;
-    } else if (saleSampleRadio.checked) {
-        reasons_submit = 'sale sample';
-        //default samt == 1
-        store = 1;
-    } else {
-        Swal.fire({
-            title: 'ERROR',
-            text: 'Please select stock out to',
-            icon: 'error',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-        });
-        return false;
-    }
-    /* สำหรับเช็คดรอปดาว */
-
-
-
-    var mgCode = $('#MG_code').val();
-    var productID = $('#product_id').val();
-    var productCode = $('#product').val();
-    var productName = $('#selectedProductName').val();
-    var productCost = $('#selectedProductCost').val();
-    var productTotal = $('#total_price').val();
-    var memo = $('#memo').val();
-    var qtyValueNum = $('#qtyValueNum').val();
-    console.log(reasons_submit, qtyValueNum);
-
-    var data = {
-        mgCode: mgCode,
-        productID: productID,
-        productCode: productCode,
-        productName: productName,
-        productCost: productCost,
-        productTotal: productTotal,
-        memo: memo,
-        qtyValue: qtyValueNum,
-        reasons: reasons_submit,
-        date: date,
-        store: store
-    };
-
-
-    if (productID != '' && qtyValueNum != 0) {
-        Swal.fire({
-            title: 'Are you sure?',
-            text: 'Do you want to submit the form?',
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: '#3085d6',
-            cancelButtonColor: '#d33',
-            confirmButtonText: 'Yes, submit it!'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                $.ajax({
-                    url: 'stock_out_submit.php',
-                    method: 'POST',
-                    data: data,
-                    success: function(response) {
-                        // จัดการข้อมูลหลังจากที่ส่งไปยังเซิร์ฟเวอร์สำเร็จ
-                        // Handle success response
-                        Swal.fire('Success!', 'Form submitted successfully', 'success')
-                            .then((result) => {
-                                location.reload();
-                            });
-                    },
-                    error: function(xhr, status, error) {
-                        // จัดการข้อมูลหลังจากที่เกิดข้อผิดพลาดในการส่งข้อมูล
-                        Swal.fire('Error!', 'Failed to submit form', 'error');
-
-                    }
-
-                });
-            } else {
-                console.log('cancel')
-            }
-        });
-    } else if (qtyValueNum == '') {
-
-        Swal.fire({
-            title: 'ERROR',
-            text: 'Please stock in or add QTY of product',
-            icon: 'error',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-        });
-    } else {
-        Swal.fire({
-            title: 'ERROR',
-            text: 'Please fill to data or register of product',
-            icon: 'error',
-            confirmButtonColor: '#3085d6',
-            confirmButtonText: 'OK'
-        });
-    }
-
-};
-</script>

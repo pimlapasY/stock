@@ -49,7 +49,7 @@
                     echo "<form method='post' class='delete-form'>";
                     echo "<input type='hidden' name='sup_id' value='" . htmlspecialchars($supplier['sup_id']) . "'>";
                     echo "<input type='hidden' name='sup_name' value='" . htmlspecialchars($supplier['sup_name']) . "'>";
-                    echo "<button type='submit' name='delete' class='btn btn-danger btn-rounded delete-btn' data-mdb-ripple-init><i class='fa-regular fa-trash-can'></i></button>";
+                    echo "<button type='submit' name='delete' class='btn btn-outline-danger btn-rounded delete-btn' data-mdb-ripple-init><i class='fa-regular fa-trash-can'></i></button>";
                     echo "</form>";
                     echo "</td>";
                     echo "</tr>";

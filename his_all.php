@@ -21,7 +21,7 @@
 <body>
     <div class="d-flex flex-wrap">
         <?php include('navbar.php'); ?>
-        <div class="container pt-5 col-10">
+        <div class="container-fluid pt-5 mt-5  col-10">
             <div class="d-flex justify-content-start p-2">
                 <h1 id="head_list">
                     <?php
@@ -67,9 +67,9 @@
                             <th><?php echo $product; ?></th>
                             <!-- <th>Receipt date</th> -->
                             <!-- <th>Supplier</th> -->
-                            <th><?php echo $size; ?></th>
-                            <th><?php echo $color; ?></th>
-                            <th><?php echo $hand; ?></th>
+                            <th><?php echo $options1_label; ?></th>
+                            <th><?php echo $options2_label; ?></th>
+                            <th><?php echo $options3_label; ?></th>
                             <th><?php echo $qty; ?></th>
                             <th><?php echo $soldDate; ?></th>
                             <th><?php echo $customer; ?></th>

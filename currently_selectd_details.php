@@ -30,9 +30,9 @@ if (isset($_POST['ids'])) {
                 <th>MG</th>
                 <th>CODE</th>
                 <th>product</th>
-                <th>size</th>
-                <th>color</th>
-                <th>hand</th>
+                <th>Option 1</th>
+                <th>Option 2</th>
+                <th>Option 3</th>
                 <th>qty</th>
                 <th>Sold date</th>
                 <th>customer</th>
@@ -51,17 +51,17 @@ if (isset($_POST['ids'])) {
         $output .= "<td>" . htmlspecialchars($product['p_size']) . "</td>";
         $output .= "<td class='text-end text-success'>" . htmlspecialchars($product['o_out_qty']) . "</td>";
         $output .= "<td class='text-center'>" . date('d/m/Y', strtotime($product['o_out_date'])) . "</td>";
-        $output .= "<td class='text-center'>" . ($data_reasons[3]!= null ? $data_reasons[3] : $data_reasons[0]) . "</td>";
+        $output .= "<td class='text-center'>" . $product['o_customer'] . "</td>";
         $output .=  "<td class='text-center'>";
              
-        if ($data_reasons[2] == 1) {
-            $output .= '<i class="fa-solid fa-money-bill" style="color: green;"></i><br>cash';
-        } elseif ($data_reasons[2] == 2) {
-            $output .=  "<i class='fa-solid fa-qrcode' style='color: blue;'></i><br>QR";
-        } elseif ($data_reasons[2] == 3) {
-            $output .=  "<i class='fa-solid fa-cart-shopping' style='color: orange;''></i><br>shopify";
+        if ($product['o_payment_option'] == 1) {
+            $output .= '<span class="badge badge-success rounded-pill d-inline">cash</span>';
+        } elseif ($product['o_payment_option'] == 2) {
+            $output .=  '<span class="badge badge-primary rounded-pill d-inline">QR</span>';
+        } elseif ($product['o_payment_option'] == 3) {
+            $output .=  '<span class="badge badge-warning rounded-pill d-inline">shopify</span>';;
         } else {
-            $output .=  "<p style='color: red;'>FREE</p>"; // กรณีที่ค่าไม่ตรงกับเงื่อนไขที่กำหนด
+            $output .=  '<span class="badge badge-danger rounded-pill d-inline">sale sample</span>';// กรณีที่ค่าไม่ตรงกับเงื่อนไขที่กำหนด
         }
        /*  
         $output .=  "</td>";  

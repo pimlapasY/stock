@@ -17,9 +17,10 @@ if (isset($_POST['products'])) {
 
                 // Prepare and execute query
         $stmt = $pdo->prepare("
-        SELECT p.*, sub.*
+        SELECT p.*, sub.*, st_name
             FROM sub_stock sub
             LEFT JOIN product p  ON sub.sub_product_id = p.p_product_id
+            LEFT JOIN store ON st_id = sub_location
         WHERE sub.sub_id IN ($placeholders)");
         $stmt->execute($productIds);
         $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);

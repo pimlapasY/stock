@@ -9,13 +9,25 @@ if (isset($_SESSION['role'])) {
 /* $dbHost = "localhost";
 $dbUser = "root";
 $dbPass = ""; */
-
-$dbHost = "192.168.100.122";
-$dbUser = "samt";
-$dbPass = "samtadmin12";
-$dbName = "Saiko2";
-$port = "3306";
-
+if($_SESSION['role'] == 'Dev' || $_SESSION['role'] == 'Test'){
+    $dbHost = "27.254.134.24";
+    $dbUser = "system_saiko";
+    $dbPass = "samtadmin12";
+    $dbName = "system_saiko";
+    $port = "3306";
+}else if($_SESSION['role'] == 'Admin'){
+    $dbHost = "192.168.100.122";
+    $dbUser = "samt";
+    $dbPass = "samtadmin12";
+    $dbName = "system_saiko";
+    $port = "3306";
+}else if($_SESSION['role'] == 'User'){
+    $dbHost = "192.168.100.122";
+    $dbUser = "samt";
+    $dbPass = "samtadmin12";
+    $dbName = "system_saiko";
+    $port = "3306";
+}
 try {
     // Establish database connection using PDO
     $pdo = new PDO("mysql:host=$dbHost;dbname=$dbName", $dbUser, $dbPass);

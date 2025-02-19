@@ -7,10 +7,13 @@ $data = json_decode(file_get_contents('php://input'), true);
 if ($data && isset($data['products']) && isset($data['updateForm'])) {
     $products = $data['products'];
     $status = isset($data['status']) ? $data['status'] : null;
-    $date = isset($data['date']) ? $data['date'] : null;
+    $dateSelect = isset($data['dateSelect']) ? $data['dateSelect'] : null;
     $typeStatus = isset($data['typeStatus']) ? $data['typeStatus']: null;
-    $storeID = isset($data['storeID']) ? $data['storeID'] : null ;
-
+    $storeID = isset($data['storeID']) ? $data['storeID'] : null;
+    $paidOption = isset($data['paidOption']) ? $data['paidOption'] : null;
+    $customerName = isset($data['customerName']) ? $data['customerName'] : null;
+    $selectedValue = isset($data['selectedValue']) ? $data['selectedValue'] : null;
+    $userID =  $_SESSION['id'];
 
     if ($data['updateForm'] == 1) {
         foreach ($products as $product) {
@@ -19,11 +22,11 @@ if ($data && isset($data['products']) && isset($data['updateForm'])) {
             
             try {
 
-                if($typeStatus == 1 || $typeStatus == 3){
+                if($selectedValue == 'sale' || $selectedValue == 'sale sample'){
                     // Update the product details in the database
                     $stmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty - ?, s_date_update = NOW() WHERE s_product_id = ?");
                     $stmt->execute([$qty, $productId]);
-                }elseif ($typeStatus == 2){
+                }elseif ($selectedValue == 'out to'){
                      // Fetch store name
                     $storeNameStmt = $pdo->prepare("SELECT st_name FROM store WHERE st_id = ?");
                     $storeNameStmt->execute([$storeID]);
@@ -35,7 +38,7 @@ if ($data && isset($data['products']) && isset($data['updateForm'])) {
 
                     if ($checkStmt->rowCount() > 0) {
                         // If exists, update the sub_qty
-                        $updateSubQtyStmt = $pdo->prepare("UPDATE sub_stock SET sub_qty = sub_qty + ?, sub_name = ? WHERE sub_product_id = ? AND sub_location = ?");
+                        $updateSubQtyStmt = $pdo->prepare("UPDATE sub_stock SET sub_qty = sub_qty + ?, sub_name = ?, sub_date_update = NOW(), WHERE sub_product_id = ? AND sub_location = ?");
                         $updateSubQtyStmt->execute([$qty, $storeName, $productId, $storeID]);
                     } else {
                          // Insert new entry into sub_stock
@@ -59,19 +62,30 @@ if ($data && isset($data['products']) && isset($data['updateForm'])) {
                 $DD = date('d');
                 $o_mg_code = 'M' . $yy . $MM . $DD . $count;
                 
+
+                //คำนวณ total price
+                $totalPrice = (float) ($productDetails['p_sale_price'] * $productDetails['p_vat'] / 100 + $productDetails['p_sale_price']);
                 // Insert into the stockout table
-                $stmt = $pdo->prepare("INSERT INTO stockout (o_mg_code, o_product_id, o_product_code, o_product_name, o_out_qty, o_reasons, o_cost_price, o_total_price, o_store, o_out_date)
-                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                $stmt = $pdo->prepare("INSERT INTO stockout (o_mg_code, o_product_id, o_product_code, o_product_name, o_out_qty, o_reasons, o_payment_option, o_customer,  o_cost_price, o_sale_price, o_vat, o_total_price, o_store, o_username, o_out_date, o_date_add)
+                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                
+                //13 param
                 $stmt->execute([
                     $o_mg_code,
                     $productId,
                     $productDetails['p_product_code'],
                     $productDetails['p_product_name'],
                     $qty,
-                    $status,
+                    $selectedValue,
+                    $paidOption,
+                    $customerName,
                     $productDetails['p_cost_price'],
-                    $productDetails['p_cost_price'] * $qty,
-                    $storeID
+                    $productDetails['p_sale_price'],
+                    $productDetails['p_vat'],
+                    ($totalPrice * $qty),
+                    $storeID,
+                    $userID,
+                    $dateSelect
                 ]);
             } catch (Exception $e) {
                 echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
@@ -103,14 +117,19 @@ if ($data && isset($data['products']) && isset($data['updateForm'])) {
                 $pr_code = 'PR' . $yy . $MM . $DD . $count;
 
                 // Insert into the pr table
-                $stmt = $pdo->prepare("INSERT INTO pr (pr_code, pr_product_id, pr_product_code, pr_product_name, pr_qty, pr_date, pr_date_add)
-                                       VALUES (?, ?, ?, ?, ?, ?, NOW())");
+                $stmt = $pdo->prepare("INSERT INTO pr (pr_code, pr_product_id, pr_product_code, pr_product_name, pr_qty, pr_cost, pr_total_cost, pr_sale, pr_vat, pr_user_add, pr_date, pr_date_add)
+                                       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
                 $stmt->execute([
                     $pr_code,
                     $productId,
                     $productDetails['p_product_code'],
                     $productDetails['p_product_name'],
                     $qty,
+                    $productDetails['p_cost_price'],
+                    $productDetails['p_cost_price']*$qty,
+                    $productDetails['p_sale_price'],
+                    $productDetails['p_vat'],
+                    $userID,
                     $currentDate
                 ]);
             } catch (Exception $e) {

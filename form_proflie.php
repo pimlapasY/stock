@@ -8,29 +8,48 @@
 </head>
 
 
+<style>
+.profile-icon-info {
+    width: 100px;
+    /* ขนาดรูปภาพ */
+    height: 100px;
+
+    border-radius: 50%;
+    /* ทำให้เป็นวงกลม */
+    object-fit: cover;
+    /* ให้รูปภาพครอบคลุมพื้นที่ */
+    margin-right: 8px;
+    /* ระยะห่างระหว่างรูปภาพและข้อความ */
+    vertical-align: middle;
+    border: 2px solid #ffff;
+}
+</style>
 
 <body>
     <div class="d-flex flex-wrap">
 
         <?php include('navbar.php'); ?>
-        <div class="container col-10 pt-5">
+        <div class="container col-10 mt-5 pt-5">
             <div class="row gutters">
                 <div class="col-xl-3 col-lg-3 col-md-12 col-sm-12 col-12">
                     <div class="card h-100">
                         <div class="card-body">
                             <div class="account-settings">
                                 <div class="user-profile text-center p-3">
-                                    <div class="user-avatar text-center">
+                                    <div class="user-avatar text-center mb-2">
                                         <?php 
-                                    if($row['u_department'] == 'RD'){
-                                    echo '<img src="img/D_RD.png" style="width:50%">';
+                                     if(isset( $row['u_img'] )){
+                                        echo "<img class='profile-icon-info' src='img/" . htmlspecialchars($row['u_img']) . "' alt='Profile Image'>";
                                     }else{
-                                    echo '<img src="img/D_RD.png" style="width:50%">';
+                                        echo "<img class='profile-icon-info' src='img/D_RD.png' alt='Profile Image'>";
                                     }
                                     ?>
                                     </div>
-                                    <h5 class="user-code"><?php echo $row['u_usercode'] ?>
-                                        <?php echo $row['u_username'] ?>
+                                    <span class="user-code badge-info p-1">
+                                        ID: <?php echo $row['u_usercode'] ?>
+                                    </span>
+                                    <h5 class="mt-5">
+                                        <?php echo $row['u_username']. '  '.  $row['u_surname']  ?>
                                     </h5>
                                     <p class="user-email"><?php echo $row['u_email'] ?></p>
                                 </div>

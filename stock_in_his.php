@@ -11,7 +11,7 @@
     <div class="d-flex flex-wrap">
         <?php include('navbar.php') ?>
 
-        <div class="container pt-5 col-10">
+        <div class="container-fluid pt-5 col-10 mt-5">
             <h1><i class="fa-solid fa-folder-plus fa-2x"></i> History</h1> <br>
             <hr>
             <div class="d-flex justify-content-start mb-2">

@@ -1,4 +1,4 @@
-<h1 id="title"></h1>
+<h1 class="mt-5" id="title"></h1>
 <select class="form-select" id="dataRangeSelect">
     <option value="0">yearly / monthly / weekly</option>
     <option value="1">yearly</option>
@@ -19,9 +19,9 @@
     <thead>
         <tr class="table-primary">
             <th></th>
+            <th>Description</th>
             <th>Amount (Exclude Vat)</th>
             <th>Amount (Include Vat)</th>
-            <th>Description</th>
         </tr>
     </thead>
     <tbody id="tableBody">
@@ -191,10 +191,9 @@ $(document).ready(function() {
                 const totalRow = `
                 <tr class="fw-bold">
                     <td class="text-primary">${timePeriod}</td>
+                     <td></td>
                     <td class="text-end text-primary">${formatCurrency(totalExcludeVat)}</td>
-                    
                     <td class="text-end text-primary">${formatCurrency(totalIncludeVat)}</td>
-                    <td></td>
                 </tr>
             `;
                 $tableBody.append(totalRow);
@@ -203,9 +202,9 @@ $(document).ready(function() {
                     const row = `
                     <tr>
                         <td></td>
+                        <td>${item.p_product_name} (${item.p_product_code})</td>
                         <td class="text-end">${formatCurrency(item.amount_exclude_vat)}</td>
                         <td class="text-end">${formatCurrency(item.amount_include_vat)}</td>
-                        <td>${item.p_product_name} (${item.p_product_code})</td>
                     </tr>
                 `;
                     $tableBody.append(row);

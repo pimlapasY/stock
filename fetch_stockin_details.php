@@ -12,7 +12,9 @@ if (isset($_POST['i_no'])) {
     $stmt = $pdo->prepare("SELECT i.*, p.*, u.u_username FROM stockin i 
     LEFT JOIN product p ON p.p_product_id = i.i_product_id 
     LEFT JOIN user u ON u.u_userid = i.i_username 
-    WHERE i.i_no = ?");
+    WHERE i.i_no = ?
+    ORDER BY i.i_date_add DESC
+    ");
     
     // Bind parameter
     $stmt->bindParam(1, $i_no, PDO::PARAM_STR);
@@ -51,8 +53,9 @@ if (isset($_POST['i_no'])) {
         echo "<th>Size</th>";
         echo "<th>Hand</th>";
         echo "<th>Quantity Add</th>";
-        echo "<th>Current Qty</th>";
+        echo "<th>Total Qty</th>";
         echo "<th>Total Price</th>";
+        echo "<th>Total Price(Vat)</th>";
         //echo "<th>Supplier</th>";
         /* echo "<th>Status</th>";
         echo "<th>Memo</th>";
@@ -65,7 +68,9 @@ if (isset($_POST['i_no'])) {
         // Loop through products and output each row
         foreach ($products as $product) {
             $total_qty_add += $product['i_qty'];
-            $total_price += ($product['p_cost_price']*$product['i_qty']);
+            $total_price += (floatval($product['i_cost']) * floatval($product['i_qty']));
+            $costVatTotal = (floatval($product['i_cost']) * floatval($product['i_vat']) / 100) + (floatval($product['i_cost']) * floatval($product['i_qty']));
+            $total_price_vat +=  $costVatTotal;
             echo "<tr class='text-center'>";
             //echo "<td>" . htmlspecialchars($product['i_product_id']) . "</td>";
             echo "<td>" . htmlspecialchars($product['p_product_code']) . "</td>";
@@ -73,11 +78,13 @@ if (isset($_POST['i_no'])) {
             echo "<td>" . htmlspecialchars($product['p_color']) . "</td>";
             echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";
             echo "<td>" . htmlspecialchars($product['p_hands']) . "</td>";
-            echo "<td style='color:green;'>+" . htmlspecialchars($product['i_qty']) . "</td>";
-            echo "<td style='color:orange;'>" . htmlspecialchars($product['i_current_qty'])  . '(' . htmlspecialchars($product['i_current_qty']+$product['i_qty']) . ')' . "</td>";
-            echo "<td class='text-end'>" . number_format($product['p_cost_price']*$product['i_qty']) . "</td>";
+            echo "<td> <span class='text-success'>+" . htmlspecialchars($product['i_qty']).'</span> ('. htmlspecialchars($product['i_current_qty'])  . ")</td>";
+            echo "<td class='text-warning'>"  . '' . htmlspecialchars($product['i_current_qty']+$product['i_qty']) . '' . "</td>";
+            echo "<td class='text-end'>" . number_format(floatval($product['i_cost']) * floatval($product['i_qty']), 2) . "</td>";
+            
+            echo "<td class='text-end'>" . number_format($costVatTotal, 2) . "</td>";
             //echo "<td>" . htmlspecialchars($product['i_supplier']) . "</td>";
-        /*     echo "<td>" . ($product['i_status'] == 1 ? 'Purchased' : 'Returned') . "</td>";
+            /*     echo "<td>" . ($product['i_status'] == 1 ? 'Purchased' : 'Returned') . "</td>";
             echo "<td>" . htmlspecialchars($product['i_memo']) . "</td>";
             echo "<td>" . htmlspecialchars($product['i_username']) . "</td>";
             echo "<td>" . htmlspecialchars($product['i_date_add']) . "</td>"; */
@@ -87,7 +94,8 @@ if (isset($_POST['i_no'])) {
         echo '<tr class="table-secondary">
         <th colspan="5">Total</th>
         <td>'.$total_qty_add.'</td>
-        <td class="text-end" colspan="3">'.number_format($total_price).'</td>
+        <td class="text-end" colspan="2">'.number_format($total_price, 2).'</td>
+        <td class="text-end" >'.number_format( $total_price_vat, 2).'</td>
         </tr>';
         echo "</tbody>";
         echo "</table>";

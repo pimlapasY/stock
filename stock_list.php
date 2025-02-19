@@ -4,29 +4,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACANA STOCK</title>
 </head>
+<style>
+.highlight {
+    background-color: yellow;
+    font-weight: bold;
+}
+</style>
 
 <body>
     <div class="d-flex flex-wrap">
         <?php include('navbar.php') ?>
-        <div class="container pt-5 col-10">
+        <div class="container-fluid pt-5 mt-5  col-10">
+            <h1 id="head_list">
+                <?php
+            echo ' <i class="fa-solid fa-boxes-stacked"></i> Stock List'; 
+            ?>
+            </h1>
+            <hr>
             <div class="d-flex justify-content-start">
                 <ul class="nav nav-tabs">
                     <ul class="nav nav-tabs">
                         <li class="nav-item">
                             <?php 
                     echo ' <a class="nav-link' . ($currentPage == 'stock_list.php' ? ' active' : '') . '"href="stock_list.php" id="productTab" style="font-size: 20px;">'; ?>
-                            <i class="fa-solid fa-box fa-lg"></i> All Store</a>
+                            <i class="fa-solid fa-box fa-lg"></i> <?php echo $allStore ?></a>
                         </li>
                         <!-- Line break after the first list item -->
                         <?php echo '<a class="nav-link' . ($currentPage == 'stock_samt.php' ? ' active' : '') . '" href="stock_samt.php" id="samtTab" style="font-size: 20px;">'; ?>
-                        <i class="fa-solid fa-store fa-lg"></i> SAMT Store</a>
+                        <i class="fa-solid fa-store fa-lg"></i> <?php echo $samtStore ?></a>
                         </li>
                         <!-- Line break after the first list item -->
                         <li class="nav-item">
                             <?php  echo '<a class="nav-link' . ($currentPage == 'stock_other.php' ? ' active' : '') . '" href="stock_other.php" id="supplierTab" style="font-size: 20px;">';                ?>
-                            <i class="fa-solid fa-store fa-lg"></i> Other Store</a>
+                            <i class="fa-solid fa-store fa-lg"></i> <?php echo $otherStore ?></a>
                         </li>
                     </ul>
                 </ul>
@@ -34,49 +45,51 @@
             <div class="d-flex justify-content-between m-3" style="align-items: center;">
                 <div class="d-flex justify-content-start">
                     <a href="register.php" class="btn btn-success">
-                        <i class="fa-solid fa-plus"></i> NEW
+                        <i class="fa-solid fa-plus"></i> <?php echo $register ?>
                     </a>&nbsp;
                     <a href="currently_taken.php" class="btn btn-danger">
-                        <i class="fa-solid fa-database"></i> Current Taken
+                        <i class="fa-solid fa-database"></i> <?php echo $cr_taken; ?>
                     </a>&nbsp;
-                    <button class="btn btn-info" disabled>
-                        <i class="fa-solid fa-cart-arrow-down"></i> Part Sale
-                    </button>&nbsp;
-                    <button class="btn btn-info" disabled>
-                        <i class="fa-solid fa-clipboard-list"></i> PR List
-                    </button>
+                    <a class="btn btn-info" href="currently_taken.php#saleTab">
+                        <i class="fa-solid fa-cart-arrow-down"></i> <?php echo $sale; ?>
+                    </a>&nbsp;
+                    <a class="btn btn-info" href="./list.php">
+                        <i class="fa-solid fa-clipboard-list"></i> <?php echo $pr_list; ?>
+                    </a>
                 </div>
                 <div class="d-flex justify-content-end w-50">
                     <div class="input-group p-3">
-                        <input id="searchInput" type="search" class="form-control rounded" placeholder="Search"
-                            aria-label="Search" aria-describedby="search-addon" />
-                        <button type="button" class="btn btn-primary" data-mdb-ripple-init
-                            onclick="loadData(1, $('#searchInput').val())" disabled>
-                            Search
-                        </button>
+                        <div class="input-group p-3">
+                            <input id="searchInput" type="search" class="form-control rounded"
+                                placeholder="<?php echo $search; ?>" aria-label="Search"
+                                aria-describedby="search-addon" />
+                            <button id="btnSearch" type="button" class="btn btn-primary" onclick="searchTable()">
+                                <?php echo $search; ?>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-bordered table-hover">
+            <div>
+                <table id="productTable" class="table table-bordered table-hover">
                     <thead class="table-dark text-center">
-                        <tr style="vertical-align: middle;">
-                            <th rowspan="2">No</th>
-                            <th rowspan="2"><?php echo $code; ?></th>
-                            <th rowspan="2">Collection</th>
-                            <th rowspan="2">Name</th>
-                            <th rowspan="2">Hands</th>
-                            <th rowspan="2">Color</th>
-                            <th rowspan="2">Size</th>
-                            <th rowspan="2">Cost price</th>
-                            <th rowspan="2">Sale price</th>
-                            <th rowspan="2">Total Qty</th>
-                            <th class="text-center" colspan="2"><?php echo $store; ?></th>
+                        <th rowspan="2"><?php echo $num; ?></th>
+                        <th rowspan="2"><?php echo $productCode; ?></th>
+                        <th rowspan="2"><?php echo $collection; ?></th>
+                        <th rowspan="2"><?php echo $productName; ?></th>
+                        <th rowspan="2"><?php echo $options1_label; ?></th>
+                        <th rowspan="2"><?php echo $options2_label; ?></th>
+                        <th rowspan="2"><?php echo $options3_label; ?></th>
+                        <th rowspan="2"><?php echo $costPrice; ?></th>
+                        <th rowspan="2"><?php echo $salePrice; ?></th>
+                        <th rowspan="2"><?php echo $salePrice.' (vat%)'; ?></th>
+                        <th rowspan="2"><?php echo $qty; ?></th>
+                        <th class="text-center" colspan="2"><?php echo $store; ?></th>
                         </tr>
                         <tr>
                             <th>SAMT</th>
-                            <th>SAKABA</th>
+                            <th><?php echo $other; ?></th>
                         </tr>
                     </thead>
                     <tbody>
@@ -97,8 +110,7 @@
                    p.p_unit, 
                    p.p_collection, 
                    p.p_cost_price, 
-                   p.p_sale_price
-      ");
+                   p.p_sale_price");
       
 
              // Execute the statement
@@ -117,8 +129,9 @@
              echo "<td>" . htmlspecialchars($product['p_hands']) . "</td>";
              echo "<td>" . htmlspecialchars($product['p_color']) . "</td>";
              echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";
-             echo "<td class='text-end'>" . number_format($product['p_cost_price']) . "</td>";
-             echo "<td class='text-end'>" . number_format($product['p_sale_price']) . "</td>";
+             echo "<td class='text-end'>" . number_format($product['p_cost_price'],2) . "</td>";
+             echo "<td class='text-end'>" . number_format($product['p_sale_price'],2) . "</td>";
+             echo "<td class='text-end'>" . number_format(($product['p_sale_price']*$product['p_vat']/100)+$product['p_sale_price'],2) . "</td>";
              echo "<td class='text-end' style='color: " . ($product['stock_qty'] == 0 ? "red; background:#FCF3CF;" : "black; background:#E5F9E5;") . "'>" .  htmlspecialchars($product['stock_qty']) . "</td>";
              echo "<td class='text-end' style='color: " . ($product['stock_qty'] == 0 ? "red" : "green") . ";'>" . ($stockSAMT == 0 ? '' : $stockSAMT) . "</td>";
              echo "<td class='text-end' style='color: " . ($product['total_sub_qty'] == 0 ? "red" : "green") . ";'>" . ($product['total_sub_qty'] == 0 ? '': htmlspecialchars($product['total_sub_qty']))  . "</td>";
@@ -133,3 +146,48 @@
 </body>
 
 </html>
+
+<script>
+// Add event listener for Enter key on search input
+document.getElementById("searchInput").addEventListener("keydown", function(event) {
+    if (event.key === "Enter") {
+        searchTable();
+    }
+});
+
+function searchTable() {
+    // Get the value from the search input
+    const input = document.getElementById("searchInput").value.toLowerCase();
+
+    // Get the table and rows
+    const table = document.getElementById("productTable");
+    const rows = table.getElementsByTagName("tr");
+
+    // Loop through all rows (except the header) and hide those that don't match the search query
+    for (let i = 1; i < rows.length; i++) {
+        const cells = rows[i].getElementsByTagName("td");
+        let rowContainsSearchTerm = false;
+
+        // Loop through each cell in the row
+        for (let j = 0; j < cells.length; j++) {
+            // Remove any previous highlight
+            const cellText = cells[j].innerText;
+            cells[j].innerHTML = cellText;
+
+            if (cellText.toLowerCase().includes(input)) {
+                rowContainsSearchTerm = true;
+                // Highlight the matching term
+                const regex = new RegExp(`(${input})`, 'gi');
+                cells[j].innerHTML = cellText.replace(regex, "<span class='highlight'>$1</span>");
+            }
+        }
+
+        // Show or hide the row based on the search
+        if (rowContainsSearchTerm) {
+            rows[i].style.display = "";
+        } else {
+            rows[i].style.display = "none";
+        }
+    }
+}
+</script>

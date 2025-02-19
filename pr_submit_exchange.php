@@ -5,17 +5,17 @@ include 'connect.php';
 // Check if POST data exists
 if (isset($_POST['pr_code'])) {
     try {
-        // Get data from POST
-        $pr_code = $_POST['pr_code'];
-        $size = $_POST['size'];
-        $color = $_POST['color'];
-        $hand = $_POST['hand'];
-        $qty = $_POST['qty'];
-        $pdCode = $_POST['pdCode'];
-        $pdName = $_POST['pdName'];
-        $prMemo = 'Exchange';
-        $prDate = $_POST['prDate'];
-        $prMgcode= $_POST['prMgcode'];
+        // Get data from POST or set to null if not set
+        $pr_code = isset($_POST['pr_code']) ? $_POST['pr_code'] : null;
+        $size = isset($_POST['size']) ? $_POST['size'] : null;
+        $color = isset($_POST['color']) ? $_POST['color'] : null;
+        $hand = isset($_POST['hand']) ? $_POST['hand'] : null;
+        $qty = isset($_POST['qty']) ? $_POST['qty'] : null;
+        $pdCode = isset($_POST['pdCode']) ? $_POST['pdCode'] : null;
+        $pdName = isset($_POST['pdName']) ? $_POST['pdName'] : null;
+        $prMemo = 'Exchange'; // This value is always 'Exchange'
+        $prDate = isset($_POST['prDate']) ? $_POST['prDate'] : null;
+        $prMgcode = isset($_POST['prMgcode']) ? $_POST['prMgcode'] : null;
         $PRStatusID = isset($_POST['prStatusID']) && !empty($_POST['prStatusID']) ? $_POST['prStatusID'] : null;
 
 
@@ -72,4 +72,5 @@ if (isset($_POST['pr_code'])) {
 } else {
     echo json_encode(['error' => 'Invalid request']);
 }
+
 ?>

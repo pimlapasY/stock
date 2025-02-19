@@ -42,9 +42,9 @@ th {
 <body>
     <div class="d-flex flex-wrap">
         <?php include('navbar.php') ?>
-
-        <div class="container pt-5 col-10">
-            <h1><i class="fa-solid fa-database fa-xl"></i> Currently Taken (Other)</h1><br>
+        <div class="container-fluid mt-5  pt-5 col-10">
+            <h1><i class="fa-solid fa-database fa-xl"></i> <?php echo $cr_taken . ' (' . $other .') ' ?></h1><br>
+            <hr>
             <div class="d-flex justify-content-end">
                 <!-- <div class="mb-2">
                 <a href="#" class="btn btn-primary" id="allBtn"><i class="fa-solid fa-bars"></i> All</a>
@@ -65,7 +65,7 @@ th {
             <div class="table-responsive">
                 <table class="table table-hover mx-auto table-sm">
                     <thead class="text-center table-secondary" style="text-transform: uppercase;">
-                        <th><?php echo $select; ?></th>
+                        <th><input type="checkbox" id="checkAll" class="form-check-input"></th>
                         <th>#</th>
                         <th><?php echo $store; ?></th>
                         <th><?php echo $code; ?></th>
@@ -73,9 +73,9 @@ th {
                         <th><?php echo $product; ?></th>
                         <!-- <th>Receipt date</th> -->
                         <!-- <th>Supplier</th> -->
-                        <th><?php echo $size; ?></th>
-                        <th><?php echo $color; ?></th>
-                        <th><?php echo $hand; ?></th>
+                        <th><?php echo $options1_label; ?></th>
+                        <th><?php echo $options2_label; ?></th>
+                        <th><?php echo $options3_label; ?></th>
                         <th><?php echo $qty; ?></th>
                         <th><?php echo $soldDate; ?></th>
                         <th><?php echo $customer; ?></th>
@@ -184,325 +184,30 @@ th {
             </div>
         </div>
     </div>
-    <script>
-    $(document).ready(function() {
-        // Other code...
+    <script src="./currently_taken.js"></script>
 
-        $('#previewReturnedSelectedBtn').click(function() {
-            $('#makePR').prop('hidden', true);
-            $('#returnButton').prop('hidden', false);
-            // Collect selected IDs
-            var selectedIds = [];
-            $('input[name="selected_ids[]"]:checked').each(function() {
-                selectedIds.push($(this).val());
-            });
-
-            if (selectedIds.length > 0) {
-                // Fetch details for selected IDs
-                $.ajax({
-                    url: 'currently_selectd_details.php',
-                    type: 'POST',
-                    data: {
-                        ids: selectedIds
-                    },
-                    success: function(response) {
-                        $('#previewModalHeader').removeClass('text-info').addClass(
-                            'text-warning');
-                        // Populate the modal body with the response
-                        $('#previewModalBody').html(response);
-
-                        $('#previewModalLabel').html('Preview Selected Items (Returned)');
-
-                        // Show the modal
-                        var modal = new bootstrap.Modal(document.getElementById(
-                            'previewModal'));
-                        modal.show();
-                    },
-                    error: function() {
-                        alert('Error fetching details. Please try again.');
-                    }
-                });
-            } else {
-                Swal.fire({
-                    title: 'No Data',
-                    text: 'No items selected.',
-                    icon: 'info',
-                    confirmButtonText: 'OK'
-                });
-                //alert('No items selected.');
-            }
-        });
-        $('#makePR').click(function() {
-            // Collect selected IDs
-            var selectedIds = [];
-            $('input[name="selected_ids[]"]:checked').each(function() {
-                selectedIds.push($(this).val());
-            });
-
-            var memo = $('#memo').val();
-            var newDate = $('#newDate').val();
-
-
-            // Send an AJAX request to insert data into the stockin table
-            $.ajax({
-                url: 'currently_pr.php', // Update the URL to your PHP script
-                type: 'POST',
-                data: {
-                    ids: selectedIds,
-                    memo: memo,
-                    prDate: newDate
-                }, // Send the selectedIds array with the key 'ids'
-                success: function(response) {
-                    Swal.fire({
-                        title: 'PR Create!',
-                        text: 'PR has been create successfully.',
-                        icon: 'success',
-                        showCancelButton: true,
-                        confirmButtonText: 'OK',
-                        cancelButtonText: 'Go to PR page...',
-                        confirmButtonColor: 'gray', // Custom color for confirm button
-                        cancelButtonColor: '#8AD4D9' // Custom color for cancel button
-                    }).then((result) => {
-                        // If user clicks "Move to Other Page" button
-                        if (!result.isConfirmed) {
-                            // Redirect to other page
-                            window.location.href = 'pr_management.php';
-                        } else {
-                            location.reload();
-                        }
-                    });
-                    // Handle the success response
-                    console.log(response); // Log the response
-                    // You can add further actions here if needed, such as displaying a success message or updating the UI
-                },
-                error: function() {
-                    // Handle the error
-                    alert('Error inserting data into stockin table. Please try again.');
-                }
-            });
-        });
-
-        $('#returnButton').click(function() {
-            // Collect selected IDs
-            var selectedIds = [];
-            $('input[name="selected_ids[]"]:checked').each(function() {
-                selectedIds.push($(this).val());
-            });
-
-            var memo = $('#memo').val();
-            var newDate = $('#newDate').val();
-
-
-            // Send an AJAX request to insert data into the stockin table
-            $.ajax({
-                url: 'currently_return.php', // Update the URL to your PHP script
-                type: 'POST',
-                data: {
-                    ids: selectedIds,
-                    memo: memo,
-                    returnDate: newDate
-                }, // Send the selectedIds array with the key 'ids'
-                success: function(response) {
-                    Swal.fire({
-                        title: 'Return Updated!',
-                        text: 'Stock has been updated successfully.',
-                        icon: 'success',
-                        showCancelButton: true,
-                        confirmButtonText: '<i class="fa-solid fa-arrow-right-to-bracket"></i> History StockIn',
-                        cancelButtonText: '<i class="fa-solid fa-folder-plus"></i> on this page',
-                        //confirmButtonColor: '#28a745', // Custom color for confirm button
-                        //cancelButtonColor: 'orange' // Custom color for cancel button
-                    }).then((result) => {
-                        // If user clicks "Move to Other Page" button
-                        if (result.isConfirmed) {
-                            // Redirect to other page
-                            window.location.href = 'stock_in_his.php';
-                        } else {
-                            location.reload();
-                        }
-                    });
-                    // Handle the success response
-                    console.log(response); // Log the response
-                    // You can add further actions here if needed, such as displaying a success message or updating the UI
-                },
-                error: function() {
-                    // Handle the error
-                    alert('Error inserting data into stockin table. Please try again.');
-                }
-            });
-        });
-
-
-
-
-        $('#previewPRSelectedBtn').click(function() {
-            $('#makePR').prop('hidden', false);
-            $('#returnButton').prop('hidden', true);
-            // Collect selected IDs
-            var selectedIds = [];
-            $('input[name="selected_ids[]"]:checked').each(function() {
-                selectedIds.push($(this).val());
-            });
-
-            if (selectedIds.length > 0) {
-                // Fetch details for selected IDs
-                $.ajax({
-                    url: 'currently_selectd_details.php',
-                    type: 'POST',
-                    data: {
-                        ids: selectedIds
-                    },
-                    success: function(response) {
-                        $('#previewModalHeader').removeClass('text-warning').addClass(
-                            'text-info');
-                        // Populate the modal body with the response
-                        $('#previewModalBody').html(response);
-                        $('#previewModalLabel').html('Preview Selected Items (PR Create)');
-
-                        // Show the modal
-                        var modal = new bootstrap.Modal(document.getElementById(
-                            'previewModal'));
-                        modal.show();
-                    },
-                    error: function() {
-                        /*  Swal.fire({
-                             icon: 'error',
-                             title: 'No items selected',
-                             text: 'Please select at least one item to preview.'
-                         }); */
-                        alert('Error fetching details. Please try again.');
-                    }
-                });
-            } else {
-                Swal.fire({
-                    title: 'No Data',
-                    text: 'No items selected.',
-                    icon: 'info',
-                    confirmButtonText: 'OK'
-                });
-                //alert('No items selected.');
-                /* swal({
-                    title: "No items selected.",
-                    icon: "error"
-                }); */
-                //alert('No items selected.');
-            }
-        });
-    });
-    </script>
     <!------------------------ Preview Modal -------------------------------------------------------------------->
 </body>
 
 </html>
-
 <script>
-function showModal(productId, mgCode, payment, delivery) {
-    const modal = new bootstrap.Modal(document.getElementById('updateModal'), {
-        keyboard: false
+// Function to load data based on button clicked
+function loadData(reasons = null) {
+    // Define the URL for the AJAX request
+    var url = "currently_other_fetch.php";
+    // Define the data to be sent
+    var data = {
+        reasons: reasons
+    };
+    // Perform an AJAX request
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: data,
+        success: function(response) {
+            // Replace the content of dataTable with the new data
+            $('#dataTable').html(response);
+        }
     });
-
-    console.log('ID:', productId);
-    console.log('Mg Code:', mgCode);
-    console.log('Payment:', payment);
-    console.log('Delivery:', delivery);
-    // Set the product ID in the modal form
-    document.getElementById('product-id').value = productId;
-    document.getElementById('mg-code').value = mgCode;
-
-    if (payment == null) {
-        payment == 2;
-    }
-    if (delivery == null) {
-        delivery == 2;
-    }
-
-    // Set the checked state of the radio buttons
-    document.getElementById('paymentSuccess').checked = (payment === '1');
-    document.getElementById('paymentPending').checked = (payment === '2');
-    document.getElementById('deliveryDelivered').checked = (delivery === '1');
-    document.getElementById('deliveryNotDelivered').checked = (delivery === '2');
-
-    // Show the modal
-    modal.show();
 }
-
-
-function updateData() {
-    // Get form values
-    const productId = document.getElementById('product-id').value;
-    const o_payment = document.querySelector('input[name="o_payment"]:checked').value;
-    const o_delivery = document.querySelector('input[name="o_delivery"]:checked').value;
-
-    // Send POST request to update data
-    fetch('currently_update.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: productId,
-                o_payment: o_payment,
-                o_delivery: o_delivery
-            })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                // Display success message using SweetAlert
-                Swal.fire('Updated!', 'The payment and delivery have been updated.', 'success')
-                    .then(() => {
-                        // Reload the page to reflect the changes
-                        location.reload();
-                    });
-            } else {
-                // Display error message using SweetAlert
-                Swal.fire('Error!', 'There was an error updating the data.', 'error');
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            // Display error message using SweetAlert
-            Swal.fire('Error!', 'There was an error updating the data.', 'error');
-        });
-}
-</script>
-
-
-<script>
-$(document).ready(function() {
-    // Function to load data based on button clicked
-    function loadData(reasons = null) {
-        // Define the URL for the AJAX request
-        var url = "currently_other_fetch.php";
-        // Define the data to be sent
-        var data = {
-            reasons: reasons
-        };
-        // Perform an AJAX request
-        $.ajax({
-            type: "POST",
-            url: url,
-            data: data,
-            success: function(response) {
-                // Replace the content of dataTable with the new data
-                $('#dataTable').html(response);
-            }
-        });
-    }
-
-    // Load all data when the page loads
-    loadData();
-
-    // Event listener for all button
-    $('#allBtn').click(function(e) {
-        e.preventDefault();
-        loadData();
-    });
-
-    // Event listener for part sale button
-    $('#partSaleBtn').click(function(e) {
-        e.preventDefault();
-        loadData('sale');
-    });
-});
 </script>

@@ -9,8 +9,12 @@ if ($data && isset($data['products']) && isset($data['updateForm'])) {
     $status = isset($data['status']) ? $data['status'] : null;
     $date = isset($data['date']) ? $data['date'] : null;
     $typeStatus = isset($data['typeStatus']) ? $data['typeStatus'] : null;
+    $customerName = isset($data['customerName']) ? $data['customerName']: null;
+    $paymentOption= isset($data['paymentOption']) ? $data['paymentOption'] : null;
+    $userID =  $_SESSION['id'];
 
-    try {
+
+try {
         $pdo->beginTransaction();
 
         if ($data['updateForm'] == 1) {
@@ -43,8 +47,9 @@ if ($data && isset($data['products']) && isset($data['updateForm'])) {
                     $o_mg_code = 'M' . $yy . $MM . $DD . $count;
 
                     // Insert into the stockout table
-                    $stmt = $pdo->prepare("INSERT INTO stockout (o_mg_code, o_product_id, o_product_code, o_product_name, o_out_qty, o_store, o_reasons, o_cost_price, o_total_price, o_out_date)
-                                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                    $stmt = $pdo->prepare("INSERT INTO stockout (o_mg_code, o_product_id, o_product_code, o_product_name, o_out_qty, 
+                    o_store, o_reasons, o_cost_price, o_sale_price,  o_total_price, o_vat, o_payment_option, o_customer, o_out_date, o_username, o_date_add)
+                                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, NOW())");
                     $stmt->execute([
                         $o_mg_code,
                         $productDetails['p_product_id'],
@@ -54,7 +59,13 @@ if ($data && isset($data['products']) && isset($data['updateForm'])) {
                         $productDetails['sub_location'],
                         $status,
                         $productDetails['p_cost_price'],
-                        $productDetails['p_cost_price'] * $qty
+                        $productDetails['p_sale_price'],
+                        $productDetails['p_sale_price'] * $qty,
+                        $productDetails['p_vat'],
+                        $paymentOption,
+                        $customerName,
+                        $currentDate,
+                        $userID
                     ]);
                 } else {
                     throw new Exception("Product not found for sub_id: $productId");
@@ -62,8 +73,9 @@ if ($data && isset($data['products']) && isset($data['updateForm'])) {
             }
         } elseif ($data['updateForm'] == 2) {
             foreach ($products as $product) {
-                $productId = $product['productId'];
+                $productId = $product['productId']; // Sub ID
                 $qty = $product['qty'];
+
 
                 // Select the product details from the product table
                 $stmt = $pdo->prepare("SELECT p.*, sub.* FROM sub_stock sub LEFT JOIN product p ON sub.sub_product_id = p.p_product_id WHERE sub.sub_id = ?");
@@ -83,14 +95,19 @@ if ($data && isset($data['products']) && isset($data['updateForm'])) {
                     $pr_code = 'PR' . $yy . $MM . $DD . $count;
 
                     // Insert into the pr table
-                    $stmt = $pdo->prepare("INSERT INTO pr (pr_code, pr_product_id, pr_product_code, pr_product_name, pr_qty, pr_date, pr_date_add)
-                                           VALUES (?, ?, ?, ?, ?, ?, NOW())");
+                    $stmt = $pdo->prepare("INSERT INTO pr (pr_code, pr_product_id, pr_product_code, pr_product_name, pr_cost, pr_total_cost, pr_sale, pr_vat, pr_qty, pr_user_add,  pr_date, pr_date_add)
+                                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
                     $stmt->execute([
                         $pr_code,
                         $productId,
                         $productDetails['p_product_code'],
                         $productDetails['p_product_name'],
+                        $productDetails['p_cost_price'],
+                        $productDetails['p_cost_price']*$qty,
+                        $productDetails['p_sale_price'],
+                        $productDetails['p_vat'],
                         $qty,
+                        $userID,
                         $currentDate
                     ]);
                 } else {
@@ -107,8 +124,7 @@ if ($data && isset($data['products']) && isset($data['updateForm'])) {
     } catch (Exception $e) {
         $pdo->rollBack();
         echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
-    }
-
+    }   
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Invalid data']);
 }

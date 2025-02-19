@@ -1,7 +1,7 @@
 <?php
 session_start();
-error_reporting(E_ALL & ~E_NOTICE);
-ini_set('display_errors', 0);
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 // Include database connection file
 include 'connect.php';
@@ -11,130 +11,90 @@ if (isset($_SESSION['role'])) {
     // Get form data
     $mgCode = $_POST['mgCode'];
     $productID = $_POST['productID'];
-    $productCode = $_POST['productCode'];
-    $productCost = $_POST['productCost'];
-    $productTotal = $_POST['productTotal'];
     $memo = $_POST['memo'];
     $qtyValueNum = $_POST['qtyValueNum'];
     $username = $_SESSION['id'];
     $date = $_POST['date'];
     $status = $_POST['status'];
-    $currentQTY = $_POST['currentQTY'];
+    $currentQTY = $_POST['currentQTY']; // Correct this line
 
-        // Get current date in YYMMDD format
-        $currentDate = date("ymd");
+    // Check for valid numeric input
+    if (!is_numeric($qtyValueNum) || !is_numeric($currentQTY)) {
+        echo "Invalid quantity values.";
+        exit;
+    }
 
-        // Check if the product already exists in the stock table
-        $stmt_count = $pdo->prepare("SELECT COUNT(*) FROM stockin");
-        $stmt_count->execute();
-        $count = $stmt_count->fetchColumn();
+    // Fetch product details
+    $stmt_product = $pdo->prepare("SELECT * FROM product WHERE p_product_id = :productID");
+    $stmt_product->bindParam(':productID', $productID, PDO::PARAM_INT);
+    $stmt_product->execute();
+    $details_product = $stmt_product->fetch(PDO::FETCH_ASSOC);
 
-        // Increment count by 1 for the new row
-        $count++;
-        $i_no = $currentDate . $count; //ต้องอยู่นอกลูปเพราะว่าต้องการให้เป็น ID เดียวกันก่อน insert 1 ครั้ง
+    // Prepare ID for stockin
+    $currentDate = date("ymd");
+    $stmt_count = $pdo->prepare("SELECT COUNT(*) FROM stockin");
+    $stmt_count->execute();
+    $count = $stmt_count->fetchColumn() + 1; // Increment for new row
+    $i_no = $currentDate . $count;
 
     try {
-        // Prepare SQL statement
-        $stmt = $pdo->prepare("INSERT INTO stockin (i_no, i_product_id, i_product_code, i_current_qty, i_qty, i_total_price, i_status, i_memo, i_username, i_date, i_mg_code, i_date_add) 
-        VALUES (?,?,?,?,?,?,?,?,?,?,?, now())");
+        // Insert into stockin
+        $stmt = $pdo->prepare("INSERT INTO stockin (i_no, i_product_id, i_product_code, i_current_qty, i_qty, i_cost, i_sale, i_status, i_memo, i_username, i_date, i_mg_code, i_date_add, i_vat) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW(), ?)");
 
         // Bind parameters
         $stmt->bindParam(1, $i_no);
         $stmt->bindParam(2, $productID);
-        $stmt->bindParam(3, $productCode);
+        $stmt->bindParam(3, $details_product['p_product_code']);
         $stmt->bindParam(4, $currentQTY);
         $stmt->bindParam(5, $qtyValueNum);
-        $stmt->bindParam(6, $productTotal);
-        $stmt->bindParam(7, $status);
-        $stmt->bindParam(8, $memo);
-        $stmt->bindParam(9, $username);
-        $stmt->bindParam(10, $date);
-        $stmt->bindParam(11, $mgCode);
+        $stmt->bindParam(6, $details_product['p_cost_price']);
+        $stmt->bindParam(7, $details_product['p_sale_price']);
+        $stmt->bindParam(8, $status);
+        $stmt->bindParam(9, $memo);
+        $stmt->bindParam(10, $username);
+        $stmt->bindParam(11, $date);
+        $stmt->bindParam(12, $mgCode);
+        $stmt->bindParam(13, $details_product['p_vat']);
 
-
-        // Execute SQL statement
+        // Execute the statement
         $stmt->execute();
 
+        // Check status
+        if ($status == 2) {
+            // Update stockout
+            $RTupdateStmt = $pdo->prepare("UPDATE stockout SET o_return = '1' WHERE o_mg_code = ?");
+            $RTupdateStmt->bindParam(1, $mgCode);
+            $RTupdateStmt->execute();
 
-        if($status == 2){
-
-        // Prepare SQL statement to update stock quantity
-        $RTupdateStmt = $pdo->prepare("UPDATE stockout SET o_return = '1' WHERE o_mg_code = ?");
-
-        // Bind parameters for update
-        $RTupdateStmt->bindParam(1, $mgCode);
-
-        // Execute SQL statement to update stock quantity
-        $RTupdateStmt->execute();
-
-        
-        // Prepare SQL statement to update stock quantity
-        $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty + ?, s_return_date = NOW() WHERE s_product_id = ?");
-
-        // Bind parameters for update
-        $updateStmt->bindParam(1, $qtyValueNum);
-        $updateStmt->bindParam(2, $productID);
-
-        // Execute SQL statement to update stock quantity
-        $updateStmt->execute();
-        }else{
-             // Prepare SQL statement to update stock quantity
-        $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty + ?, s_date_update = NOW() WHERE s_product_id = ?");
-
-        // Bind parameters for update
-        $updateStmt->bindParam(1, $qtyValueNum);
-        $updateStmt->bindParam(2, $productID);
-
-        // Execute SQL statement to update stock quantity
-        $updateStmt->execute();
-        }
-/* 
-        // Check if the reason is 'sale' or 'sale sample'
-        if ($data_reasons[0] == 'sale' || $data_reasons[0] == 'sale sample') {
-            // Prepare SQL statement to update stock quantity
-            $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty - ? WHERE s_product_id = ?");
-
-            // Bind parameters for update
-            $updateStmt->bindParam(1, $qtyValue);
+            // Update stock quantity
+            $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty + ?, s_return_date = NOW() WHERE s_product_id = ?");
+            $updateStmt->bindParam(1, $qtyValueNum);
             $updateStmt->bindParam(2, $productID);
-
-            // Execute SQL statement to update stock quantity
             $updateStmt->execute();
-
-            if ($data_reasons[1] == '2') {
-                // Prepare SQL statement to update stock quantity
-                $updateSakaba = $pdo->prepare("UPDATE sub_stock SET sub_qty = sub_qty - ? WHERE sub_product_id = ?");
-
-                // Bind parameters for update
-                $updateSakaba->bindParam(1, $qtyValue);
-                $updateSakaba->bindParam(2, $productID);
-
-                // Execute SQL statement to update stock quantity
-                $updateSakaba->execute();
-            }
         } else {
-                   // Check if the sub_stock record exists
-            $checkStmt = $pdo->prepare("SELECT * FROM sub_stock WHERE sub_product_id = ? AND sub_location = ?");
+            // Check if the product exists
+            $checkStmt = $pdo->prepare("SELECT COUNT(*) FROM stock WHERE s_product_id = ?");
             $checkStmt->bindParam(1, $productID);
-            $checkStmt->bindParam(2, $data_reasons[1]);
             $checkStmt->execute();
+            $productExists = $checkStmt->fetchColumn();
 
-            if ($checkStmt->rowCount() > 0) {
-                // If exists, update the sub_qty
-                $updateSubQtyStmt = $pdo->prepare("UPDATE sub_stock SET sub_qty = sub_qty + ? WHERE sub_product_id = ? AND sub_location = ?");
-                $updateSubQtyStmt->bindParam(1, $qtyValue);
-                $updateSubQtyStmt->bindParam(2, $productID);
-                $updateSubQtyStmt->bindParam(3, $data_reasons[1]);
-                $updateSubQtyStmt->execute();
+            if ($productExists > 0) {
+                // Update stock quantity
+                $updateStmt = $pdo->prepare("UPDATE stock SET s_qty = s_qty + ?, s_date_update = NOW() WHERE s_product_id = ?");
+                $updateStmt->bindParam(1, $qtyValueNum);
+                $updateStmt->bindParam(2, $productID);
+                $updateStmt->execute();
             } else {
-                // If not exists, insert new entry into sub_stock
-                $insertSubStockStmt = $pdo->prepare("INSERT INTO sub_stock (sub_product_id, sub_qty, sub_location, sub_date_add) VALUES (?, ?, ?, NOW())");
-                $insertSubStockStmt->bindParam(1, $productID);
-                $insertSubStockStmt->bindParam(2, $qtyValue);
-                $insertSubStockStmt->bindParam(3, $data_reasons[1]);
-                $insertSubStockStmt->execute();
+                // Insert new row into stock
+                $insertStmt = $pdo->prepare("INSERT INTO stock (s_product_id, s_product_code, s_product_name, s_qty, s_date_add) VALUES (?, ?, ?, ?, NOW())");
+                $insertStmt->bindParam(1, $productID);
+                $insertStmt->bindParam(2, $details_product['p_product_code']);
+                $insertStmt->bindParam(3, $details_product['p_product_name']);
+                $insertStmt->bindParam(4, $qtyValueNum);
+                $insertStmt->execute();
             }
-        } */
+        }
 
         // Print success message
         echo "Form submitted successfully";

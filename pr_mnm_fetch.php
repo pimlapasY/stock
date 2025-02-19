@@ -103,7 +103,7 @@ if (isset($_POST['store'])) {
         }
 
         // Adding the order by clause
-        $sql .= " ORDER BY pr.pr_code DESC, pr.pr_date_update, pr.pr_date_add DESC";
+        $sql .= " ORDER BY  pr.pr_id DESC, pr.pr_code DESC, pr.pr_date_update, pr.pr_date_add DESC";
 
         $stmt = $pdo->prepare($sql);
 
@@ -130,39 +130,25 @@ if (isset($_POST['store'])) {
             foreach ($products as $index => $product) {
                 $data_reasons = explode(",", $product['o_reasons']);
 
-                if ($product['pr_exchange'] == null) {
-                    echo '<tr>';
-                } else {
-                    echo '<tr class="table-secondary" id="exchangeID' . $product['pr_code'] . '" hidden>';
-                }
+                 //เช็คสถานะว่ามีการเปลี่ยน ให้ข้อมูลเก่าโดนซ่อน
+            if ($product['pr_exchange'] == null) {
+                echo '<tr>';
+                echo '<td class="text-center"><input class="select-checkbox form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['pr_id'] . '"></td>';
+            } else {
+                echo '<tr class="table-secondary" id="exchangeID' . $product['pr_code'] . '" hidden>';
+                echo  '<td></td>';
+            }
 
-                if ($product['pr_exchange'] == null) {
-                    echo '<td class="text-center"><input class="select-checkbox form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['pr_id'] . '"></td>';
-                } else {
-                    echo '<td></td>';
-                }
+            $classColor = ($product['pr_status'] == '1' && $product['pr_exchange'] == null) ? 'success' :
+              (($product['pr_status'] == '2' && $product['pr_exchange'] == null) ? 'warning' :
+              'secondary');
 
-                if ($product['pr_status'] == null && $product['pr_exchange'] == null) {
-                    echo '<td>
-                    <a class="btn btn-outline-secondary btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_id'] . '\')">'
-                    . $product['pr_code'] .
-                        '</a></td>';
-                } elseif ($product['pr_status'] == '1' && $product['pr_exchange'] == null) {
-                    echo '<td>
-                    <a class="btn btn-outline-success btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_id'] . '\')">'
-                    . $product['pr_code'] .
-                        '</a></td>';
-                } elseif ($product['pr_status'] == '2' && $product['pr_exchange'] == null) {
-                    echo '<td>
-                    <a class="btn btn-outline-warning btn-rounded  edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_id'] . '\')">'
-                    . $product['pr_code'] .
-                        '</a></td>';
-                } else {
-                    echo '<td>
-                    <a class="btn btn-outline-secondary btn-rounded edit-button" id="showExchange">'
-                    . $product['pr_code'] .
-                        '</a></td>';
-                }
+
+            echo '<td> <a class="btn btn-outline-'.$classColor.' btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_id'] . '\')">'
+                            . $product['pr_code'] .
+                            '</a></td>';
+
+               
 
                 echo '<td>' . $product['st_name']  . '</td>';
                 echo '<td>' . $product['pr_mg_code'] . '</td>';
@@ -171,51 +157,52 @@ if (isset($_POST['store'])) {
                 echo '<td>' . $product['p_color'] . '</td>';
                 echo '<td>' . $product['p_hands'] . '</td>';
                 echo '<td class="text-center bg-success-subtle">' . $product['pr_qty'] . '</td>';
+                //วันที่ขายออก หรือ สร้าง stock out
                 echo '<td>' . $product['o_out_date'] . '</td>';
+                //ชื่อลูกค้า
                 echo '<td>' . $data_reasons[2] . '</td>';
+                //ช่องทางการชำระเงิน
                 echo "<td class='text-center'>";
 
-                if ($data_reasons[1] == 1) {
-                    echo '<span class="badge badge-success rounded-pill d-inline">cash</span>';
-                } elseif ($data_reasons[1] == 2) {
-                    echo  '<span class="badge badge-primary rounded-pill d-inline">QR</span>';
-                } elseif ($data_reasons[1] == 3) {
-                    echo  '<span class="badge badge-warning rounded-pill d-inline">shopify</span>';
-                } else {
-                   echo  '<span class="badge badge-danger rounded-pill d-inline">sale sample</span>';
-    
-               }
+                $badgeMap = [
+                    1 => ['class' => 'success', 'text' => 'cash'],
+                    2 => ['class' => 'primary', 'text' => 'QR'],
+                    3 => ['class' => 'warning', 'text' => 'shopify'],
+                ];
+                $badge = $badgeMap[$data_reasons[1]] ?? ['class' => 'danger', 'text' => 'sale sample'];
+
+                echo "<span class='badge badge-{$badge['class']} rounded-pill d-inline'>{$badge['text']}</span>";
                 echo "</td>";
+
+                //เช็ค payment       
                 echo '<td class="text-center">';
 
-                if ($data_reasons[0] == 'out to' || $product['pr_mg_code'] == null) {
-                    // Do nothing or handle the case where $data_reasons[0] is 'out to'
-                } elseif ($product['o_payment'] == 1) {
-                    echo '<a class="btn btn-success btn-sm btn-floating update-payment" onclick="updatePayment(\'' . $product['o_mg_code'] . '\', ' . $product['o_payment'] . ')"><i class="fa-solid fa-check"></i></a>';
-                } elseif ($product['o_payment'] == 2 || $product['o_payment'] == null) {
-                    echo '<a class="btn btn-outline-warning btn-sm btn-floating update-payment" onclick="updatePayment(\'' . $product['o_mg_code'] . '\', ' . $product['o_payment'] . ')"><i class="fa-solid fa-hourglass-half"></i></a>';
+                if (!($data_reasons[0] == 'out to' || $product['pr_mg_code'] == null)) {
+                    $btnClass = $product['o_payment'] == 1 ? 'btn-success' : 'btn-outline-warning';
+                    $icon = $product['o_payment'] == 1 ? 'fa-check' : 'fa-hourglass-half';
+                    echo '<a class="btn ' . $btnClass . ' btn-sm btn-floating update-payment" onclick="updatePayment(\'' . $product['o_mg_code'] . '\', ' . $product['o_payment'] . ')"><i class="fa-solid ' . $icon . '"></i></a>';
                 }
 
+                echo '</td>';
+                
+
+                echo "<td class='text-center'>";
+
+                $status = $product['pr_status'];
+                $pr_date = $product['pr_date_add'] ? (new DateTime($product['pr_date_add']))->format('m-Y') : '';
+                
+                if ($status == '1') {
+                    echo "<span class='badge badge-success'>success $pr_date</span>";
+                } elseif ($status == '2') {
+                    echo "<span class='badge badge-warning'>*delivered*</span>";
+                } elseif ($status == '3') {
+                    echo "<span class='badge badge-info'>stock in</span>";
+                }else {
+                    echo "<span class='badge badge-secondary'>PR pending</span>";
+                }
+                
                 echo "</td>";
 
-                if ($product['pr_status'] == '1') {
-                    //ส่ง PO ไปแล้ว
-                    echo "<td class='text-center' style='color:" . ($product['o_pr_code'] !== null ? 'green;' : 'red;') . "'>";
-
-                    echo ($product['o_pr_code'] !== null ? 'issued<br>' : 'unissue');
-                    // Check if 'pr_date_add' is not null and create a DateTime object
-                    $pr_date = $product['pr_date_add'] !== null ? new DateTime($product['pr_date_add']) : null;
-
-                    // Format the date to 'Y-m' (year and month) if the DateTime object is created
-                    $formatted_date = $pr_date ? $pr_date->format('m-Y') : '';
-                    echo $formatted_date;
-                    echo "</td>";
-                } elseif ($product['pr_status'] == '2') {
-                    //กดรับแล้ว
-                    echo "<td class='text-center text-warning'>*delivered*</td>";
-                } else {
-                    echo "<td class='text-center text-secondary'>PR pending</td>";
-                }
 
                 if ($product['pr_memo'] === 'Exchange' && $product['pr_exchange'] == null) {
                     echo '<td class="text-center">

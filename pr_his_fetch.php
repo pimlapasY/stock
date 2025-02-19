@@ -6,6 +6,7 @@ include 'connect.php';
 
 // Check if reasons is set
 if(isset($_POST['store'])) {
+    
     // Get reasons value
     $store = $_POST['store'];
     $month = $_POST['month'];
@@ -24,28 +25,32 @@ if(isset($_POST['store'])) {
 
             // Prepare SQL statement based on reasons
         if ($store == 'all') {
-            $sql = "SELECT o.*, p.*, pr.*
+            $sql = "SELECT o.*, p.*, pr.*, st.*
                     FROM pr
                     LEFT JOIN product p ON pr.pr_product_id = p.p_product_id
                     LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code
+                    LEFT JOIN store st ON st.st_id = o.o_store
                     WHERE MONTH(pr.pr_date) = :month";
         } elseif ($store == 'samt') {
-            $sql = "SELECT o.*, p.*, pr.*
+            $sql = "SELECT o.*, p.*, pr.*, st.*
                     FROM pr
                     LEFT JOIN product p ON pr.pr_product_id = p.p_product_id
                     LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code
-                    WHERE o.o_reasons NOT LIKE '%sale,2%' AND MONTH(pr.pr_date) = :month";
+                    LEFT JOIN store st ON st.st_id = o.o_store
+                    WHERE o.o_store = '1' AND MONTH(pr.pr_date) = :month";
         } elseif ($store == 'sakaba') {
-            $sql = "SELECT o.*, p.*, pr.*
+            $sql = "SELECT o.*, p.*, pr.*, st.*
                     FROM pr
                     LEFT JOIN product p ON pr.pr_product_id = p.p_product_id
                     LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code
-                    WHERE o.o_reasons LIKE '%sale,2%' AND MONTH(pr.pr_date) = :month";
+                    LEFT JOIN store st ON st.st_id = o.o_store
+                    WHERE o.o_store != '1' AND MONTH(pr.pr_date) = :month";
         } else {
-            $sql = "SELECT o.*, p.*, pr.*
+            $sql = "SELECT o.*, p.*, pr.*, st.*
                     FROM pr
                     LEFT JOIN product p ON pr.pr_product_id = p.p_product_id
                     LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code
+                    LEFT JOIN store st ON st.st_id = o.o_store
                     WHERE MONTH(pr.pr_date) = :month";
         }
 
@@ -68,11 +73,12 @@ if(isset($_POST['store'])) {
         foreach ($products as $index => $product) {
             $data_reasons = explode(",", $product['o_reasons']);
             echo '<tr>';
+            echo '<td class="text-center"><input class="select-checkbox form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['o_mg_code'] . '"></td>';
             echo '<td>
             <a class="btn btn-light btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_code'] . '\')" style="display: none;">
                 <i class="fa-solid fa-right-left"></i>
             </a>' . $product['pr_code'] . '</td>';
-            echo  '<td>'.($data_reasons[1] == '2' ? 'SAKABA' : 'SAMT' ).'</td>';
+            echo  '<td>'.($product['st_name'] ).'</td>';
             echo  '<td>'.$product['pr_mg_code'].'</td>';
             echo  '<td>'.$product['p_product_name'].'</td>';
             echo  '<td>'.$product['p_size'].'</td>';
@@ -80,50 +86,51 @@ if(isset($_POST['store'])) {
             echo  '<td>'.$product['p_hands'].'</td>';
             echo  '<td class="text-center bg-success-subtle ">'.$product['o_out_qty'].'</td>';
             echo  '<td class="text-center">'.substr($product['pr_date_add'], 0, 10).'</td>';
-            echo  '<td>'.$data_reasons[3].'</td>';
+            echo  '<td>'.$product['o_customer'].'</td>';
             echo "<td class='text-center'>";
 
-            if ($data_reasons[2] == 1) {
-                echo '<i class="fa-solid fa-money-bill" style="color: green;"></i><br>cash';
-            } elseif ($data_reasons[2] == 2) {
-                echo "<i class='fa-solid fa-qrcode' style='color: blue;'></i><br>QR";
-            } elseif ($data_reasons[2] == 3) {
-                echo "<i class='fa-solid fa-cart-shopping' style='color: orange;'></i><br>shopify";
-            } elseif($data_reasons[0] == 'out to') {
-                //empty
-            } else {
-                echo "<p style='color: red;'>FREE</p>"; // Default case
-            }
-            echo "</td>";  
-            if($data_reasons[0] == 'out to'){
-                //empty
-            }elseif($product['o_payment'] == 2 || $product['o_payment'] == null){
-                echo "<td class='text-center'>" . '<a class="btn btn-outline-warning btn-sm btn-floating"><i class="fa-solid fa-hourglass-half"></i></a>' . "</td>";
-            } else if($product['o_payment'] == 1){
-                echo "<td class='text-center'>" . '<a class="btn btn-success btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
-            }
-            /* if($data_reasons[0] == 'out to'){
-                //empty
-            }elseif($product['o_delivery'] == null || $product['o_delivery'] == 2){
-                echo "<td class='text-center'>" . '<a class="btn btn-outline-warning btn-sm btn-floating"><i class="fa-solid fa-hourglass-half"></i></a>' . "</td>";
-            } else if($product['o_delivery'] == 1){
-                echo "<td class='text-center'>" . '<a class="btn btn-success btn-sm btn-floating"><i class="fa-solid fa-check"></i></a>' . "</td>";
-            } */
-            echo "<td class='text-center' style='color:".($product['o_pr_code'] !== null ? 'green;' : 'red;')."'>" . ($product['o_pr_code'] !== null ? 'issued<br>' : 'unissue'); 
-                        // Check if 'pr_date_add' is not null and create a DateTime object
-            $pr_date = $product['pr_date_add'] !== null ? new DateTime($product['pr_date_add']) : null;
+            $badgeMap = [
+                1 => ['class' => 'success', 'text' => 'cash'],
+                2 => ['class' => 'primary', 'text' => 'QR'],
+                3 => ['class' => 'warning', 'text' => 'shopify'],
+            ];
+            $badge = $badgeMap[$product['o_reasons']] ?? ['class' => 'danger', 'text' => 'sale sample'];
 
-            // Format the date to 'Y-m' (year and month) if the DateTime object is created
-            $formatted_date = $pr_date ? $pr_date->format('m-Y') : '';
-            echo $formatted_date;
+            echo "<span class='badge badge-{$badge['class']} rounded-pill d-inline'>{$badge['text']}</span>";
             echo "</td>";
-            echo '<td class="text-center"><input class="select-checkbox form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['o_mg_code'] . '"></td>';
+            
+            
+                //เช็ค payment       
+                echo '<td class="text-center">';
+
+                if (!($product['o_reasons'] == 'out to' || $product['pr_mg_code'] == null)) {
+                    $btnClass = $product['o_payment'] == 1 ? 'badge-success' : 'badge-secondary';
+                    $textPayment = $product['o_payment'] == 1 ? 'success' : 'pending';
+                    echo '<a class="badge ' . $btnClass . ' update-payment">'.$textPayment.'</a>';
+                }
+
+                echo '</td>';
+
+                echo "<td class='text-center'>";
+
+                $status = $product['pr_status'];
+                $pr_date = $product['pr_date_add'] ? (new DateTime($product['pr_date_add']))->format('m-Y') : '';
+                
+                if ($status == '1') {
+                    echo "<span class='badge badge-success'>success $pr_date</span>";
+                } elseif ($status == '2') {
+                    echo "<span class='badge badge-warning'>*delivered*</span>";
+                } elseif ($status == '3') {
+                    echo "<span class='badge badge-info'>stock in</span>";
+                }else {
+                    echo "<span class='badge badge-secondary'>PR pending</span>";
+                }               
+
+                echo "</td>";
+
             echo "<td class='text-center'>" . $product['o_memo'] . "</td>";
-
-
             echo '</tr>';
         }
-
     } catch(PDOException $e) {
         // If an error occurs, output it
         echo "Error: " . $e->getMessage();

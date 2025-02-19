@@ -8,10 +8,10 @@
 <link rel="stylesheet" href="css/index.css">
 <!-- <link rel="stylesheet" href="css/mdb-ui-7.2.0.min.css">
  -->
-<script src="js/sweetalert2.all.min.js"></script>
 <script src="js/jquery-3.6.0.min.js"></script>
-<script src="js/boostrap-5.1.3.js"></script>
 
+<script src="js/sweetalert2.all.min.js"></script>
+<script src="js/boostrap-5.1.3.js"></script>
 
 <link rel="icon" href="img/icon-stock7.png" type="image/png">
 
@@ -22,7 +22,10 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
+
+
+<!-- ใช้ฟอนต์ Noto Sans Thai Looped -->
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai+Looped&display=swap" rel="stylesheet">
 <!-- <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" crossorigin="anonymous">
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"

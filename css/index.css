@@ -28,3 +28,15 @@
     100% {
     }
 }
+
+.relative-cell {
+  position: relative; /* Establishes a positioning context for the child elements */
+}
+
+.asterisk {
+  position: absolute;
+  top: 0;
+  right: 0;
+  padding: 2px 5px; /* Adjust padding as needed for spacing */
+  background: white; /* Ensure the background color matches the cell's background */
+}

@@ -17,7 +17,7 @@ if(isset($_POST['reasons'])) {
                                    FROM stockout o
                                    LEFT JOIN product p ON o.o_product_id = p.p_product_id
                                    LEFT JOIN store ON store.st_id = o.o_store
-                                   WHERE o.o_return IS NULL  AND o_pr_code IS NULL AND (o.o_store != '1' AND o.o_reasons LIKE '%sale%')
+                                   WHERE o.o_return IS NULL  AND o_pr_code IS NULL AND (o.o_store != '1' AND o.o_reasons = 'sale')
                                    ORDER BY o_reasons, o.o_mg_code DESC");
     
 
@@ -47,20 +47,20 @@ if(isset($_POST['reasons'])) {
          echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";
          echo "<td class='text-end '>" . $product['o_out_qty'] . "</td>";
          echo "<td class='text-end'>" . date('d/m/Y', strtotime($product['o_out_date'])) . "</td>";
-         echo "<td class='text-center'>" .  $data_reasons[2]. "</td>";
-         echo "<td class='text-center'>";
+         echo "<td class='text-center'>" .   $product['o_customer'] . "</td>";
          
-         if ($data_reasons[1] == 1) {
-            echo '<span class="badge badge-success rounded-pill d-inline">cash</span>';
-        } elseif ($data_reasons[1] == 2) {
-            echo  '<span class="badge badge-primary rounded-pill d-inline">QR</span>';
-        } elseif ($data_reasons[1] == 3) {
-            echo  '<span class="badge badge-warning rounded-pill d-inline">shopify</span>';
-        } else {
-           echo  '<span class="badge badge-danger rounded-pill d-inline">sale sample</span>';
-       }
+         echo "<td class='text-center'>";
+         if ($product['o_payment_option'] == 1) {
+             echo '<span class="badge badge-success rounded-pill d-inline">cash</span>';
+         } elseif ($product['o_payment_option'] == 2) {
+             echo  '<span class="badge badge-primary rounded-pill d-inline">QR</span>';
+         } elseif ($product['o_payment_option'] == 3) {
+             echo  '<span class="badge badge-warning rounded-pill d-inline">shopify</span>';
+         } else {
+             echo  '<span class="badge badge-danger rounded-pill d-inline">sale sample</span>';
+         }
+      echo "</td>";  
         
-         echo "</td>";  
          if($product['o_payment'] == 2 || $product['o_payment'] == null){
             echo "<td class='text-center'>" . '<a class="btn btn-outline-secondary btn-sm btn-floating"><i class="fa-solid fa-hourglass-half"></i></a>' . "</td>";
          }else if($product['o_payment'] == 1){

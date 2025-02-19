@@ -61,8 +61,8 @@ foreach ($products as $index => $product) {
     echo "<td>" . htmlspecialchars($product['p_hands']) . "</td>";
     echo "<td>" . htmlspecialchars($product['p_color']) . "</td>";
     echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";
-    echo "<td class='text-end'>" . number_format($product['p_cost_price']) . "</td>";
-    echo "<td class='text-end'>" . number_format($product['p_sale_price']) . "</td>";
+    echo "<td class='text-end'>" . number_format($product['p_cost_price'], 2) . "</td>";
+    echo "<td class='text-end'>" . number_format($product['p_sale_price'],2) . "</td>";
     echo "<td class='text-end' style='color: " . ($product['stock_qty'] == 0 ? "red" : "green") . "; background:#FBE7C6;'>" . htmlspecialchars($product['stock_qty']) . "</td>";
     echo "<td class='text-end' style='color: " . ($product['s_qty'] == 0 ? "red" : "green") . ";'>" . htmlspecialchars(($product['s_qty']) - ($product['sub_qty'])) . "</td>";
     echo "<td class='text-end' style='color: " . ($product['sub_qty'] == 0 ? "red" : "green") . ";'>" . htmlspecialchars($product['sub_qty']) . "</td>";

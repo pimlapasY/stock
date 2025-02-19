@@ -2,7 +2,7 @@
 // fetch_data_by_pr_code.php
 
 // Include the database connection
-include 'connect.php';
+include '../connect.php';
 
 try {
     // Get pr_code from POST data

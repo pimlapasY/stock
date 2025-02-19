@@ -13,9 +13,8 @@
 
 <body>
     <div class="d-flex flex-wrap">
-
         <?php include('navbar.php'); ?>
-        <div class="container pt-5 col-10">
+        <div class="container-fluid pt-5 col-10 mt-5">
             <div class="d-flex justify-content-start m-5">
                 <h1 id="head_list">
                     <?php
@@ -24,27 +23,26 @@
                 </h1>
             </div>
             <hr>
-
+            <div class="d-flex justify-content-start align-self-start mb-4">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="productTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-box fa-lg"></i> All Store
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="samtTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-store fa-lg"></i> SAMT Store
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link tab" href="#" id="sakabaTab" style="font-size: 20px;">
+                            <i class="fa-solid fa-store fa-lg"></i> other Store
+                        </a>
+                    </li>
+                </ul>
+            </div>
             <div class="d-flex justify-content-between">
-                <div class="d-flex align-self-start mb-4">
-                    <ul class="nav nav-tabs">
-                        <li class="nav-item">
-                            <a class="nav-link tab" href="#" id="productTab" style="font-size: 20px;">
-                                <i class="fa-solid fa-box fa-lg"></i> All Store
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link tab" href="#" id="samtTab" style="font-size: 20px;">
-                                <i class="fa-solid fa-store fa-lg"></i> SAMT Store
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link tab" href="#" id="sakabaTab" style="font-size: 20px;">
-                                <i class="fa-solid fa-store fa-lg"></i> SAKABA Store
-                            </a>
-                        </li>
-                    </ul>
-                </div>
                 <div class="d-flex align-self-end  align-items-center mb-2">
                     <div class="d-flex align-items-baseline mx-auto">
                         <select class="form-select" id="months" name="months">
@@ -110,13 +108,14 @@
             <table class="table table-hover mx-auto table-sm">
                 <thead class="text-center table-secondary " style="text-transform: uppercase;">
                     <tr>
+                        <th><input class="form-check-input" type="checkbox" id="select-all"></th>
                         <th><?php echo $prCode; ?></th>
                         <th><?php echo $store; ?></th>
                         <th><?php echo $mgCode; ?></th>
                         <th><?php echo $product; ?></th>
-                        <th><?php echo $size; ?></th>
-                        <th><?php echo $color; ?></th>
-                        <th><?php echo $hand; ?></th>
+                        <th><?php echo $options1_label; ?></th>
+                        <th><?php echo $options2_label; ?></th>
+                        <th><?php echo $options3_label; ?></th>
                         <th><?php echo $qty; ?></th>
                         <th><?php echo $prDate; ?></th>
                         <th><?php echo $customer; ?></th>
@@ -124,7 +123,6 @@
                         <th><?php echo $payment; ?></th>
                         <th><?php echo $prPo; ?></th>
                         <!-- <th>Delivery</th> -->
-                        <th><input class="form-check-input" type="checkbox" id="select-all"></th>
                         <th><?php echo $memo; ?></th>
                     </tr>
                 </thead>
@@ -170,19 +168,19 @@
                                 <div class="col-md-6">
                                     <form id="editForm">
                                         <div class="mb-3">
-                                            <label for="size" class="form-label">Size:</label>
+                                            <label for="size" class="form-label"><?php echo $options1_label; ?></label>
                                             <input type="text" class="form-control" id="size">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="color" class="form-label">Color:</label>
+                                            <label for="color" class="form-label"><?php echo $options2_label; ?></label>
                                             <input type="text" class="form-control" id="color">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="hand" class="form-label">Hand:</label>
+                                            <label for="hand" class="form-label"><?php echo $options3_label; ?></label>
                                             <input type="text" class="form-control" id="hand">
                                         </div>
                                         <div class="mb-3">
-                                            <label for="qty" class="form-label">Qty:</label>
+                                            <label for="qty" class="form-label"><?php echo $qty; ?></label>
                                             <input type="number" class="form-control" id="qty">
                                         </div>
                                         <div class="mb-3">

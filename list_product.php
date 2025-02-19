@@ -16,29 +16,71 @@
 
 
 <body>
-    <div class="d-flex justify-content-end m-3">
-        <a href="register.php" class="btn btn-success"><i class="fa-solid fa-plus"></i> NEW</a>&nbsp;
-        <button type="button" class="btn btn-outline-primary" onclick="openPreviewModal()"><i
-                class="fa-solid fa-inbox"></i>
-            Stock in</button>&nbsp;
-        <button class="btn btn-outline-info" disabled><i class="fa-solid fa-clipboard-list"></i> add PR</button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">Import CSV</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form action="list_product_import.php" method="post" enctype="multipart/form-data">
+                        <label for="csvFile">Choose CSV file:</label>
+                        <input type="file" name="csvFile" class="form-control" id="csvFile" accept=".csv" required><br>
+                        <button name="import" class="btn btn-primary">
+                            Import
+                            CSV
+                        </button>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-between m-3">
+        <div>
+            <a href="register.php" class="btn btn-success"><i class="fa-solid fa-plus"></i> NEW</a>&nbsp;
+            <!-- New Export CSV Button -->
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                <i class="fa-solid fa-file-csv"></i> Import CSV
+            </button>&nbsp;
+            <button class="btn btn-warning" onclick="exportToCSV()">
+                <i class="fa-solid fa-file-csv"></i> Export CSV
+            </button>&nbsp;
+        </div>
+        <div>
+            <button type="button" class="btn btn-outline-primary" onclick="openPreviewModal(1)"><i
+                    class="fa-solid fa-inbox"></i>
+                Stock in
+            </button>&nbsp;
+            <button class="btn btn-outline-info" onclick="openPreviewModal(2)">
+                <i class=" fa-solid fa-clipboard-list"></i>
+                add PR
+            </button>&nbsp;
+        </div>
     </div>
 
     <table class="table table-bordered table-hover mx-auto" style="width: 100%;">
         <!-- Table content -->
         <thead class="table-primary text-center">
             <tr style="vertical-align: middle;">
-                <th rowspan="2">No</th>
-                <th rowspan="2">Product ID</th>
-                <th rowspan="2">Collection</th>
-                <th rowspan="2">Name</th>
-                <th rowspan="2">Hands</th>
-                <th rowspan="2">Color</th>
-                <th rowspan="2">Size</th>
-                <th rowspan="2">Cost price</th>
-                <th rowspan="2">Sale price</th>
-                <th rowspan="2">All Qty</th>
-                <th class="text-center" colspan="1">Store</th>
+                <th rowspan="2"><?php echo $num; ?></th>
+                <th rowspan="2"><?php echo $product_code; ?></th>
+                <th rowspan="2"><?php echo $collection; ?></th>
+                <th rowspan="2"><?php echo $product_name; ?></th>
+                <th rowspan="2"><?php echo $options1_label; ?></th>
+                <th rowspan="2"><?php echo $options2_label; ?></th>
+                <th rowspan="2"><?php echo $options3_label; ?></th>
+                <th rowspan="2"><?php echo $costPrice; ?></th>
+                <th rowspan="2"><?php echo $salePrice; ?></th>
+                <th rowspan="2"><?php echo $salePrice.'(vat%)'; ?></th>
+                <th rowspan="2"><?php echo $qty; ?></th>
+                <th class="text-center" colspan="1"><?php echo $store; ?></th>
             </tr>
             <tr>
                 <th class="text-center">SAMT</th>
@@ -46,7 +88,6 @@
         </thead>
         <tbody>
             <?php
-
                     // Fetch individual product rows
                     $stmt = $pdo->prepare("SELECT p.*, IFNULL(s.s_qty, 0) AS stock_qty
                     FROM product p
@@ -62,33 +103,35 @@
                     // Loop through products and output each row
                     foreach ($products as $index => $product) {
                     echo "<tr data-id='" . htmlspecialchars($product['p_product_id']) . "'>";
-                    echo "<td>" . ($index + 1) . "</td>"; // Display No starting from 1
-                    echo "<td>".htmlspecialchars($product['p_product_code'])."</td>";
-                    echo "<td>" . htmlspecialchars($product['p_collection']) . "</td>";
-                    echo "<td>" . htmlspecialchars($product['p_product_name']) . "</td>";
-                    echo "<td>" . htmlspecialchars($product['p_hands']) . "</td>";
-                    echo "<td>" . htmlspecialchars($product['p_color']) . "</td>";
-                    echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";
-                    echo "<td class='text-end'>" . number_format($product['p_cost_price']) . "</td>";
-                    echo "<td class='text-end'>" . number_format($product['p_sale_price']) . "</td>";
-                    echo "<td class='text-end' style='color: " . ($product['stock_qty'] == 0 ? "red ;background:#FCF3CF;" : "green;") . "'>" . htmlspecialchars($product['stock_qty']) . "</td>";
-                    echo "<td class='text-center' style='vertical-align: middle;'>";
-                    echo '<div class="input-group w-75 mx-auto"><div class="input-group-text">';
-                    echo "<input class='form-check-input' type='checkbox' value='' id='checkbox_" . htmlspecialchars($product['p_product_id']) . "' onchange='toggleInput(this)' /> <br>";
-                    echo "</div><input class='form-control' min='1' type='number' id='input_" . htmlspecialchars($product['p_product_id']) . "' value='' style='display: none;' /> </div>";
-                    echo "</td>";
+                        echo "<td>" . ($index + 1) . "</td>"; // Display No starting from 1
+                        echo "<td>".htmlspecialchars($product['p_product_code'])."</td>";
+                        echo "<td>" . htmlspecialchars($product['p_collection']) . "</td>";
+                        echo "<td>" . htmlspecialchars($product['p_product_name']) . "</td>";
+                        echo "<td>" . htmlspecialchars($product['p_hands']) . "</td>";
+                        echo "<td>" . htmlspecialchars($product['p_color']) . "</td>";
+                        echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";
+                        echo "<td class='text-end'>" . number_format($product['p_cost_price'],2) . "</td>";
+                        echo "<td class='text-end'>" . number_format($product['p_sale_price'],2) . "</td>";
+                        echo "<td class='text-end'>" . number_format(($product['p_sale_price']*$product['p_vat']/100)+$product['p_sale_price'],2) . "</td>";
+                        echo "<td class='text-end' style='color: " . ($product['stock_qty'] == 0 ? "red ;background:#FCF3CF;" : "green;") . "'>" . htmlspecialchars($product['stock_qty']) . "</td>";
+                        echo "<td class='text-center' style='vertical-align: middle;'>";
+                        echo '<div class="input-group mx-auto"><div class="input-group-text">';
+                        echo "<input class='form-check-input' type='checkbox' value='' id='checkbox_" . htmlspecialchars($product['p_product_id']) . "' onchange='toggleInput(this)' /> <br>";
+                        echo "</div><input class='form-control ' min='1' type='number' id='input_" . htmlspecialchars($product['p_product_id']) . "' value='' style='display: none;' /> </div>";
+                        echo "</td>";
                     echo "</tr>";
                     }
-
-                
-                     ?>
+                    ?>
         </tbody>
-    </table> <!-- Preview Modal -->
+    </table>
+    <!-- Preview Modal -->
     <div id="previewModal" class="modal modal-xl modal fade" style="display:none; width:100%;">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="fa-solid fa-inbox fa-lg"></i> Preview Changes</h5>
+                    <h5 class="modal-title" id="modal-title">
+                        <i class="fa-solid fa-inbox fa-lg"></i> Preview Changes
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body" style="margin: 50px;">
@@ -111,22 +154,21 @@
                         <h2 id="total">Total</h2>
                     </div>
                     <div class="d-flex justify-content-center">
-                        <table class="table table-hover table-bordered" style="width: 100%;">
+                        <table class="table table-hover table-bordered table-sm" style="width: 100%;">
                             <!-- Table content -->
                             <thead class="text-center">
                                 <tr class="table-light" style="vertical-align: middle;">
-                                    <th rowspan="2">No</th>
-                                    <th rowspan="2">Code</th>
-                                    <th rowspan="2">Collection</th>
-                                    <th rowspan="2">Name</th>
-                                    <th rowspan="2">Hands</th>
-                                    <th rowspan="2">Color</th>
-                                    <th rowspan="2">Size</th>
-                                    <th rowspan="2">Cost price</th>
-                                    <th rowspan="2">Sale price</th>
-                                    <th rowspan="2">All Qty</th>
+                                    <th><?php echo $num; ?></th>
+                                    <th><?php echo $productCode; ?></th>
+                                    <th><?php echo $productName; ?></th>
+                                    <th><?php echo $options1_label; ?></th>
+                                    <th><?php echo $options2_label; ?></th>
+                                    <th><?php echo $options3_label; ?></th>
+                                    <th><?php echo $costPrice; ?></th>
+                                    <th><?php echo $costPrice. '(Vat%)'; ?></th>
+                                    <th><?php echo $qty; ?></th>
                                     <th class="text-center" colspan="1">Store</th>
-                                    <th rowspan="2">Total Price</th>
+                                    <th>Total Price</th>
                                 </tr>
                             </thead>
                             <tbody class=" modal-body" id="previewBody">
@@ -134,261 +176,36 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="d-flex justify-content-start m-3">
+                    <div class="d-flex justify-content-start m-3" id="checkRadio">
                         <div class="form-check me-4">
                             <input class="form-check-input" type="radio" name="reason" id="flexRadioDefault1" value="1"
                                 checked>
-                            <label class="form-check-label" for="flexRadioDefault1">
-                                Purchased
-                            </label>
+                            <label class="form-check-label" for="flexRadioDefault1">Purchased</label>
                         </div>
                         <div class="form-check me-4">
                             <input class="form-check-input" type="radio" name="reason" id="flexRadioDefault2" value="2">
-                            <label class="form-check-label" for="flexRadioDefault2">
-                                Returned
-                            </label>
+                            <label class="form-check-label" for="flexRadioDefault2">Returned</label>
                         </div>
                     </div>
+
                     <div class="d-flex justify-content-start m-3">
                         <textarea class="form-control w-50" name="memo" placeholder="memo"></textarea>
                     </div>
                 </div>
 
                 <div class="modal-footer">
+                    <input id="statusType" hidden>
                     <button type="button" class="btn btn-secondary modal-footer" data-bs-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-success" id="confirmButton">Confirm</button>
+                    <button type="button" class="btn btn-success" id="confirmStockInButton" onclick="confirmButton(1)"
+                        hidden>Stock In</button>
+                    <button type="button" class="btn btn-success" id="confirmPRButton" onclick="confirmButton(2)"
+                        hidden>Add
+                        PR</button>
                 </div>
             </div>
         </div>
     </div>
+    <script src="list_product.js"></script>
 </body>
 
 </html>
-
-<script>
-var previewData = []; // Array to store preview data
-
-// Function to toggle input field visibility and update preview
-function toggleInput(checkbox, reason) {
-    var inputId = checkbox.id.replace('checkbox_', 'input_'); // Get the corresponding input field ID
-    var inputField = document.getElementById(inputId);
-
-    if (checkbox.checked) {
-        inputField.type = 'number'; // Change input type to number
-        inputField.style.display = 'block'; // Show the input field
-
-        // Remove any existing event listener to avoid duplicates
-        inputField.removeEventListener('input', handleInputChange);
-        inputField.addEventListener('input', handleInputChange);
-
-        //updatePreview(inputId); // Update the preview with the reason
-    } else {
-        inputField.style.display = 'none'; // Hide the input field
-        inputField.value = ''; // Clear input value
-
-        // Remove the product from previewData
-        var productId = inputId.replace('input_', ''); // Get the product ID from inputId
-        previewData = previewData.filter(item => item.p_product_id !== productId);
-
-        // Update the preview display
-        updatePreviewDisplay();
-    }
-}
-// Function to handle input change
-function handleInputChange(event) {
-    var inputId = event.target.id;
-    updatePreview(inputId);
-}
-
-// Function to update the preview
-function updatePreview(inputId) {
-    if (inputId) {
-        var productId = inputId.replace('input_', ''); // Get the product ID from inputId
-        var inputField = document.getElementById(inputId);
-        var qty = inputField.value; // Get the quantity from input field
-
-        // Validate quantity input
-        /* if (!qty || isNaN(qty) || qty < 0) {
-            console.error('Invalid quantity input');
-            return;
-        } */
-
-        // Send AJAX request to fetch product data
-        $.ajax({
-            type: 'POST',
-            url: 'list_get_product_info.php', // URL to handle AJAX request
-            data: {
-                productId: productId
-            }, // Send product ID as data
-            success: function(response) {
-                try {
-                    var productData = JSON.parse(response);
-
-                    // Update previewData or create new entry
-                    var productIndex = previewData.findIndex(item => item.p_product_id === productId);
-                    if (productIndex !== -1) {
-                        previewData[productIndex].s_qty = qty;
-                    } else {
-
-                        // Create a new entry in previewData
-                        previewData.push({
-                            p_product_id: productId,
-                            p_product_code: productData.p_product_code,
-                            p_qty: productData
-                                .stock_qty, // Ensure this field exists in your fetched data
-                            s_qty: qty,
-                            p_collection: productData.p_collection,
-                            p_product_name: productData.p_product_name,
-                            p_hands: productData.p_hands,
-                            p_color: productData.p_color,
-                            p_size: productData.p_size,
-                            p_cost_price: productData.p_cost_price,
-                            p_sale_price: productData.p_sale_price,
-                            // Add more properties as needed
-                            //p_reason: reason // Add reason to the new entry
-                        });
-                    }
-
-                    // Update the preview display
-                    updatePreviewDisplay();
-                } catch (e) {
-                    console.error('Error parsing response:', e);
-                }
-            },
-            error: function(xhr, status, error) {
-                console.error('AJAX request error:', error);
-            }
-        });
-    }
-}
-
-// Function to update the preview display
-function updatePreviewDisplay() {
-    var previewBody = document.getElementById('previewBody');
-    previewBody.innerHTML = ''; // Clear existing content
-
-    previewData.forEach(function(product, index) {
-        var row = document.createElement('tr');
-        row.innerHTML = `
-            <td style="display: none;">${product.p_product_id}</td> <!-- Hidden to send ID for update -->
-            <td>${index + 1}</td>
-            <td>${product.p_product_code}</td>
-            <td>${product.p_collection}</td>
-            <td>${product.p_product_name}</td>
-            ${product.p_hands ? `<td>${product.p_hands}</td>` : `<td></td>`}
-            ${product.p_color ? `<td>${product.p_color}</td>` : `<td></td>`}
-            ${product.p_size ? `<td>${product.p_size}</td>` : `<td></td>`}
-            <td>${Number(product.p_cost_price).toLocaleString()}</td>
-            <td>${Number(product.p_sale_price).toLocaleString()}</td>
-            <td style="width:200px; color: red; text-align: center;">${product.p_qty}</td>    
-            <td style="width:200px; color: green; text-align: center;">
-                +${product.s_qty} (${parseInt(product.p_qty) + parseInt(product.s_qty)})
-            </td>
-            <td class='text-end'>${Number(parseInt(product.s_qty) * parseInt(product.p_cost_price)).toLocaleString()}</td>
-        `;
-        previewBody.appendChild(row);
-    });
-}
-
-
-
-function openPreviewModal() {
-    // Call the updatePreview function to update the preview data
-    updatePreview();
-    // Show the preview modal
-    $('#previewModal').modal('show');
-
-    // Get the total number of preview rows
-    var totalRows = previewData.length;
-
-    // Update the total count display in the modal
-    document.getElementById('total').innerText = 'Total: ' + totalRows;
-
-    // Check if totalRows is 0
-    if (totalRows === 0) {
-        // If total is 0, show an alert
-        Swal.fire({
-            title: 'No Data',
-            text: 'There is no data to update.',
-            icon: 'info',
-            confirmButtonText: 'OK'
-        });
-    }
-
-
-    /* // Event listener for radio button change inside the modal
-    document.querySelectorAll('#previewModal input[name="reason"]').forEach(function(radio) {
-        radio.addEventListener('change', function(event) {
-            // Call toggleInput with the corresponding checkbox inputId and reason value
-            var checkboxId = event.target.id.replace('flexRadioDefault', 'checkbox');
-            var checkbox = document.getElementById(checkboxId);
-            var reason = event.target.value;
-            toggleInput(checkbox, reason);
-        });
-    }); */
-}
-
-// เพิ่มการจัดการเหตุการณ์เมื่อปุ่ม "Confirm" ถูกคลิก
-document.querySelector('#confirmButton').addEventListener('click', function() {
-    // แสดงข้อความยืนยันด้วย Sweet Alert
-    Swal.fire({
-        title: 'Are you sure?',
-        text: 'Do you want to update stock?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonText: 'Yes, update it!',
-        cancelButtonText: 'Cancel'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            var selectedReason = document.querySelector('input[name="reason"]:checked').value;
-            // ค่าวันที่
-            var dateCreate = document.querySelector('#currentDate').value;
-            var memo = document.querySelector('textarea[name="memo"]').value;
-
-            // ถ้าผู้ใช้กด OK ให้ดำเนินการส่งข้อมูลไปยังสคริปต์ PHP ด้วย AJAX
-            $.ajax({
-                type: 'POST',
-                url: 'list_insert_stock_qty.php', // ตั้งค่า URL ของสคริปต์ PHP ที่จะปรับปรุงข้อมูลในฐานข้อมูล
-                data: {
-                    previewData: previewData, // ส่งข้อมูลทั้งหมดใน previewData
-                    reason: selectedReason, // ส่งค่า reason
-                    date_create: dateCreate, // ส่งค่าวันที่
-                    memo: memo // ส่งค่า memo
-
-                },
-                success: function(response) {
-                    console.log(response);
-
-                    // Show success message
-                    Swal.fire({
-                        title: 'Updated!',
-                        text: 'Stock has been updated successfully.',
-                        icon: 'success',
-                        showCancelButton: true,
-                        confirmButtonText: '<i class="fa-solid fa-folder-plus"></i> on this page',
-                        cancelButtonText: '<i class="fa-solid fa-arrow-right-to-bracket"></i> History StockIn',
-                        confirmButtonColor: '#28a745', // Custom color for confirm button
-                        cancelButtonColor: 'orange' // Custom color for cancel button
-                    }).then((result) => {
-                        // If user clicks "Move to Other Page" button
-                        if (!result.isConfirmed) {
-                            // Redirect to other page
-                            window.location.href = 'stock_in_his.php';
-                        } else {
-                            location.reload();
-                        }
-                    });
-                },
-                error: function(xhr, status, error) {
-                    Swal.fire({
-                        title: 'Error',
-                        icon: 'error',
-                    });
-                    console.error(error);
-                    //alert('Error occurred while updating stock.');
-                }
-            });
-        }
-    });
-});
-</script>
