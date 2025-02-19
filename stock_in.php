@@ -1,5 +1,5 @@
 <?php
-   include('connect.php'); 
+include('connect.php');
 // Fetch product names from the database
 $stmt_code = $pdo->query("SELECT DISTINCT p_product_code FROM product");
 $productNames_code = $stmt_code->fetchAll(PDO::FETCH_COLUMN);
@@ -151,7 +151,7 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th><?php echo $product_name?></th>
+                                    <th><?php echo $product_name ?></th>
 
                                     <!-- Replace the input field with a readonly input -->
                                     <td>
@@ -161,14 +161,12 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </tr>
                                 <tr>
                                     <th><?php echo $unit ?></th>
-
                                     <td>
                                         <input type="text" class="form-control badge-warning" id="selectedProductUnit"
                                             name="productUnit" readonly>
                                     </td>
                                 </tr>
                                 <tr>
-
                                     <th><?php echo $options1_label ?></th>
                                     <td>
                                         <input class="form-control" type="text" id="colorInput" name="productColor"
@@ -182,7 +180,6 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                 </tr>
                                 <tr>
                                     <th><?php echo $options2_label ?></th>
-
                                     <td>
                                         <input class="form-control" type="text" id="handInput" name="productHand"
                                             list="product_hand" onchange="validateInput(this)">
@@ -206,6 +203,27 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
                                     </td>
                                 </tr>
                                 <tr>
+                                    <th>CURRENT QTY :</th>
+                                    <td class="text-end">
+                                        <input class="form-control text-end badge-warning" type="number" id="currentQTY"
+                                            readonly>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $qty ?></th>
+                                    <!-- <div class="input-group">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        id="decrementButton">-</button>
+                                    <span class="input-group-text" id="qtyValue">1</span>
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        id="incrementButton">+</button>
+                                </div> -->
+                                    <td>
+                                        <input type="number" id="qtyValueNum" onchange="updateTotalPrice()"
+                                            class="form-control" min="1" value="1">
+                                    </td>
+                                </tr>
+                                <tr>
                                     <th><?php echo 'Cost' ?></th>
                                     <td>
                                         <input class="form-control text-end badge-warning" type="text"
@@ -225,20 +243,8 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                                     </td>
                                 </tr>
-                                <tr>
-                                    <th><?php echo $qty ?></th>
-                                    <!-- <div class="input-group">
-                                    <button type="button" class="btn btn-outline-secondary"
-                                        id="decrementButton">-</button>
-                                    <span class="input-group-text" id="qtyValue">1</span>
-                                    <button type="button" class="btn btn-outline-secondary"
-                                        id="incrementButton">+</button>
-                                </div> -->
-                                    <td>
-                                        <input type="number" id="qtyValueNum" onchange="updateTotalPrice()"
-                                            class="form-control" min="1" value="1">
-                                    </td>
-                                </tr>
+
+
                                 <tr>
                                     <th><?php echo 'Total Price'  ?></th>
                                     <td>
@@ -264,14 +270,7 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         </tr> -->
                             </tbody>
                         </table>
-                        <table class="table mx-auto table-borderless w-100">
-                            <tr style="vertical-align: middle;">
-                                <th class="text-end w-75">CURRENT QTY :</th>
-                                <td class="text-end">
-                                    <input class="form-control text-end badge-warning" type="number" id="currentQTY"
-                                        readonly>
-                                </td>
-                            </tr>
+                        <table class="table mx-auto table-borderless d-flex justify-content-end">
                             <tr style="vertical-align: middle;">
                                 <th class="text-end">TOTAL QTY :</th>
                                 <td class="text-end">
@@ -289,14 +288,13 @@ $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
                     </form>
                 </div>
                 <div class="card-footer d-flex justify-content-between">
-                    <button type="button" class="btn btn-outline-warning" data-mdb-ripple-init onclick="resetInput()"><i
-                            class="fa-solid fa-eraser"></i> <?php echo $reset  ?></button>
-
-                    <button type="button" class="btn btn-success" data-mdb-ripple-init onclick="submitStockin()">
+                    <button type="button" class="btn btn-outline-warning" data-mdb-ripple-init onclick="resetInput()">
+                        <i class="fa-solid fa-eraser"></i> <?php echo $reset ?></button>
+                    <button type="button" class="btn btn-success" id="submitedBtn" data-mdb-ripple-init
+                        onclick="submitStockin()">
                         <i class="fa-solid fa-floppy-disk"></i> Submit
                     </button>
                 </div>
-
             </div>
         </div>
     </div>

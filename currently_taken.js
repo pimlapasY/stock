@@ -11,6 +11,113 @@ $(document).ready(function () {
             $('input[name="selected_ids[]"]').length === $('input[name="selected_ids[]"]:checked').length
         );
     });
+
+    $('#completedBtn').click(function () {
+        // เก็บค่า ID ที่เลือก
+        var selectedIds = [];
+        $('input[name="selected_ids[]"]:checked').each(function () {
+            selectedIds.push($(this).val());
+        });
+
+        // ตรวจสอบค่า selectedIds
+        console.log('Selected IDs:', selectedIds);
+
+        // ตรวจสอบว่าเลือก checkbox หรือไม่
+        if (selectedIds.length === 0) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Please select at least one item.',
+                icon: 'warning',
+                confirmButtonColor: '#17a2b8'
+            });
+            return;
+        }
+
+        // ตรวจสอบรูปแบบของ mg_code
+        var isValid = selectedIds.every(function (id) {
+            const result = /^[a-zA-Z0-9_-]+$/.test(id);
+            console.log(`Checking ID "${id}": ${result}`); // Log การตรวจสอบแต่ละ ID
+            return result;
+        });
+
+        if (!isValid) {
+            console.log('Invalid IDs found:', selectedIds.filter(id => !/^[a-zA-Z0-9_-]+$/.test(id)));
+            Swal.fire({
+                title: 'Error!',
+                text: 'Some selected items have invalid codes. Please check again.',
+                icon: 'error',
+                confirmButtonColor: '#dc3545'
+            });
+            return;
+        }
+
+        // แสดง Loading
+        Swal.fire({
+            title: 'Processing...',
+            html: 'Please wait a moment',
+            allowOutsideClick: false,
+            allowEscapeKey: false,
+            didOpen: () => {
+                Swal.showLoading();
+            }
+        });
+
+        // ส่งข้อมูลไปยังเซิร์ฟเวอร์
+        $.ajax({
+            url: 'ajax_POST/completed_current.php',
+            type: 'POST',
+            data: {
+                ids: selectedIds,
+            },
+            dataType: 'json', // Expect JSON response
+            success: function (response) {
+                console.log('Server Response:', response); // ตรวจสอบ response จากเซิร์ฟเวอร์
+                try {
+                    // ถ้า response เป็น string ให้แปลงเป็น JSON
+                    if (typeof response === 'string') {
+                        response = JSON.parse(response);
+                    }
+
+                    if (response.status === 'success') {
+                        console.log('Operation Success:', response.message); // Log ข้อความสำเร็จ
+                        Swal.fire({
+                            title: 'Success',
+                            text: response.message,
+                            icon: 'success',
+                        }).then(() => {
+                            location.reload(); // Refresh หน้า
+                        });
+                    } else {
+                        console.log('Operation Error:', response.message); // Log ข้อความข้อผิดพลาด
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message || 'An error occurred while processing your request.',
+                            icon: 'error',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error parsing response:', e); // Log ข้อผิดพลาด
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Invalid response from server.',
+                        icon: 'error',
+                        confirmButtonColor: '#dc3545'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX Error:', { status, error }); // Log ข้อผิดพลาดจาก AJAX
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to communicate with the server. Please try again.',
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545'
+                });
+            }
+        });
+    });
+
     /* start preview */
     // Other code...
     $('#previewReturnedSelectedBtn').click(function () {
@@ -127,6 +234,17 @@ $(document).ready(function () {
             selectedIds.push($(this).val());
         });
 
+        // Validate if any checkboxes are selected
+        if (selectedIds.length === 0) {
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Please select at least one item.',
+                icon: 'warning',
+                confirmButtonColor: '#17a2b8'
+            });
+            return;
+        }
+
         // แสดง Loading
         Swal.fire({
             title: 'Processing...',
@@ -140,39 +258,66 @@ $(document).ready(function () {
 
         // Send an AJAX request to insert data into the stockin table
         $.ajax({
-            url: 'ajax_POST/currently_pr.php', // Update the URL to your PHP script
+            url: 'ajax_POST/currently_pr.php',
             type: 'POST',
             data: {
                 ids: selectedIds,
                 memo: memo,
                 prDate: newDate
-            }, // Send the selectedIds array with the key 'ids'
-            success: function (response) {
-                Swal.fire({
-                    title: 'PR Create!',
-                    text: 'PR has been create successfully.',
-                    icon: 'success',
-                    showCancelButton: true,
-                    confirmButtonText: 'OK',
-                    cancelButtonText: 'Go to PR page...',
-                    confirmButtonColor: 'gray', // Custom color for confirm button
-                    cancelButtonColor: '#8AD4D9' // Custom color for cancel button
-                }).then((result) => {
-                    // If user clicks "Move to Other Page" button
-                    if (!result.isConfirmed) {
-                        // Redirect to other page
-                        window.location.href = 'pr_management.php';
-                    } else {
-                        location.reload();
-                    }
-                });
-                // Handle the success response
-                console.log(response); // Log the response
-                // You can add further actions here if needed, such as displaying a success message or updating the UI
             },
-            error: function () {
-                // Handle the error
-                alert('Error inserting data into stockin table. Please try again.');
+            dataType: 'json',  // Expect JSON response
+            success: function (response) {
+                try {
+                    // If response is string, parse it
+                    if (typeof response === 'string') {
+                        response = JSON.parse(response);
+                    }
+
+                    if (response.status === 'success') {
+                        Swal.fire({
+                            title: 'PR Create!',
+                            text: response.message,
+                            icon: 'success',
+                            confirmButtonText: 'Go to PR Page',
+                            confirmButtonColor: '#17a2b8',
+                            showCancelButton: true,
+                            cancelButtonText: 'Stay on this page',
+                            timer: 5000,
+                            timerProgressBar: true
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.location.href = 'pr_management.php';
+                            } else {
+                                location.reload();
+                            }
+                        });
+                    } else {
+                        // Handle error response
+                        Swal.fire({
+                            title: 'Error!',
+                            text: response.message || 'An error occurred while processing your request.',
+                            icon: 'error',
+                            confirmButtonColor: '#dc3545'
+                        });
+                    }
+                } catch (e) {
+                    console.error('Error parsing response:', e);
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Invalid response from server.',
+                        icon: 'error',
+                        confirmButtonColor: '#dc3545'
+                    });
+                }
+            },
+            error: function (xhr, status, error) {
+                console.error('AJAX Error:', status, error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to communicate with the server. Please try again.',
+                    icon: 'error',
+                    confirmButtonColor: '#dc3545'
+                });
             }
         });
     });
@@ -230,16 +375,17 @@ $(document).ready(function () {
                         title: 'Success',
                         text: response.message,
                         icon: 'success',
+                        confirmButtonText: '<i class="fa-solid fa-arrow-right-to-bracket"></i> Stock In History',
+                        confirmButtonColor: "#ffc107", // สี warning
                         showCancelButton: true,
-                        confirmButtonText: '<i class="fa-solid fa-check"></i> ตกลง',
-                        cancelButtonText: '<i class="fa-solid fa-arrow-right-to-bracket"></i> ประวัติการรับเข้า',
-                        confirmButtonColor: 'gray',
-                        cancelButtonColor: 'orange'
+                        cancelButtonText: 'Stay on this page',
+                        timer: 5000, // ตั้งเวลา 2 วินาที
+                        timerProgressBar: true // แสดงแถบความคืบหน้า        
                     }).then((result) => {
                         if (!result.isConfirmed) {
-                            window.location.href = 'stock_in_his.php';
-                        } else {
                             location.reload();
+                        } else {
+                            window.location.href = 'stock_in_his.php';
                         }
                     });
                 } else {
@@ -278,91 +424,6 @@ $(document).ready(function () {
 
 
     /* ---------------------------------------------------------------------------------- */
-
-    function showModal(productId, mgCode, payment, delivery) {
-        const modal = new bootstrap.Modal(document.getElementById('updateModal'), {
-            keyboard: false
-        });
-
-        console.log('ID:', productId);
-        console.log('Mg Code:', mgCode);
-
-        // Set the product ID in the modal form
-        document.getElementById('product-id').value = productId;
-        document.getElementById('mg-code').value = mgCode;
-
-        if (payment === null) {
-            payment === '2';
-        }
-        if (delivery == null) {
-            delivery === '2';
-        }
-
-        console.log('Payment:', payment);
-        console.log('Delivery:', delivery);
-        // Set the checked state of the radio buttons
-        document.getElementById('paymentSuccess').checked = (payment === '1');
-        document.getElementById('paymentPending').checked = (payment === '2');
-        document.getElementById('deliveryDelivered').checked = (delivery === '1');
-        document.getElementById('deliveryNotDelivered').checked = (delivery === '2');
-
-        // Show the modal
-        modal.show();
-    }
-
-
-    function updateData() {
-        // Get form values
-        const productId = document.getElementById('product-id').value;
-        let o_payment = 2;
-        let o_delivery = 2;
-
-        // Check if payment is checked
-        const selectedPayment = document.querySelector('input[name="o_payment"]:checked');
-        if (selectedPayment) {
-            o_payment = selectedPayment.value;
-        }
-
-        // Check if delivery is checked
-        const selectedDelivery = document.querySelector('input[name="o_delivery"]:checked');
-        if (selectedDelivery) {
-            o_delivery = selectedDelivery.value;
-        }
-
-        // Send POST request to update data
-        fetch('currently_update.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                id: productId,
-                o_payment: o_payment,
-                o_delivery: o_delivery
-            })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    // Display success message using SweetAlert
-                    Swal.fire('Updated!', 'The payment and delivery have been updated.', 'success')
-                        .then(() => {
-                            // Reload the page to reflect the changes
-                            location.reload();
-                        });
-                } else {
-                    // Display error message using SweetAlert
-                    Swal.fire('Error!', 'There was an error updating the data.', 'error');
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-                // Display error message using SweetAlert
-                Swal.fire('Error!', 'There was an error updating the data.', 'error');
-            });
-    }
-
-
 
 
     // Load all data when the page loads
@@ -405,3 +466,85 @@ $(document).ready(function () {
         activateSaleTab();
     }
 });
+
+/* ------------------------- */
+
+function updatePayment(mgCode, paymentStatus) {
+    // Toggle payment status: if current status is 1, set to 2, else set to 1
+    var new_payment_status = (paymentStatus == 1) ? 2 : 1;
+
+    // AJAX request
+    $.ajax({
+        type: "POST",
+        url: "ajax_POST/update_payment.php",
+        data: {
+            o_mg_code: mgCode,
+            new_payment_status: new_payment_status
+        },
+        success: function (response) {
+
+            // Show success notification
+            Swal.fire({
+                icon: "success",
+                title: "Success!",
+                text: "Payment updated for " + mgCode,
+                showConfirmButton: true
+            }).then(() => {
+                // ตรวจสอบว่าแท็บ #saleTab กำลังเปิดใช้งานอยู่
+                checkCurrentTab()
+            });
+
+            // Optionally, update UI or handle success response
+            console.log("Payment status updated successfully.");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error updating payment status: " + error);
+            // Handle error if needed
+        }
+    });
+}
+
+function updateDelivery(mgCode, deliveryStatus) {
+    // Toggle payment status: if current status is 1, set to 2, else set to 1
+    var new_deliver_status = (deliveryStatus == 1) ? 2 : 1;
+
+    // AJAX request
+    $.ajax({
+        type: "POST",
+        url: "ajax_POST/update_deliver.php",
+        data: {
+            o_mg_code: mgCode,
+            new_deliver_status: new_deliver_status
+        },
+        success: function (response) {
+
+            // Show success notification
+            Swal.fire({
+                icon: "success",
+                title: "Success!",
+                text: "Delivery updated for " + mgCode,
+                showConfirmButton: true
+            }).then(() => {
+                // ตรวจสอบว่าแท็บ #saleTab กำลังเปิดใช้งานอยู่
+                checkCurrentTab(); // Reload the page after the notification is closed
+            });
+            console.log(response);
+            // Optionally, update UI or handle success response
+            console.log("Delivery status updated successfully.");
+        },
+        error: function (xhr, status, error) {
+            console.error("Error updating payment status: " + error);
+            // Handle error if needed
+        }
+    });
+}
+
+
+function checkCurrentTab() {
+    // ตรวจสอบว่าแท็บ #saleTab กำลังเปิดใช้งานอยู่
+    if ($('#saleTab').hasClass('active')) {
+        loadData('sale'); // Reload the page after the notification is closed
+    } else {
+        loadData();
+    }
+}

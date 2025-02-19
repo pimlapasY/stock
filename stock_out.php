@@ -9,76 +9,74 @@
 </head>
 
 <style>
-.valid {
-    border-color: green;
-}
+    .valid {
+        border-color: green;
+    }
 
-.invalid {
-    border-color: red;
-}
+    .invalid {
+        border-color: red;
+    }
 
-input {
-    width: 100px;
-}
+    input {
+        width: 100px;
+    }
 
-.valid-input-green {
-    border-color: green !important;
-}
+    .valid-input-green {
+        border-color: green !important;
+    }
 
-.valid-input-red {
-    border-color: red !important;
-}
+    .valid-input-red {
+        border-color: red !important;
+    }
 </style>
 
 <script>
-function validateInput(input) {
-    // Check if the input has a value
-    if (input.value.trim() !== '') {
-        input.classList.remove('valid-input-red');
-        // If the input has a value, add the valid-input class
-        //input.classList.add('valid-input-green');
-    } else {
-        // If the input doesn't have a value, remove the valid-input class
-        //input.classList.remove('valid-input-green');
-        input.classList.add('valid-input-red');
+    function validateInput(input) {
+        // Check if the input has a value
+        if (input.value.trim() !== '') {
+            input.classList.remove('valid-input-red');
+            // If the input has a value, add the valid-input class
+            //input.classList.add('valid-input-green');
+        } else {
+            // If the input doesn't have a value, remove the valid-input class
+            //input.classList.remove('valid-input-green');
+            input.classList.add('valid-input-red');
+        }
     }
-}
 </script>
 
 
 <body>
-
     <div class="d-flex flex-wrap">
+        <?php include('navbar.php');
 
-        <?php include('navbar.php') ;
-    
-    // Fetch product names from the database
-    $stmt_code = $pdo->query("SELECT DISTINCT p_product_code FROM product");
-    $productNames_code = $stmt_code->fetchAll(PDO::FETCH_COLUMN); 
-    // Fetch product names from the database
-    $stmt_color = $pdo->query("SELECT DISTINCT p_color FROM product");
-    $productNames_color = $stmt_color->fetchAll(PDO::FETCH_COLUMN);       
-    // Fetch product names from the database
-    $stmt_size = $pdo->query("SELECT DISTINCT p_size FROM product");
-    $productNames_size = $stmt_size->fetchAll(PDO::FETCH_COLUMN);    
-    // Fetch product names from the database
-    $stmt_hands = $pdo->query("SELECT DISTINCT p_hands FROM product");
-    $productNames_hands = $stmt_hands->fetchAll(PDO::FETCH_COLUMN);  
-        
-    $dateNow = date('ymd');
-    $stmt = $pdo->prepare("SELECT COUNT(*) AS count FROM stockout WHERE o_mg_code LIKE CONCAT('M', :dateNow, '%')");
-    $stmt->bindParam(':dateNow', $dateNow);
-    $stmt->execute();
-    $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    $count = $row['count'];
+        // Fetch product names from the database
+        $stmt_code = $pdo->query("SELECT DISTINCT p_product_code FROM product");
+        $productNames_code = $stmt_code->fetchAll(PDO::FETCH_COLUMN);
+        // Fetch product names from the database
+        $stmt_color = $pdo->query("SELECT DISTINCT p_color FROM product");
+        $productNames_color = $stmt_color->fetchAll(PDO::FETCH_COLUMN);
+        // Fetch product names from the database
+        $stmt_size = $pdo->query("SELECT DISTINCT p_size FROM product");
+        $productNames_size = $stmt_size->fetchAll(PDO::FETCH_COLUMN);
+        // Fetch product names from the database
+        $stmt_hands = $pdo->query("SELECT DISTINCT p_hands FROM product");
+        $productNames_hands = $stmt_hands->fetchAll(PDO::FETCH_COLUMN);
 
-    // Fetch store IDs and names from the database
-    $stmt_store = $pdo->query("SELECT st_id, st_name FROM store WHERE st_id != 1");
-    $store_options = $stmt_store->fetchAll(PDO::FETCH_ASSOC);
+        $dateNow = date('ymd');
+        $stmt = $pdo->prepare("SELECT COUNT(*) AS count FROM stockout WHERE o_mg_code LIKE CONCAT('M', :dateNow, '%')");
+        $stmt->bindParam(':dateNow', $dateNow);
+        $stmt->execute();
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        $count = $row['count'];
 
-    // Construct MG_CODE
-    $MG_CODE = 'M' . $dateNow . str_pad($count + 1, STR_PAD_LEFT);
-?>
+        // Fetch store IDs and names from the database
+        $stmt_store = $pdo->query("SELECT st_id, st_name FROM store WHERE st_id != 1");
+        $store_options = $stmt_store->fetchAll(PDO::FETCH_ASSOC);
+
+        // Construct MG_CODE
+        $MG_CODE = 'M' . $dateNow . str_pad($count + 1, 2, '0', STR_PAD_LEFT);
+        ?>
 
         <div class="container-fluid pt-5 col-10 mt-5 pb-5">
             <div class="card w-75 mx-auto ">
@@ -164,9 +162,9 @@ function validateInput(input) {
                                     <select class="form-select" id="store" style="text-transform: uppercase;">
                                         <option value="1">SAMT (main)</option>
                                         <?php foreach ($store_options as $store_option): ?>
-                                        <option value="<?php echo htmlspecialchars($store_option['st_id']); ?>">
-                                            <?php echo htmlspecialchars($store_option['st_id']) . ' - ' . htmlspecialchars($store_option['st_name']); ?>
-                                        </option>
+                                            <option value="<?php echo htmlspecialchars($store_option['st_id']); ?>">
+                                                <?php echo htmlspecialchars($store_option['st_id']) . ' - ' . htmlspecialchars($store_option['st_name']); ?>
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -178,6 +176,9 @@ function validateInput(input) {
                                         <option value="1">Cash</option>
                                         <option value="2">QR</option>
                                         <option value="3">Shopify</option>
+                                        <option value="4">Lazada</option>
+                                        <option value="5">Shopee</option>
+                                        <option value="99">Other</option>
                                     </select>
                                 </div>
                                 <div class="input-group mb-3">
@@ -193,9 +194,9 @@ function validateInput(input) {
                                     <select class="form-select" id="stockToOption">
                                         <option value="" disabled selected>Select a store</option>
                                         <?php foreach ($store_options as $store_option): ?>
-                                        <option value="<?php echo htmlspecialchars($store_option['st_id']); ?>">
-                                            <?php echo htmlspecialchars($store_option['st_id']) . ' - ' . htmlspecialchars($store_option['st_name']); ?>
-                                        </option>
+                                            <option value="<?php echo htmlspecialchars($store_option['st_id']); ?>">
+                                                <?php echo htmlspecialchars($store_option['st_id']) . ' - ' . htmlspecialchars($store_option['st_name']); ?>
+                                            </option>
                                         <?php endforeach; ?>
                                     </select>
                                 </div>
@@ -262,13 +263,13 @@ function validateInput(input) {
                                         <!-- Populate datalist with product names -->
                                         <datalist id="product_names">
                                             <?php foreach ($productNames_code as $productName_code): ?>
-                                            <option value="<?php echo $productName_code; ?>">
+                                                <option value="<?php echo $productName_code; ?>">
                                                 <?php endforeach; ?>
                                         </datalist>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th><?php echo $product_name?></th>
+                                    <th><?php echo $product_name ?></th>
                                     <!-- Replace the input field with a readonly input -->
                                     <td>
                                         <input type="text" class="form-control badge-warning" id="selectedProductName"
@@ -290,7 +291,7 @@ function validateInput(input) {
                                             list="product_names_color" onchange="validateInput(this)">
                                         <datalist id="product_names_color">
                                             <?php foreach ($productNames_color as $productName_color): ?>
-                                            <option value="<?php echo $productName_color; ?>">
+                                                <option value="<?php echo $productName_color; ?>">
                                                 <?php endforeach; ?>
                                         </datalist>
                                     </td>
@@ -302,7 +303,7 @@ function validateInput(input) {
                                             list="product_hand" onchange="validateInput(this)">
                                         <datalist id="product_hand">
                                             <?php foreach ($productNames_hands as $productName_hand): ?>
-                                            <option value="<?php echo $productName_hand; ?>">
+                                                <option value="<?php echo $productName_hand; ?>">
                                                 <?php endforeach; ?>
                                         </datalist>
                                     </td>
@@ -314,9 +315,24 @@ function validateInput(input) {
                                             list="product_size" onchange="validateInput(this)">
                                         <datalist id="product_size">
                                             <?php foreach ($productNames_size as $productName_size): ?>
-                                            <option value="<?php echo $productName_size; ?>">
+                                                <option value="<?php echo $productName_size; ?>">
                                                 <?php endforeach; ?>
                                         </datalist>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $qty ?></th>
+                                    <td>
+                                        <!--  <div class="input-group">
+                                    <button type="button" class="btn btn-outline-secondary"
+                                        onclick="decrementQty()">-</button>
+                                    
+                                    <button type="button" class="btn btn-outline-secondary" onclick="incrementQty()"
+                                        id="incrementBtn">+</button>
+                                </div> -->
+
+                                        <input type="number" min="1" id="qtyValueNum" onchange="calculateTotalSale()"
+                                            class="form-control">
                                     </td>
                                 </tr>
                                 <!-- <tr>
@@ -334,61 +350,13 @@ function validateInput(input) {
                                     </td>
                                 </tr> -->
                                 <tr>
-                                    <th><?php echo $salePrice ?></th>
-                                    <td>
-                                        <input class="form-control text-end badge-warning" type="text"
-                                            id="selectedProductSale" readonly>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><?php echo $salePrice . '(Vat)' ?></th>
-                                    <td>
-                                        <input class="form-control text-end badge-warning" type="text"
-                                            id="selectedProductSaleVat" readonly>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><?php echo $qty ?></th>
-                                    <td>
-                                        <!--  <div class="input-group">
-                                    <button type="button" class="btn btn-outline-secondary"
-                                        onclick="decrementQty()">-</button>
-                                    
-                                    <button type="button" class="btn btn-outline-secondary" onclick="incrementQty()"
-                                        id="incrementBtn">+</button>
-                                </div> -->
+                                    <th>
+                                        <?php echo $salePrice ?>
 
-                                        <input type="number" min="1" id="qtyValueNum" onchange="updateTotalPrice()"
-                                            class="form-control">
-                                    </td>
-                                </tr>
-                                <!-- <tr>
-                                    <th><?php echo $total_cost ?></th>
+                                    </th>
                                     <td>
-                                        <input class="form-control text-end badge-warning" id="total_price" readonly>
-                                        </input>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><?php echo $total_cost.'(Vat)' ?></th>
-                                    <td>
-                                        <input class="form-control text-end badge-warning" id="total_price_vat"
-                                            readonly>
-                                        </input>
-                                    </td>
-                                </tr> -->
-                                <tr>
-                                    <th><?php echo $total_sale ?></th>
-                                    <td>
-                                        <input class="form-control text-end badge-info" id="total_sale" readonly>
-                                        </input>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <th><?php echo $total_sale.'(Vat)' ?></th>
-                                    <td>
-                                        <input class="form-control text-end badge-info" id="total_sale_vat" readonly>
-                                        </input>
+                                        <input class="form-control text-end badge-danger" type="text"
+                                            id="selectedProductSale" onchange="calculateTotalSale()">
                                     </td>
                                 </tr>
                                 <tr>
@@ -404,21 +372,96 @@ function validateInput(input) {
                                             <select name="disType" id="disType" class="form-select me-3"
                                                 onchange="calculateTotalSale()">
                                                 <option value="99"><?php echo $optionNone; ?></option>
+                                                <option value="1"><?php echo $optionPerItem; ?></option>
                                                 <option value="2"><?php echo $optionTotal; ?></option>
                                                 <option value="3"><?php echo $optionPercentage; ?></option>
-                                                <option value="1"><?php echo $optionPerItem; ?></option>
                                             </select>
                                             <input type="number" id="inputDiscount" class="form-control"
                                                 onchange="calculateTotalSale()" hidden>
                                         </div>
                                     </td>
                                 </tr>
-
                                 <tr>
-                                    <th><?php echo $total_sale.'(Vat) + '. $discount ?></th>
+                                    <th><?php echo $salePrice . ' - ' . $discount ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-warning" type="text"
+                                            id="salePerDiscount" readonly>
+                                        <span class="text-warning">/Per item</span>
+                                    </td>
+                                </tr>
+                                <!--  <tr>
+                                    <th><?php echo $salePrice . '(Vat)' ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-warning" type="text"
+                                            id="selectedProductSaleVat" readonly>
+                                    </td>
+                                </tr> -->
+                                <!-- <tr>
+                                    <th><?php echo $total_cost ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-warning" id="total_price" readonly>
+                                        </input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $total_cost . '(Vat)' ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-warning" id="total_price_vat"
+                                            readonly>
+                                        </input>
+                                    </td>
+                                </tr> -->
+                                <tr hidden>
+                                    <th><?php echo $total_sale ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-info" id="total_sale" readonly>
+                                        </input>
+                                    </td>
+                                </tr>
+                                <tr hidden>
+                                    <th><?php echo $total_sale . '(Vat)' ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-info" id="total_sale_vat" readonly>
+                                        </input>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $total_sale ?></th>
                                     <td>
                                         <input class="form-control text-end badge-success" id="total_sale_dis" readonly>
                                         </input>
+                                        <span class="text-success">All items(Exclude Vat)</span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>
+                                        <?php echo 'Vat (%)' ?>
+                                        <div class="form-check form-switch">
+                                            <input class="form-check-input" type="checkbox" role="switch"
+                                                id="flexSwitchCheckChecked" checked>
+                                            <label class="form-check-label" for="flexSwitchCheckChecked">Have</label>
+                                        </div>
+                                    </th>
+                                    <td>
+                                        <div class="d-flex">
+                                            <input class="form-control text-end" id="vat_default" hidden>
+                                            </input>
+                                            <input class="form-control text-end badge-danger w-25 me-3" id="vat"
+                                                onchange="calculateTotalSale()">
+                                            </input>
+                                            <input class="form-control text-end badge-success w-75" id="vat_amount"
+                                                readonly>
+                                            </input>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><?php echo $total_sale . '(Vat) - ' . $discount ?></th>
+                                    <td>
+                                        <input class="form-control text-end badge-danger" id="total_sale_dis_vat"
+                                            onchange="calculateTotalSaleTotal()">
+                                        </input>
+                                        <span class="text-danger">All items(Include Vat)</span>
                                     </td>
                                 </tr>
                                 <tr>
@@ -454,3 +497,94 @@ function validateInput(input) {
 <script src="stock_out.js"></script>
 
 </html>
+
+<script>
+    function calculateTotalSale() {
+        const disType = $('#disType').val();
+        const totalSale = parseFloat($('#total_sale_dis').val()) || 0;
+        const qtyValueNum = parseFloat($('#qtyValueNum').val()) || 1; // ป้องกันการหารด้วย 0
+        const inputDiscount = parseFloat($('#inputDiscount').val()) || 0;
+        const perSale = parseFloat($('#selectedProductSale').val());
+        const vatInput = parseFloat($('#vat').val()) || 0;
+
+        const vat = vatInput / 100; // คำนวณ VAT ใหม่
+
+        let newTotalSale = 0; // กำหนดค่าเริ่มต้น
+        let newSale = 0;
+        let vatAmount = 0;
+
+        $('#inputDiscount').prop('hidden', false);
+        $('#selectedCalculateTotalSale').prop('hidden', false);
+
+        if (disType === '1') {
+            // คำนวณสำหรับ 'ต่อชิ้น'
+            newTotalSale = (perSale - inputDiscount) * qtyValueNum;
+            newSale = (perSale - inputDiscount);
+        } else if (disType === '2') {
+            // คำนวณสำหรับ 'ทั้งหมด'
+            newTotalSale = (perSale * qtyValueNum) - inputDiscount;
+            newSale = (newTotalSale / qtyValueNum);
+        } else if (disType === '3') {
+            // คำนวณสำหรับ 'เปอร์เซ็น (%)'
+            newTotalSale = (perSale * qtyValueNum) - (perSale * qtyValueNum) * (inputDiscount / 100);
+            newSale = (perSale - (perSale * (inputDiscount / 100)));
+        } else {
+            $('#inputDiscount').val('');
+            $('#inputDiscount').prop('hidden', true);
+            newTotalSale = (perSale * qtyValueNum);
+            newSale = perSale;
+        }
+
+        vatAmount = newTotalSale * vat;
+
+        $('#salePerDiscount').val(newSale.toFixed(2));
+        $('#total_sale_dis').val(newTotalSale.toFixed(2));
+        $('#vat_amount').val(vatAmount.toFixed(2));
+        $('#total_sale_dis_vat').val((newTotalSale + vatAmount).toFixed(2));
+    }
+
+    function calculateTotalSaleTotal() {
+        const disType = $('#disType').val();
+        const totalSale = parseFloat($('#total_sale_dis').val()) || 0;
+        const qtyValueNum = parseFloat($('#qtyValueNum').val()) || 1;
+        const inputDiscount = parseFloat($('#inputDiscount').val()) || 0;
+        const perSale = parseFloat($('#selectedProductSale').val()) || 0;
+        const vatInput = parseFloat($('#vat').val()) || 0;
+        const totalAllSaleVat = parseFloat($('#total_sale_dis_vat').val()) || 0;
+
+        // ป้องกันหารด้วยศูนย์
+        if (qtyValueNum === 0) {
+            alert("จำนวนสินค้าไม่สามารถเป็น 0 ได้");
+            return;
+        }
+
+        // คำนวณ VAT
+        const vat = vatInput / 100;
+        const vatCalculate = totalAllSaleVat * (vat / (1 + vat));
+        $('#vat_amount').val(vatCalculate.toFixed(2));
+
+        // คำนวณราคาสุทธิหลังหัก VAT
+        const totalSalePrice = totalAllSaleVat - vatCalculate;
+        $('#total_sale_dis').val(totalSalePrice.toFixed(2));
+
+        // คำนวณราคาต่อชิ้น
+        const salePrice = totalSalePrice / qtyValueNum;
+        $('#salePerDiscount').val(salePrice.toFixed(2));
+
+        // แสดงช่องส่วนลด
+        $('#inputDiscount').prop('hidden', false);
+        $('#selectedCalculateTotalSale').prop('hidden', false);
+
+        // เคลียร์ค่าช่องกรอกส่วนลด
+        /* $('#inputDiscount').val('');
+        $('#salePerDiscount').val(''); */
+
+        // เลือกส่วนลดเป็นแบบ per item
+        $("#disType").val("1");
+        // แสดงส่วนลด
+        const discount = perSale - salePrice;
+        $('#inputDiscount').val(discount.toFixed(2));
+
+
+    }
+</script>

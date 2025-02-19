@@ -1,39 +1,8 @@
-
-function calculateTotalSale() {
-    const disType = document.getElementById('disType').value;
-    const totalSale = parseFloat(document.getElementById('total_sale').value) || 0;
-    const qtyValueNum = parseFloat(document.getElementById('qtyValueNum').value) || 1; // ป้องกันการหารด้วย 0
-    const inputDiscount = parseFloat(document.getElementById('inputDiscount').value) || 0;
-    let newTotalSale = 0; // กำหนดค่าเริ่มต้น
-
-    $('#inputDiscount').prop('hidden', false);
-
-    $('#selectedCalculateTotalSale').prop('hidden', false);
-
-    if (disType == '1') {
-        // คำนวณสำหรับ 'ต่อชิ้น'
-        newTotalSale = ((totalSale / qtyValueNum) - inputDiscount) * qtyValueNum;
-    } else if (disType == '2') {
-        // คำนวณสำหรับ 'ทั้งหมด'
-        newTotalSale = totalSale - inputDiscount;
-    } else if (disType == '3') {
-        // คำนวณสำหรับ 'เปอร์เซ็น (%)'
-        newTotalSale = totalSale - ((inputDiscount / 100) * totalSale);
-    } else {
-        newTotalSale = totalSale;
-        $('#inputDiscount').val('');
-        $('#inputDiscount').prop('hidden', true);
-    }
-
-    // อัปเดตค่า total_sale
-    document.getElementById('total_sale_dis').value = newTotalSale.toFixed(2); // แสดงเป็นจำนวนทศนิยม 2 ตำแหน่ง
-}
-
 function resetInput() {
+
     var inputs = document.querySelectorAll(
         "#product, #selectedProductName, #myInput, #selectedProductUnit, #colorInput, #sizeInput, #handInput, #total_price, #selectedProductCost,  #selectedProductCostVat"
     );
-
 
     // Reset the value of the input fields
     inputs.forEach(function (input) {
@@ -123,6 +92,7 @@ $('#product').on('input', function () {
             $('#handInput').val(productOption1);
             $('#colorInput').val(productOption2);
             $('#sizeInput').val(productOption3);
+
         },
         error: function () {
             console.error('Failed to fetch product data');
@@ -137,11 +107,10 @@ $('#product, #colorInput, #sizeInput, #handInput').on('change', function () {
     updateQuantityInput();
 });
 
-$('#qtyValueNum').on('change', function () {
-    calculateTotalSale();
-});
 
 $('#store').on('change', updateQuantityInput);
+
+
 
 function updateQuantityInput() {
     var store = $('#store').val();
@@ -171,32 +140,32 @@ function updateQuantityInput() {
                 $('#alertSuccess').prop('hidden', true);
                 $('#alertError').prop('hidden', true);
                 $('#submitStockOutBtn').prop('hidden', true);
-                qtyInputText.prop('hidden', true);
+                updateQuantityInput();
                 return;
             } else if (data.error2) {
                 $('#alertError').prop('hidden', false);
                 $('#alertSuccess').prop('hidden', true);
                 $('#alertFillData').prop('hidden', true);
                 $('#submitStockOutBtn').prop('hidden', true);
-                qtyInputText.prop('hidden', true);
-                resetInput();
                 return;
             } else if (data.error3) {
                 $('#alertFillData').prop('hidden', false);
                 $('#alertSuccess').prop('hidden', true);
                 $('#alertError').prop('hidden', true);
                 $('#submitStockOutBtn').prop('hidden', true);
-                qtyInputText.prop('hidden', true);
                 return;
             };
 
             var productID = data.p_product_id;
+            //เช็ค store หลักกับจำนวน stock รอง
             var stockQuantity = store == '1' ? parseInt(data.stock_quantity) : parseInt(data.sub_qty);
+            //ต้นทุน
             var productCost = parseFloat(data.p_cost_price);
+            //จำนวน stock master
             var productQTY = parseInt(data.p_qty);
-            /* costvat */
+            //ราคาขาย
             var salePrice = parseFloat(data.p_sale_price);
-            var costPrice = parseFloat(data.p_cost_price);
+            //vat
             var vatRate = parseFloat(data.p_vat);
 
             /* if (!isNaN(costPrice) && !isNaN(vatRate)) {
@@ -205,9 +174,9 @@ function updateQuantityInput() {
             } else {
                 var productCostVat = 0; // หรือค่าที่เหมาะสม
             } */
+            var Vat = (salePrice * vatRate) / 100;
 
             if (!isNaN(salePrice) && !isNaN(vatRate)) {
-                var Vat = (salePrice * vatRate) / 100;
                 var salePriceVat = (salePrice + Vat).toFixed(2); // ทศนิยม 2 ตำแหน่ง
             } else {
                 var salePriceVat = 0; // หรือค่าที่เหมาะสม
@@ -225,12 +194,20 @@ function updateQuantityInput() {
                 qtyValueNum.val(stockQuantity).prop('disabled', false);
                 var totalSalePrice = (stockQuantity * salePrice).toFixed(2).toLocaleString();
                 var totalSalePriceVat = (stockQuantity * salePriceVat).toFixed(2).toLocaleString();
+                var vatAmount = (stockQuantity * salePrice) * vatRate / 100;
+
                 $('#total_sale_vat').val(totalSalePriceVat);
                 $('#total_sale').val(totalSalePrice);
+                $('#vat').val(parseFloat(vatRate).toFixed(2));
+                $('#vat_default').val(parseFloat(vatRate).toFixed(2));
+                $('#total_sale_dis').val(totalSalePrice);
+                $('#vat_amount').val(vatAmount.toFixed(2));
+                $('#total_sale_dis_vat').val((parseFloat(vatAmount) + parseFloat(totalSalePrice)).toFixed(2));
+
                 /* $('#selectedProductCost').val(productCost);
                 $('#selectedProductCostVat').val(productCostVat); */
-                $('#selectedProductSale').val(salePrice);
-                $('#selectedProductSaleVat').val(salePriceVat);
+                $('#selectedProductSale').val(salePrice.toFixed(2));
+                /* $('#selectedProductSaleVat').val(salePriceVat); */
                 $('#product_id').val(productID);
 
             } else if (productQTY === 0) {
@@ -279,7 +256,7 @@ function updateTotalPrice() {
     var qtyValueNum = $('#qtyValueNum').val();
     var productSale = parseFloat($('#selectedProductSale').val()); // Get the product cost
     var totalSalePrice = (qtyValueNum * productSale).toFixed(2);
-    var productSaleVat = parseFloat($('#selectedProductSaleVat').val()); // Get the product cost
+    /* var productSaleVat = parseFloat($('#selectedProductSaleVat').val()); */ // Get the product cost
     var totalPriceSaleVat = (qtyValueNum * productSaleVat).toFixed(2);
 
     $('#total_sale').val(totalSalePrice); // Update the total price element
@@ -340,20 +317,27 @@ function submitStockOut() {
     var discountPrice = $('#inputDiscount').val();
     var totalSaleDis = $('#total_sale_dis').val();
     var totalSaleVat = $('#total_sale_vat').val();
+    var salePrice = $('#selectedProductSale').val();
+    var vat = $('#vat').val();
     var reasons_submit; // Define reasons_submit variable
     // Check if the sale radio is checked
     if (saleRadio.checked) {
 
-        if (paidOption === '' || customerName === '') {
+        function showErrorMessage(message) {
             Swal.fire({
                 title: 'ERROR',
-                text: "Please select a payment method \nor enter the customer's name.",
-                icon: 'warning',
+                text: message,
+                icon: 'error',
                 confirmButtonColor: '#3085d6',
                 confirmButtonText: 'OK'
             });
-            return false;
         }
+
+        if (!paidOption || !customerName) {
+            showErrorMessage("Please select a payment method \nor enter the customer's name.");
+            return;
+        }
+
         // Update reasons_submit for 'sale' reason
         reasons_submit = 'sale';
         store = $('#store').val();
@@ -403,7 +387,9 @@ function submitStockOut() {
         totalSaleDis: totalSaleDis,
         totalSaleVat: totalSaleVat,
         customerName: customerName,
-        paidOption: paidOption
+        paidOption: paidOption,
+        salePrice: salePrice,
+        vat: vat
     };
 
 
@@ -461,3 +447,18 @@ function submitStockOut() {
     }
 
 };
+
+/* ------------------------------------------------------- */
+//ตรวจสอบว่าปุ่ม vat ถูกเช็คอยู่หรือไม่
+
+$('#flexSwitchCheckChecked').change(function () {
+    const vatDefault = $('#vat_default').val();
+    if (!$(this).prop('checked')) {
+        $('#vat').val('0').prop('disabled', true);
+        $('#vat_amount').val('0').prop('disabled', true);
+    } else {
+        $('#vat').val(vatDefault).prop('disabled', false);
+        $('#vat_amount').prop('disabled', false);
+    }
+    calculateTotalSale();
+});

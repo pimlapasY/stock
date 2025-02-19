@@ -12,6 +12,7 @@
 
 <script src="js/sweetalert2.all.min.js"></script>
 <script src="js/boostrap-5.1.3.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 
 <link rel="icon" href="img/icon-stock7.png" type="image/png">
 

@@ -278,7 +278,7 @@ function updatePayment(mgCode, paymentStatus) {
     // AJAX request
     $.ajax({
         type: "POST",
-        url: "pr_update_payment.php",
+        url: "ajax_POST/update_payment.php",
         data: {
             o_mg_code: mgCode,
             new_payment_status: new_payment_status

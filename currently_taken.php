@@ -19,15 +19,15 @@ th {
 }
 </style> -->
 <style>
-.modal-body {
-    overflow-y: auto;
-}
+    .modal-body {
+        overflow-y: auto;
+    }
 </style>
 
 <body>
-    <div class="d-flex flex-wrap">
-        <?php include('navbar.php') ?>
-        <div class="container-fluid pt-5 mt-5 col-10">
+    <?php include('navbar.php') ?>
+    <div class="table-responsive">
+        <div class="container-fluid pt-5 mt-5 col-12">
             <h1><i class="fa-solid fa-database fa-xl"></i> <?php echo $cr_taken ?></h1><br>
             <hr>
             <div class="d-flex justify-content-between">
@@ -47,17 +47,17 @@ th {
                 </div>
 
                 <div class="mb-2">
-                    <a href="#" id="previewPRSelectedBtn" class="btn btn-outline-info rounded-8"><i
+                    <a href="#" id="previewPRSelectedBtn" class="btn btn-outline-info"><i
                             class="fa-solid fa-file-lines"></i> PR
                         create</a>
-                    <a href="#" id="previewReturnedSelectedBtn" class="btn btn-outline-warning rounded-8"><i
+                    <a href="#" id="previewReturnedSelectedBtn" class="btn btn-outline-warning"><i
                             class="fa-solid fa-right-left"></i> Returned</a>
-                    <a href="his_all.php" class="btn btn-success rounded-8"><i
+                    <a href="#" id="completedBtn" class="btn btn-outline-success"><i
                             class="fa-solid fa-file-circle-check"></i>
                         Completed</a>
                 </div>
             </div>
-            <div class="table-responsive">
+            <div class="">
                 <table class="table table-hover mx-auto table-sm">
                     <thead class="text-center table-secondary" style="text-transform: uppercase;">
                         <th><input type="checkbox" id="checkAll" class="form-check-input"></th>
@@ -77,9 +77,9 @@ th {
                         <th><?php echo $paidBy; ?></th>
                         <th><?php echo $payment; ?></th>
                         <th><?php echo $delivery; ?></th>
+                        <th><?php echo 'user'; ?></th>
                         <th><?php echo $prPo; ?></th>
                         <!-- <th>PO status</th> -->
-                        <th><?php echo $update; ?></th>
                         <th><?php echo $memo; ?></th>
                     </thead>
                     <tbody id="dataTable" class="table-group-divider table-divider-color">
@@ -98,9 +98,9 @@ th {
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <?php
-                    // กำหนดวันที่ปัจจุบันในรูปแบบ 'Y-m-d'
-                    $currentDate = date('Y-m-d');
-                    ?>
+                // กำหนดวันที่ปัจจุบันในรูปแบบ 'Y-m-d'
+                $currentDate = date('Y-m-d');
+                ?>
                 <div class="modal-body m-3">
                     <label for="newDate">Date: </label>
                     <input id="newDate" type="date" class="form-control w-50 ms-1"
@@ -184,23 +184,23 @@ th {
 
 </html>
 <script>
-// Function to load data based on button clicked
-function loadData(reasons = null) {
-    // Define the URL for the AJAX request
-    var url = "currently_fetch_data.php";
-    // Define the data to be sent
-    var data = {
-        reasons: reasons
-    };
-    // Perform an AJAX request
-    $.ajax({
-        type: "POST",
-        url: url,
-        data: data,
-        success: function(response) {
-            // Replace the content of dataTable with the new data
-            $('#dataTable').html(response);
-        }
-    });
-}
+    // Function to load data based on button clicked
+    function loadData(reasons = null) {
+        // Define the URL for the AJAX request
+        var url = "currently_fetch_data.php";
+        // Define the data to be sent
+        var data = {
+            reasons: reasons
+        };
+        // Perform an AJAX request
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            success: function(response) {
+                // Replace the content of dataTable with the new data
+                $('#dataTable').html(response);
+            }
+        });
+    }
 </script>

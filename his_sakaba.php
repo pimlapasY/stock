@@ -71,73 +71,73 @@
     </div>
 
     <script>
-    $(document).ready(function() {
-        function loadData(store = null, currentPage = 1) {
-            var url = "his_fetch.php";
-            var data = {
-                store: store,
-                page: currentPage
-            };
+        $(document).ready(function() {
+            function loadData(store = null, currentPage = 1) {
+                var url = "his_fetch.php";
+                var data = {
+                    store: store,
+                    page: currentPage
+                };
 
-            $.ajax({
-                type: "POST",
-                url: url,
-                data: data,
-                success: function(response) {
-                    var result = JSON.parse(response);
-                    if (result.error) {
-                        alert(result.error);
-                    } else {
-                        $('#dataTable').html(result.tableRows);
-                        updatePagination(result.totalPages, currentPage, store);
+                $.ajax({
+                    type: "POST",
+                    url: url,
+                    data: data,
+                    success: function(response) {
+                        var result = JSON.parse(response);
+                        if (result.error) {
+                            alert(result.error);
+                        } else {
+                            $('#dataTable').html(result.tableRows);
+                            updatePagination(result.totalPages, currentPage, store);
+                        }
                     }
-                }
-            });
-        }
-
-        function updatePagination(totalPages, currentPage, store) {
-            var pagination = '';
-            for (var i = 1; i <= totalPages; i++) {
-                pagination += "<li class='page-item " + (currentPage == i ? 'active' : '') +
-                    "'><a class='page-link' href='#' data-page='" + i + "' data-store='" + store + "'>" + i +
-                    "</a></li>";
+                });
             }
-            $('#pagination').html(pagination);
-        }
 
-        $(document).on('click', '.page-link', function(e) {
-            e.preventDefault();
-            var page = $(this).data('page');
-            var store = $(this).data('store');
-            loadData(store, page);
-        });
+            function updatePagination(totalPages, currentPage, store) {
+                var pagination = '';
+                for (var i = 1; i <= totalPages; i++) {
+                    pagination += "<li class='page-item " + (currentPage == i ? 'active' : '') +
+                        "'><a class='page-link' href='#' data-page='" + i + "' data-store='" + store + "'>" + i +
+                        "</a></li>";
+                }
+                $('#pagination').html(pagination);
+            }
 
-        // Function to handle tab click events
-        function handleTabClick(tabId, store) {
-            $('.tab').removeClass('active');
-            $(tabId).addClass('active');
-            loadData(store);
-        }
+            $(document).on('click', '.page-link', function(e) {
+                e.preventDefault();
+                var page = $(this).data('page');
+                var store = $(this).data('store');
+                loadData(store, page);
+            });
 
-        // Load all data when the page loads
-        handleTabClick('#sakabaTab', 'sakaba');
+            // Function to handle tab click events
+            function handleTabClick(tabId, store) {
+                $('.tab').removeClass('active');
+                $(tabId).addClass('active');
+                loadData(store);
+            }
 
-        // Set up click event handlers for each tab
-        $('#productTab').click(function(e) {
-            e.preventDefault();
-            handleTabClick('#productTab');
-        });
-
-        $('#samtTab').click(function(e) {
-            e.preventDefault();
-            handleTabClick('#samtTab', 'samt');
-        });
-
-        $('#sakabaTab').click(function(e) {
-            e.preventDefault();
+            // Load all data when the page loads
             handleTabClick('#sakabaTab', 'sakaba');
+
+            // Set up click event handlers for each tab
+            $('#productTab').click(function(e) {
+                e.preventDefault();
+                handleTabClick('#productTab');
+            });
+
+            $('#samtTab').click(function(e) {
+                e.preventDefault();
+                handleTabClick('#samtTab', 'samt');
+            });
+
+            $('#sakabaTab').click(function(e) {
+                e.preventDefault();
+                handleTabClick('#sakabaTab', 'sakaba');
+            });
         });
-    });
     </script>
 </body>
 

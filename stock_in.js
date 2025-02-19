@@ -210,11 +210,13 @@ function updateQuantityInput() {
                 $('#alertFillData').prop('hidden', false);
                 $('#alertSuccess').prop('hidden', true);
                 $('#alertError').prop('hidden', true);
+                updateQuantityInput();
                 return;
             } else if (data.error2) {
                 $('#alertError').prop('hidden', false);
                 $('#alertSuccess').prop('hidden', true);
                 $('#alertFillData').prop('hidden', true);
+                $('#submitedBtn').prop('hidden', true);
                 return;
             }
 
@@ -232,6 +234,7 @@ function updateQuantityInput() {
 
 
             if (stockQuantity > 0 || productQTY == 0) {
+                $('#submitedBtn').prop('hidden', false);
                 $('#alertSuccess').prop('hidden', false);
                 $('#successText').html('Stock: ' + stockQuantity);
                 $('#alertFillData').prop('hidden', true);

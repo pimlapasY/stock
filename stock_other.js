@@ -53,10 +53,11 @@ $(document).ready(function () {
         var checkStatus = $('#flexRadioDefault1').val(); // Get the selected radio button value
         var paymentOption = $('#paidOption').val();
         var customerName = $('#cusname').val();
-
+        var memo = $('#memo').val();
         const currentDate = $('#currentDate').val(); // Get the date input value
         var updateForm = $('#updateForm').val();
         console.log('updateForm:' + updateForm);
+
 
         if ($('#paidOption').val() == '' || $('#cusname').val() == '' && updateForm == '1') {
             Swal.fire({
@@ -97,6 +98,7 @@ $(document).ready(function () {
             }
         });
 
+        console.log('Memo:', memo);
 
         // Send an AJAX request to the server
         $.ajax({
@@ -109,7 +111,8 @@ $(document).ready(function () {
                 updateForm: updateForm, // Include the date in the request
                 typeStatus: typeStatus,
                 paymentOption: paymentOption,
-                customerName: customerName
+                customerName: customerName,
+                memo: memo
             }),
             contentType: 'application/json',
             success: function (response) {

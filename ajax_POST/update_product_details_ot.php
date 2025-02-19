@@ -9,12 +9,12 @@ if ($data && isset($data['products']) && isset($data['updateForm'])) {
     $status = isset($data['status']) ? $data['status'] : null;
     $date = isset($data['date']) ? $data['date'] : null;
     $typeStatus = isset($data['typeStatus']) ? $data['typeStatus'] : null;
-    $customerName = isset($data['customerName']) ? $data['customerName']: null;
-    $paymentOption= isset($data['paymentOption']) ? $data['paymentOption'] : null;
+    $customerName = isset($data['customerName']) ? $data['customerName'] : null;
+    $paymentOption = isset($data['paymentOption']) ? $data['paymentOption'] : null;
     $userID =  $_SESSION['id'];
+    $memo = isset($data['memo']) ? $data['memo'] : null;
 
-
-try {
+    try {
         $pdo->beginTransaction();
 
         if ($data['updateForm'] == 1) {
@@ -47,15 +47,17 @@ try {
                     $o_mg_code = 'M' . $yy . $MM . $DD . $count;
 
                     // Insert into the stockout table
-                    $stmt = $pdo->prepare("INSERT INTO stockout (o_mg_code, o_product_id, o_product_code, o_product_name, o_out_qty, 
+                    $stmt = $pdo->prepare("INSERT INTO stockout (o_mg_code, o_product_id, o_product_code, o_product_name, o_out_qty, o_memo,
                     o_store, o_reasons, o_cost_price, o_sale_price,  o_total_price, o_vat, o_payment_option, o_customer, o_out_date, o_username, o_date_add)
-                                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?, NOW())");
+                                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+
                     $stmt->execute([
                         $o_mg_code,
                         $productDetails['p_product_id'],
                         $productDetails['p_product_code'],
                         $productDetails['p_product_name'],
                         $qty,
+                        $memo,
                         $productDetails['sub_location'],
                         $status,
                         $productDetails['p_cost_price'],
@@ -95,18 +97,19 @@ try {
                     $pr_code = 'PR' . $yy . $MM . $DD . $count;
 
                     // Insert into the pr table
-                    $stmt = $pdo->prepare("INSERT INTO pr (pr_code, pr_product_id, pr_product_code, pr_product_name, pr_cost, pr_total_cost, pr_sale, pr_vat, pr_qty, pr_user_add,  pr_date, pr_date_add)
-                                           VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, NOW())");
+                    $stmt = $pdo->prepare("INSERT INTO pr (pr_code, pr_product_id, pr_product_code, pr_product_name, pr_cost, pr_total_cost, pr_sale, pr_vat, pr_qty, pr_memo,  pr_user_add,  pr_date, pr_date_add)
+                                           VALUES (?, ?, ?, ?, ?, ?, ?,?, ?, ?, ?, ?, NOW())");
                     $stmt->execute([
                         $pr_code,
                         $productId,
                         $productDetails['p_product_code'],
                         $productDetails['p_product_name'],
                         $productDetails['p_cost_price'],
-                        $productDetails['p_cost_price']*$qty,
+                        $productDetails['p_cost_price'] * $qty,
                         $productDetails['p_sale_price'],
                         $productDetails['p_vat'],
                         $qty,
+                        $memo,
                         $userID,
                         $currentDate
                     ]);
@@ -120,12 +123,10 @@ try {
 
         $pdo->commit();
         echo json_encode(['status' => 'success']);
-
     } catch (Exception $e) {
         $pdo->rollBack();
         echo json_encode(['status' => 'error', 'message' => $e->getMessage()]);
-    }   
+    }
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Invalid data']);
 }
-?>

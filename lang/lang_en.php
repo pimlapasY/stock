@@ -30,7 +30,7 @@ $reset = 'Reset';
 $require = 'Require';
 $accept = 'Approved';
 $wait_accept = 'Pending for approval';
-$no_accept ='Disapproved';
+$no_accept = 'Disapproved';
 $description = 'Description';
 $code = 'Code';
 $date = 'Date';
@@ -67,7 +67,7 @@ $total_sale = 'Total sale price';
 $size = 'Size';
 $color = 'Color';
 $hand = 'Hand';
-$qty = 'Quantity';
+$qty = 'Qty';
 $soldDate = 'Sold Date';
 $customer = 'Customer';
 $paidBy = 'Paid By';
@@ -101,17 +101,17 @@ $collectionOptions = [
 ];
 
 // ประกาศตัวแปรสำหรับ label
-$options1_label = "Option 1";
-$options2_label = "Option 2";
-$options3_label = "Option 3";
+$options1_label = "Option<br>1";
+$options2_label = "Option<br>2";
+$options3_label = "Option<br>3";
 
 $logout = 'Logout';
 
 $listProduct = 'Product List';
 $listSuplier = 'Supplier List';
-$listStore = 'Supplier List';
+$listStore = 'Store List';
 
-$check ='Check';
+$check = 'Check';
 
 
 //alert Message
@@ -121,7 +121,7 @@ $alertFilldata = 'Please specify additional details, such as color, size, or han
 $alertNodata = 'No data or stock quantity found for the product code.';
 $alertFillSuccess = 'Valid data found! You may proceed with this product. Please verify.';
 $alertNoStock = 'Out of stock: Please restock before proceeding with the withdrawal.';
-$saleSample ='Sample Sale';
+$saleSample = 'Sample Sale';
 
 $optionNone = '-None-';
 $optionTotal = 'Total';
@@ -131,3 +131,6 @@ $optionPerItem = 'Per Item';
 $success = 'success';
 $delivered = 'delivered';
 $pendingPR = 'PR pending';
+$currentList = 'Current List';
+$newList = 'New List';
+$close = 'Close';

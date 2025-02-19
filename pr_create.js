@@ -73,6 +73,23 @@ $('#product').on('input', function () {
             $('#handInput').val(productOption1);
             $('#colorInput').val(productOption2);
             $('#sizeInput').val(productOption3);
+            if (!productOption1) {
+                $('#handInput').prop('disabled', true);
+            } else {
+                $('#handInput').prop('disabled', false);
+            }
+
+            if (!productOption2) {
+                $('#colorInput').prop('disabled', true);
+            } else {
+                $('#colorInput').prop('disabled', false);
+            }
+
+            if (!productOption3) {
+                $('#sizeInput').prop('disabled', true);
+            } else {
+                $('#sizeInput').prop('disabled', false);
+            }
         },
         error: function () {
             console.error('Failed to fetch product data');
@@ -111,6 +128,7 @@ function updateQuantityInput() {
                 $('#alertSuccess').prop('hidden', true);
                 $('#alertError').prop('hidden', true);
                 $('#createPR').prop('disabled', true);
+                updateQuantityInput();
             } else if (data.error2) {
                 $('#alertError').prop('hidden', false);
                 $('#alertSuccess').prop('hidden', true);

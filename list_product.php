@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product_list</title>
+    <title>Productlist</title>
 </head>
 <?php include('connect.php'); ?>
 <style>
@@ -14,12 +14,94 @@
 }
 </style>
 
-
 <body>
+    <div class="table-responsive">
+        <div class="d-flex mb-3">
+            <div class="m-0">
+                <a href="register.php" class="btn btn-success"><i class="fa-solid fa-plus"></i> NEW</a>&nbsp;
+                <!-- New Export CSV Button -->
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+                    <i class="fa-solid fa-file-csv"></i> Import CSV
+                </button>&nbsp;
+                <button class="btn btn-warning" onclick="exportToCSV()">
+                    <i class="fa-solid fa-file-csv"></i> Export CSV
+                </button>&nbsp;
+            </div>
+            <div>
+                <button type="button" class="btn btn-outline-primary" onclick="openPreviewModal(1)"><i
+                        class="fa-solid fa-inbox"></i>
+                    Stock in
+                </button>&nbsp;
+                <button class="btn btn-outline-info" onclick="openPreviewModal(2)">
+                    <i class=" fa-solid fa-clipboard-list"></i>
+                    add PR
+                </button>&nbsp;
+            </div>
+        </div>
 
+        <table class="table table-sm table-bordered table-hover mx-auto" style="width: 100%;">
+            <!-- Table content -->
+            <thead class="table-primary text-center">
+                <tr style="vertical-align: middle;">
+                    <th class="text-center" colspan="1"><?php echo $store; ?></th>
+                    <th rowspan="2"><?php echo $num; ?></th>
+                    <th rowspan="2"><?php echo $product_code; ?></th>
+                    <th rowspan="2"><?php echo $collection; ?></th>
+                    <th rowspan="2"><?php echo $product_name; ?></th>
+                    <th rowspan="2"><?php echo $options1_label; ?></th>
+                    <th rowspan="2"><?php echo $options2_label; ?></th>
+                    <th rowspan="2"><?php echo $options3_label; ?></th>
+                    <th rowspan="2"><?php echo $costPrice; ?></th>
+                    <th rowspan="2"><?php echo $salePrice; ?></th>
+                    <th rowspan="2"><?php echo $salePrice . '(vat%)'; ?></th>
+                    <th rowspan="2"><?php echo $qty; ?></th>
+                </tr>
+                <tr>
+                    <th class="text-center">SAMT</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php
+                // Fetch individual product rows
+                $stmt = $pdo->prepare("SELECT p.*, IFNULL(s.s_qty, 0) AS stock_qty
+                    FROM product p
+                    LEFT JOIN stock s ON s.s_product_id = p.p_product_id
+                    ORDER BY p.p_date_add DESC
+                    ");
+
+                // Execute the statement
+                $stmt->execute();
+                $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                // Loop through products and output each row
+                foreach ($products as $index => $product) {
+                    echo "<tr data-id='" . htmlspecialchars($product['p_product_id']) . "'>";
+                    echo "<td class='text-center' style='vertical-align: middle;'>";
+                    echo '<div class="input-group mx-auto"><div class="input-group-text">';
+                    echo "<input class='form-check-input' type='checkbox' value='' id='checkbox_" . htmlspecialchars($product['p_product_id']) . "' onchange='toggleInput(this)' /> <br>";
+                    echo "</div><input class='form-control ' min='1' type='number' id='input_" . htmlspecialchars($product['p_product_id']) . "' value='' style='display: none;' /> </div>";
+                    echo "</td>";
+                    echo "<td>" . ($index + 1) . "</td>"; // Display No starting from 1
+                    echo "<td>" . htmlspecialchars($product['p_product_code']) . "</td>";
+                    echo "<td>" . htmlspecialchars($product['p_collection']) . "</td>";
+                    echo "<td>" . htmlspecialchars($product['p_product_name']) . "</td>";
+                    echo "<td>" . htmlspecialchars($product['p_hands']) . "</td>";
+                    echo "<td>" . htmlspecialchars($product['p_color']) . "</td>";
+                    echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";
+                    echo "<td class='text-end'>" . number_format($product['p_cost_price'], 2) . "</td>";
+                    echo "<td class='text-end'>" . number_format($product['p_sale_price'], 2) . "</td>";
+                    echo "<td class='text-end'>" . number_format(($product['p_sale_price'] * $product['p_vat'] / 100) + $product['p_sale_price'], 2) . "</td>";
+                    echo "<td class='text-end' style='color: " . ($product['stock_qty'] == 0 ? "red ;background:#FCF3CF;" : "green;") . "'>" . htmlspecialchars($product['stock_qty']) . "</td>";
+                    echo "</tr>";
+                }
+                ?>
+            </tbody>
+        </table>
+
+    </div>
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        aria-labelledby="staticBackdropLabel">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -27,10 +109,11 @@
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
+                    <!-- นำเข้า excel csv -->
                     <form action="list_product_import.php" method="post" enctype="multipart/form-data">
                         <label for="csvFile">Choose CSV file:</label>
                         <input type="file" name="csvFile" class="form-control" id="csvFile" accept=".csv" required><br>
-                        <button name="import" class="btn btn-primary">
+                        <button name="import" class="btn btn-primary" onclick="showLoading()">
                             Import
                             CSV
                         </button>
@@ -42,88 +125,6 @@
             </div>
         </div>
     </div>
-    <div class="d-flex justify-content-between m-3">
-        <div>
-            <a href="register.php" class="btn btn-success"><i class="fa-solid fa-plus"></i> NEW</a>&nbsp;
-            <!-- New Export CSV Button -->
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                <i class="fa-solid fa-file-csv"></i> Import CSV
-            </button>&nbsp;
-            <button class="btn btn-warning" onclick="exportToCSV()">
-                <i class="fa-solid fa-file-csv"></i> Export CSV
-            </button>&nbsp;
-        </div>
-        <div>
-            <button type="button" class="btn btn-outline-primary" onclick="openPreviewModal(1)"><i
-                    class="fa-solid fa-inbox"></i>
-                Stock in
-            </button>&nbsp;
-            <button class="btn btn-outline-info" onclick="openPreviewModal(2)">
-                <i class=" fa-solid fa-clipboard-list"></i>
-                add PR
-            </button>&nbsp;
-        </div>
-    </div>
-
-    <table class="table table-bordered table-hover mx-auto" style="width: 100%;">
-        <!-- Table content -->
-        <thead class="table-primary text-center">
-            <tr style="vertical-align: middle;">
-                <th rowspan="2"><?php echo $num; ?></th>
-                <th rowspan="2"><?php echo $product_code; ?></th>
-                <th rowspan="2"><?php echo $collection; ?></th>
-                <th rowspan="2"><?php echo $product_name; ?></th>
-                <th rowspan="2"><?php echo $options1_label; ?></th>
-                <th rowspan="2"><?php echo $options2_label; ?></th>
-                <th rowspan="2"><?php echo $options3_label; ?></th>
-                <th rowspan="2"><?php echo $costPrice; ?></th>
-                <th rowspan="2"><?php echo $salePrice; ?></th>
-                <th rowspan="2"><?php echo $salePrice.'(vat%)'; ?></th>
-                <th rowspan="2"><?php echo $qty; ?></th>
-                <th class="text-center" colspan="1"><?php echo $store; ?></th>
-            </tr>
-            <tr>
-                <th class="text-center">SAMT</th>
-            </tr>
-        </thead>
-        <tbody>
-            <?php
-                    // Fetch individual product rows
-                    $stmt = $pdo->prepare("SELECT p.*, IFNULL(s.s_qty, 0) AS stock_qty
-                    FROM product p
-                    LEFT JOIN stock s ON s.s_product_id = p.p_product_id
-                    GROUP BY p.p_product_code, p.p_product_name, p.p_hands, p.p_color,FIELD(p.p_size, 'SS', 'S', 'M', 'L', 'XL', 'XXL'), p.p_unit, p.p_collection, p.p_cost_price, p.p_sale_price
-                    ORDER BY p.p_date_add DESC, p.p_color ,FIELD(p.p_size, 'SS', 'S', 'M', 'L', 'XL', 'XXL')
-                    ");
-
-                    // Execute the statement
-                    $stmt->execute();
-                    $products = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-                    // Loop through products and output each row
-                    foreach ($products as $index => $product) {
-                    echo "<tr data-id='" . htmlspecialchars($product['p_product_id']) . "'>";
-                        echo "<td>" . ($index + 1) . "</td>"; // Display No starting from 1
-                        echo "<td>".htmlspecialchars($product['p_product_code'])."</td>";
-                        echo "<td>" . htmlspecialchars($product['p_collection']) . "</td>";
-                        echo "<td>" . htmlspecialchars($product['p_product_name']) . "</td>";
-                        echo "<td>" . htmlspecialchars($product['p_hands']) . "</td>";
-                        echo "<td>" . htmlspecialchars($product['p_color']) . "</td>";
-                        echo "<td>" . htmlspecialchars($product['p_size']) . "</td>";
-                        echo "<td class='text-end'>" . number_format($product['p_cost_price'],2) . "</td>";
-                        echo "<td class='text-end'>" . number_format($product['p_sale_price'],2) . "</td>";
-                        echo "<td class='text-end'>" . number_format(($product['p_sale_price']*$product['p_vat']/100)+$product['p_sale_price'],2) . "</td>";
-                        echo "<td class='text-end' style='color: " . ($product['stock_qty'] == 0 ? "red ;background:#FCF3CF;" : "green;") . "'>" . htmlspecialchars($product['stock_qty']) . "</td>";
-                        echo "<td class='text-center' style='vertical-align: middle;'>";
-                        echo '<div class="input-group mx-auto"><div class="input-group-text">';
-                        echo "<input class='form-check-input' type='checkbox' value='' id='checkbox_" . htmlspecialchars($product['p_product_id']) . "' onchange='toggleInput(this)' /> <br>";
-                        echo "</div><input class='form-control ' min='1' type='number' id='input_" . htmlspecialchars($product['p_product_id']) . "' value='' style='display: none;' /> </div>";
-                        echo "</td>";
-                    echo "</tr>";
-                    }
-                    ?>
-        </tbody>
-    </table>
     <!-- Preview Modal -->
     <div id="previewModal" class="modal modal-xl modal fade" style="display:none; width:100%;">
         <div class="modal-dialog">
@@ -165,13 +166,13 @@
                                     <th><?php echo $options2_label; ?></th>
                                     <th><?php echo $options3_label; ?></th>
                                     <th><?php echo $costPrice; ?></th>
-                                    <th><?php echo $costPrice. '(Vat%)'; ?></th>
+                                    <th><?php echo $costPrice . '(Vat%)'; ?></th>
                                     <th><?php echo $qty; ?></th>
                                     <th class="text-center" colspan="1">Store</th>
                                     <th>Total Price</th>
                                 </tr>
                             </thead>
-                            <tbody class=" modal-body" id="previewBody">
+                            <tbody class="modal-body" id="previewBody">
                                 <!-- Preview content will be inserted here -->
                             </tbody>
                         </table>
@@ -188,7 +189,7 @@
                         </div>
                     </div>
 
-                    <div class="d-flex justify-content-start m-3">
+                    <div class="d-flex justify-content-start mt-3">
                         <textarea class="form-control w-50" name="memo" placeholder="memo"></textarea>
                     </div>
                 </div>

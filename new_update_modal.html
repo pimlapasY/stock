@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title></title>
+</head>
+
+<body>
+    <!-- Modal -->
+    <div class="modal fade" id="modalNewUpdate" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="false">
+        <div class="modal-dialog modal-lg"> <!-- เพิ่ม modal-lg เพื่อขยายขนาด -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="staticBackdropLabel">อัปเดตล่าสุด - 15 มกราคม 2568</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <h3 class="mb-4">ปัญหาที่ได้รับการแก้ไข</h3>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            - มีการอัปเดตในส่วนของ <a href="take_out_his.php" class="text-primary">Take Out History</a>
+                            โดยบันทึกข้อมูลในทุกคอลัมน์อย่างถูกต้อง
+                        </li>
+                        <li class="list-group-item">
+                            - มีการปรับปรุงให้หน้า <a href="stock_samt.php" class="text-primary">Stock</a>
+                            สามารถใช้งานได้อย่างถูกต้อง โดยเพิ่มการแสดงชื่อของ Other Store
+                        </li>
+                        <li class="list-group-item">
+                            - ปรับการดึงค่าเวลา Sale จาก Other Store ให้มีการแจ้งเตือนเมื่อไม่มีข้อมูล
+                            โดยไม่รีเซ็ตข้อมูลอัตโนมัติเพื่อป้องกันปัญหาการขายสินค้าไม่ได้
+                        </li>
+                        <li class="list-group-item">
+                            - แก้บัครายการที่ memo ไม่ได้ในหน้า <a href="stock_samt.php"> Stock List(SAMT) </a>
+                        </li>
+                        <li class="list-group-item">
+                            - แก้บัครายการที่ memo ไม่ได้ในหน้า <a href="stock_other.php"> Stock List(Other) </a>
+                        </li>
+
+                        <li class="list-group-item">
+                            - เพิ่มการ add ข้อมูลให้ครอบคลุมมากขึ้น เมื่อทำการดึงค่าอัตโนมัติบนหน้า
+                            <a href="stock_out.php">stock out</a>
+                            ,
+                            <a href="stock_in.php">stock in</a>
+                            ,
+                            <a href="pr_create.php"> pr create</a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">รับทราบ</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

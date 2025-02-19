@@ -1,11 +1,18 @@
-* {
-    font-family: "Inter", sans-serif;
-    font-optical-sizing: auto;
-    font-style: normal;
-    
+/* @font-face {
+  font-family: 'KhanoonThin';
+  src: url('../font/KhanoonThin.ttf') format('truetype');
+  font-weight: 400;
+  font-display: swap;
 }
 
+@font-face {
+  font-family: 'Sarabun';
+  src: url('../font/THSarabun.ttf') format('truetype');
+  font-display: swap;
+  font-weight: bold;
+}
 
+ */
 
 .uppercase {
     text-transform: uppercase;
@@ -28,7 +35,12 @@
     100% {
     }
 }
-
+.table-responsive {
+  transform: scale(0.9);
+  /* ลดขนาดลง 90% */
+  transform-origin: top center;
+  /* จุดเริ่มต้นการย่อ */
+}
 .relative-cell {
   position: relative; /* Establishes a positioning context for the child elements */
 }

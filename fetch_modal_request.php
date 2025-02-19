@@ -27,7 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reqno'])) {
     $stmt->execute();
     $data = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    
+
     // SQL to fetch data
     $sql_data_table = "SELECT *
     FROM request
@@ -38,24 +38,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reqno'])) {
     $stmt_data_table->bindParam(':reqno', $reqno, PDO::PARAM_STR);
     $stmt_data_table->execute();
 
-        $no = 1;
-        // Format the fetched data as HTML table rows
-        $data_table = '';
-        while ($row = $stmt_data_table->fetch(PDO::FETCH_ASSOC)) {
-            // Format each row as a table row
-            $data_table .= '<tr class="text-center">';
-            $data_table .= '<td>' . $no . '</td>';
-            $data_table .= '<td>' . $row['r_product_code'] . '</td>'; // Adjust column names accordingly
-            $data_table .= '<td>' . $row['r_description'] . '</td>';
-            $data_table .= '<td>' . $row['r_qty'] . '</td>';
-            $data_table .= '<td>' . $row['r_unit'] . '</td>';
-            $data_table .= '<td>' . $row['r_objective'] . '</td>';
-            // Add more columns as needed
-            $data_table .= '</tr>';
+    $no = 1;
+    // Format the fetched data as HTML table rows
+    $data_table = '';
+    while ($row = $stmt_data_table->fetch(PDO::FETCH_ASSOC)) {
+        // Format each row as a table row
+        $data_table .= '<tr class="text-center">';
+        $data_table .= '<td>' . $no . '</td>';
+        $data_table .= '<td>' . $row['r_product_code'] . '</td>'; // Adjust column names accordingly
+        $data_table .= '<td>' . $row['r_description'] . '</td>';
+        $data_table .= '<td>' . $row['r_qty'] . '</td>';
+        $data_table .= '<td>' . $row['r_unit'] . '</td>';
+        $data_table .= '<td>' . $row['r_objective'] . '</td>';
+        // Add more columns as needed
+        $data_table .= '</tr>';
 
-            $no++;
-        }
-    
+        $no++;
+    }
 
     $response = [
         'title' => $data['r_reqno'], // Set the title to the request number
@@ -68,11 +67,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['reqno'])) {
         'rec_username' => $data['r_rec_username'],
         'req_username' => $data['req_username']
     ];
-    
+
     echo json_encode($response);
-    
 } else {
     // Invalid request
     echo json_encode(['error' => 'Invalid request']);
 }
-?>

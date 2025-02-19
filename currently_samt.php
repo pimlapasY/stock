@@ -19,30 +19,31 @@ th {
 }
 </style> -->
 <style>
-.modal-body {
-    overflow-y: auto;
-}
+    .modal-body {
+        overflow-y: auto;
+    }
 
-.custom-modal-size {
-    max-width: 70%;
-    /* Adjust the width as needed */
-}
+    .custom-modal-size {
+        max-width: 70%;
+        /* Adjust the width as needed */
+    }
 
-.table-responsive {
-    overflow-x: auto;
-}
-
-@media (max-width: 576px) {
     .table-responsive {
         overflow-x: auto;
     }
-}
+
+    @media (max-width: 576px) {
+        .table-responsive {
+            overflow-x: auto;
+        }
+    }
 </style>
 
 <body>
-    <div class="d-flex flex-wrap">
-        <?php include('navbar.php') ?>
-        <div class="container-fluid pt-5 mt-5 col-10">
+    <?php include('navbar.php') ?>
+
+    <div class="table-responsive">
+        <div class="container-fluid pt-5 mt-5 col-12">
             <h1><i class="fa-solid fa-database fa-xl"></i> <?php echo $cr_taken ?> (SAMT)</h1><br>
             <hr>
             <div class="d-flex justify-content-between">
@@ -61,17 +62,17 @@ th {
                     </ul>
                 </div>
                 <div class="mb-2">
-                    <a href="#" id="previewPRSelectedBtn" class="btn btn-outline-info  rounded-8"><i
+                    <a href="#" id="previewPRSelectedBtn" class="btn btn-outline-info"><i
                             class="fa-solid fa-file-lines"></i> PR
                         create</a>
-                    <a href="#" id="previewReturnedSelectedBtn" class="btn btn-outline-warning  rounded-8"><i
+                    <a href="#" id="previewReturnedSelectedBtn" class="btn btn-outline-warning"><i
                             class="fa-solid fa-right-left"></i> Returned</a>
-                    <a href="his_all.php" class="btn btn-success  rounded-8"><i
+                    <a href="#" id="completedBtn" class="btn btn-outline-success"><i
                             class="fa-solid fa-file-circle-check"></i>
                         Completed</a>
                 </div>
             </div>
-            <div class="table-responsive">
+            <div class="">
                 <table class="table table-hover mx-auto table-sm">
                     <thead class="text-center table-secondary" style="text-transform: uppercase;">
                         <th><input type="checkbox" id="checkAll" class="form-check-input"></th>
@@ -90,9 +91,9 @@ th {
                         <th><?php echo $paidBy; ?></th>
                         <th><?php echo $payment; ?></th>
                         <th><?php echo $delivery; ?></th>
+                        <th><?php echo 'user'; ?></th>
                         <th><?php echo $prPo; ?></th>
                         <!-- <th>PO status</th> -->
-                        <th><?php echo $update; ?></th>
                         <th><?php echo $memo; ?></th>
                     </thead>
                     <tbody id="dataTable">
@@ -100,38 +101,37 @@ th {
                 </table>
             </div>
         </div>
-        <!------------------------ Preview Modal -------------------------------------------------------------------->
-        <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
-            <div class="modal-dialog modal-xl mx-auto">
-                <div class="modal-content">
-                    <div class="modal-header text-center" id="previewModalHeader">
-                        <h5 class="modal-title" id="previewModalLabel">Preview Selected Items</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <?php
-                    // กำหนดวันที่ปัจจุบันในรูปแบบ 'Y-m-d'
-                    $currentDate = date('Y-m-d');
-                    ?>
-                    <div class="modal-body">
-                        <label for="newDate">Date: </label>
-                        <input id="newDate" type="date" class="form-control w-50 ms-1"
-                            value="<?php echo $currentDate; ?>"><br>
-                        <label for="memo">Memo: </label>
-                        <textarea id="memo" class="form-control w-50" placeholder="memo"></textarea>
-                    </div>
-                    <div class="modal-body" id="previewModalBody">
-                        <!-- Details will be populated here -->
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-info" id="makePR" hidden>PR CREATE</button>
-                        <button type="button" class="btn btn-warning" id="returnButton" hidden>RETURN</button>
-                    </div>
+    </div>
+    <!------------------------ Preview Modal -------------------------------------------------------------------->
+    <div class="modal fade" id="previewModal" tabindex="-1" aria-labelledby="previewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl mx-auto">
+            <div class="modal-content">
+                <div class="modal-header text-center" id="previewModalHeader">
+                    <h5 class="modal-title" id="previewModalLabel">Preview Selected Items</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <?php
+                // กำหนดวันที่ปัจจุบันในรูปแบบ 'Y-m-d'
+                $currentDate = date('Y-m-d');
+                ?>
+                <div class="modal-body">
+                    <label for="newDate">Date: </label>
+                    <input id="newDate" type="date" class="form-control w-50 ms-1"
+                        value="<?php echo $currentDate; ?>"><br>
+                    <label for="memo">Memo: </label>
+                    <textarea id="memo" class="form-control w-50" placeholder="memo"></textarea>
+                </div>
+                <div class="modal-body" id="previewModalBody">
+                    <!-- Details will be populated here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-info" id="makePR" hidden>PR CREATE</button>
+                    <button type="button" class="btn btn-warning" id="returnButton" hidden>RETURN</button>
                 </div>
             </div>
         </div>
     </div>
-
     <!------------------------ Preview Modal -------------------------------------------------------------------->
     <!-- Bootstrap Modal -->
     <div class="modal fade" id="updateModal" tabindex="-1" aria-labelledby="updateModalLabel" aria-hidden="true">
@@ -204,23 +204,23 @@ th {
 </html>
 
 <script>
-// Function to load data based on button clicked
-function loadData(reasons = null) {
-    // Define the URL for the AJAX request
-    var url = "currently_samt_fetch.php";
-    // Define the data to be sent
-    var data = {
-        reasons: reasons
-    };
-    // Perform an AJAX request
-    $.ajax({
-        type: "POST",
-        url: url,
-        data: data,
-        success: function(response) {
-            // Replace the content of dataTable with the new data
-            $('#dataTable').html(response);
-        }
-    });
-}
+    // Function to load data based on button clicked
+    function loadData(reasons = null) {
+        // Define the URL for the AJAX request
+        var url = "currently_samt_fetch.php";
+        // Define the data to be sent
+        var data = {
+            reasons: reasons
+        };
+        // Perform an AJAX request
+        $.ajax({
+            type: "POST",
+            url: url,
+            data: data,
+            success: function(response) {
+                // Replace the content of dataTable with the new data
+                $('#dataTable').html(response);
+            }
+        });
+    }
 </script>

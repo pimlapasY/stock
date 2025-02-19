@@ -1,6 +1,194 @@
 
 $(document).ready(function () {
+    //เรียกข้อมูล body ของ table
+    fetchProducts();
 
+    $("#selectedSearchBy").on("change", function () {
+        if ($(this).val() === "0") {
+            $("#option1").val("").prop("disabled", true);
+            $("#option2").val("").prop("disabled", true);
+            $("#option3").val("").prop("disabled", true);
+            $("#productCodeSearch").val("");
+            $("#productNameSearch").val("");
+        }
+        updateSelectedProducts();
+        fetchProducts();
+    });
+    // ตรวจสอบการเปลี่ยนแปลงของฟิลด์การค้นหา
+    $("#productCodeSearch, #productNameSearch, #option1, #option2, #option3").on("input", function () {
+        // เก็บค่า selections ก่อนที่จะ fetch ใหม่
+        updateSelectedProducts();
+        fetchProducts();
+    });
+
+
+    function fetchProducts() {
+        let searchBy = $("#selectedSearchBy").val();
+        let productCode = $("#productCodeSearch").val();
+        let productName = $("#productNameSearch").val();
+        let option1 = $("#option1").prop("disabled") ? "" : $("#option1").val();
+        let option2 = $("#option2").prop("disabled") ? "" : $("#option2").val();
+        let option3 = $("#option3").prop("disabled") ? "" : $("#option3").val();
+
+        let selectedProducts = JSON.parse(localStorage.getItem("selectedProducts")) || {};
+
+        $.ajax({
+            url: "stock_samt_fetch.php",
+            type: "POST",
+            dataType: "json",
+            data: { searchBy, productCode, productName, option1, option2, option3 },
+            success: function (data) {
+                let tableBody = $("#tableBody");
+                tableBody.empty();
+
+                data.forEach((product) => {
+                    let rowClass = product.rowColor ? `class='${product.rowColor}'` : "";
+                    let isChecked = selectedProducts.hasOwnProperty(product.id) ? "checked" : "";
+                    let storedValue = selectedProducts[product.id] || "";
+                    let inputValue = storedValue ? `value='${storedValue}'` : "";
+                    let inputDisplay = isChecked ? "block" : "none";
+
+                    let checkbox = `<div class="input-group">
+                                <div class="input-group-text">
+                                    <input class='form-check-input checkbox-select' type='checkbox' 
+                                           name='selected_ids[]' value='${product.id}' 
+                                           id='checkbox_${product.id}' ${isChecked} 
+                                           onchange='toggleInput(this)' /> 
+                                </div>
+                                <input class='form-control quantity-input' 
+                                       min='1' max='${product.difference}' 
+                                       type='number' id='input_${product.id}' 
+                                       ${inputValue} 
+                                       style='display: ${inputDisplay}; width: 70px;' />
+                            </div>`;
+
+                    let detailsButton = product.total_sub_qty
+                        ? `<a href="#" class="info-icon btn btn-info" data-product-id="${product.id}">
+                        <i class="fa-solid fa-magnifying-glass"></i>
+                    </a>`
+                        : "";
+
+                    let row = `<tr ${rowClass} data-id='${product.id}'>
+                            <td class='text-center' style='vertical-align: middle;'>${checkbox}</td>
+                            <td>${product.index || ""}</td>
+                            <td>${product.code || ""}</td>
+                            <td>${product.collection || ""}</td>
+                            <td>${product.name || ""}</td>
+                            <td>${product.hands || ""}</td>
+                            <td>${product.color || ""}</td>
+                            <td>${product.size || ""}</td>
+                            <td class='text-end'>${product.cost_price || ""}</td>
+                            <td class='text-end'>${product.sale_price || ""}</td>
+                            <td class='text-end'>${product.vat_price || ""}</td>
+                            <td class='text-end' style='color: ${product.textColor}; background: ${product.backgroundColor};'>
+                                ${product.difference || "0"}
+                            </td>
+                            <td class='text-center'>${detailsButton}</td>
+                        </tr>`;
+
+                    tableBody.append(row);
+                });
+
+                // เรียก restoreSelections หลังจากสร้างตารางใหม่
+                restoreSelections();
+            },
+            error: function (xhr, status, error) {
+                console.error("Error fetching data:", error);
+            }
+        });
+    }
+
+    function updateSelectedProducts() {
+        let selectedProducts = JSON.parse(localStorage.getItem("selectedProducts")) || {};
+        $(".checkbox-select").each(function () {
+            let productId = $(this).val();
+            if ($(this).is(":checked")) {
+                let quantity = $("#input_" + productId).val();
+                selectedProducts[productId] = quantity || "";
+            }
+        });
+        localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
+    }
+
+    function restoreSelections() {
+        let selectedProducts = JSON.parse(localStorage.getItem("selectedProducts")) || {};
+        Object.keys(selectedProducts).forEach(productId => {
+            let checkbox = $(`#checkbox_${productId}`);
+            let input = $(`#input_${productId}`);
+            if (checkbox.length) {
+                checkbox.prop("checked", true);
+                input.val(selectedProducts[productId]).show();
+            }
+        });
+    }
+
+    window.toggleInput = function (checkbox) {
+        const productId = $(checkbox).val();
+        const inputField = $('#input_' + productId);
+        if (checkbox.checked) {
+            inputField.show().focus();
+        } else {
+            inputField.val('').hide();
+            // ลบค่าออกจาก localStorage เมื่อยกเลิกการเลือก
+            let selectedProducts = JSON.parse(localStorage.getItem("selectedProducts")) || {};
+            delete selectedProducts[productId];
+            localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
+        }
+    };
+    /* --------------------------------------------------------------------------- */
+    function loadOptions(productCode, productName) {
+        $.ajax({
+            url: "stock_samt_product_options.php",
+            type: "POST",
+            data: {
+                code: productCode,
+                name: productName
+            },
+            dataType: "json",
+            success: function (data) {
+                console.log("🔹 Data received:", data); // 🔥 ตรวจสอบ JSON ที่ได้รับ
+
+                function updateDatalist(selector, options) {
+                    $(selector).empty(); // ล้างค่าก่อนเติมใหม่
+
+                    // ใช้ Set เพื่อลบค่าที่ซ้ำกัน
+                    let uniqueOptions = [...new Set(options)];
+
+                    if (uniqueOptions.length > 0) {
+                        uniqueOptions.forEach(function (item) {
+                            $(selector).append("<option value='" + item + "'></option>");
+                        });
+                        $("input[list='" + selector.replace("#", "") + "']").prop("disabled",
+                            false);
+                    } else {
+                        // ✅ รีเซ็ตค่า และปิดใช้งาน input
+                        $("input[list='" + selector.replace("#", "") + "']")
+                            .val('')
+                            .prop("disabled", true);
+                    }
+                }
+
+                updateDatalist("#product_option1", data.option1 || []);
+                updateDatalist("#product_option2", data.option2 || []);
+                updateDatalist("#product_option3", data.option3 || []);
+            },
+            error: function (xhr, status, error) {
+                console.error("AJAX Error: " + status + " - " + error);
+            }
+        });
+    }
+
+    $("#productCodeSearch").on("change", function () {
+        let productCode = $(this).val();
+        loadOptions(productCode, "");
+    });
+
+    $("#productNameSearch").on("change", function () {
+        let productName = $(this).val();
+        loadOptions("", productName);
+    });
+
+    /* ---------------------------------------------------------------------- */
     // เมื่อโหลดหน้า ให้เช็คสถานะ checkbox ที่ถูกเลือก
     $('input[name="selected_ids[]"]:checked').each(function () {
         $('#input_' + $(this).val()).show(); // แสดง input
@@ -9,41 +197,49 @@ $(document).ready(function () {
     // เมื่อคลิกที่ checkbox "เลือกทั้งหมด"
     $('#checkAll').on('change', function () {
         const isChecked = $(this).prop('checked');
+        const checkboxes = $('input[name="selected_ids[]"]');
 
-        // เลือก/ยกเลิกการเลือกทุก checkbox
-        $('input[name="selected_ids[]"]').prop('checked', isChecked);
+        checkboxes.prop('checked', isChecked);
 
-        // แสดง/ซ่อน input ทั้งหมดตามสถานะ
+        checkboxes.each(function () {
+            const inputId = '#input_' + $(this).val();
+            $(inputId).toggle(isChecked);
+        });
+
+        // จัดการ localStorage
         if (isChecked) {
-            // ถ้าเลือก "เลือกทั้งหมด" ให้แสดงทุก input
-            $('input[name="selected_ids[]"]').each(function () {
-                $('#input_' + $(this).val()).show();
+            let selectedProducts = {};
+            checkboxes.each(function () {
+                selectedProducts[$(this).val()] = true;
             });
+            localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
         } else {
-            // ถ้ายกเลิก "เลือกทั้งหมด" ให้ซ่อนทุก input
-            $('input[name="selected_ids[]"]').each(function () {
-                $('#input_' + $(this).val()).hide();
-            });
+            localStorage.removeItem("selectedProducts");
         }
     });
 
     // ตรวจสอบสถานะของ checkbox ย่อยเพื่อปรับ "เลือกทั้งหมด"
     $('input[name="selected_ids[]"]').on('change', function () {
-        // แสดง/ซ่อน input ตามสถานะของ checkbox แต่ละตัว
-        const inputId = '#input_' + $(this).val();
-        if ($(this).prop('checked')) {
-            $(inputId).show();
-        } else {
-            $(inputId).hide();
-        }
+        const productId = $(this).val();
+        const inputId = '#input_' + productId;
+        const isChecked = $(this).prop('checked');
 
-        // ปรับสถานะ "เลือกทั้งหมด"
+        $(inputId).toggle(isChecked);
+
+        // จัดการ localStorage
+        let selectedProducts = JSON.parse(localStorage.getItem("selectedProducts")) || {};
+        if (isChecked) {
+            selectedProducts[productId] = true;
+        } else {
+            delete selectedProducts[productId];
+        }
+        localStorage.setItem("selectedProducts", JSON.stringify(selectedProducts));
+
         $('#checkAll').prop(
             'checked',
             $('input[name="selected_ids[]"]').length === $('input[name="selected_ids[]"]:checked').length
         );
     });
-
     // Hide all details sections initially
     $('#saleDetails').hide();
     $('#takeOutDetails').hide();
@@ -63,68 +259,9 @@ $(document).ready(function () {
         }
     });
 
-    $('.info-icon').click(function (e) {
-        e.preventDefault(); // Prevent the default link behavior
 
-        var productId = $(this).data('product-id'); // Get the product ID
-
-        // Make an AJAX request to fetch details
-        $.ajax({
-            url: 'ajax_GET/get_sub_stock_details.php',
-            type: 'POST',
-            data: {
-                p_product_id: productId
-            },
-            success: function (data) {
-                var details = JSON.parse(data);
-                // Build the table rows for the modal
-                $('#modalOtherStockLabel').html(` ${details[0].p_product_code} 
-                            ${details[0].p_product_name}
-                            ${details[0].p_hands} 
-                            ${details[0].p_color} 
-                            ${details[0].p_size}`);
-                let rows = `
-                    <tr class="text-center table-info">
-                       <th >Location</th>
-                       <th>QTY</th>
-                    </tr>
-                `;
-
-                var num = 0;
-                var total = 0;
-                $.each(details, function (index, item) {
-                    num++
-                    rows += `
-                    <tr>
-                        <td class="text-primary"> ${item.sub_name}</td>
-                         <td class="text-end">${item.sub_qty}</td>
-                    </tr>
-                    
-                `;
-                    total += parseInt(item.sub_qty);
-                });
-
-                rows += `
-                     <td>Total: </td>
-                    <td class="text-end">${total}</td>
-                `;
-                // Update the modal content
-                $('#stockModal tbody').html(
-                    rows); // Ensure #stockModal is the <tbody> or relevant container
-
-                // Show the modal
-                $('#previewStockModal').modal('show');
-            },
-            error: function () {
-                alert('Error loading sub stock details.');
-            }
-        });
-    });
-
-
-
-
-    // When the "Submit" button is clicked
+    /* ************************************************************************************** */
+    // submit function อัพเดทการสต็อคออก/การสร้างใบ PR
     $('#submitProductDetails').click(function () {
         // Gather the data from the table
         const productDetails = [];
@@ -135,6 +272,7 @@ $(document).ready(function () {
         var storeID = '1';
         var paidOption = '';
         var customerName = '';
+        var memo = $('#memo').val();
 
         let selectedValue = ''; // กำหนดค่า selectedValue เป็นตัวแปรแบบ let
 
@@ -163,14 +301,17 @@ $(document).ready(function () {
             customerName = $('#cusname').val();
             paidOption = $('#paidOption').val();
             storeID = '1';
+            typeStatus = '1';
         } else if (selectedValue == 'out to') {
             customerName = '';
             paidOption = '';
             storeID = $('#stockToOption').val();
+            typeStatus = '2'
         } else if (selectedValue == 'sale sample') {
             customerName = $('#cusname').val();
             paidOption = '';
             storeID = '1';
+            typeStatus = '3'
         } else {
             if (updateForm == '1') {
                 Swal.fire({
@@ -210,12 +351,13 @@ $(document).ready(function () {
                 paidOption: paidOption,
                 customerName: customerName,
                 selectedValue: selectedValue,
-
+                memo: memo
             }),
             contentType: 'application/json',
             success: function (response) {
                 // Handle the server response
                 console.log(response);
+
 
                 Swal.fire({
                     title: 'Success',
@@ -224,10 +366,27 @@ $(document).ready(function () {
                     confirmButtonText: 'OK'
                 }).then((result) => {
                     if (result.isConfirmed) {
-                        // Close the modal
+                        // ล้างค่า checkbox ทั้งหมด
+                        $('input[name="selected_ids[]"]').prop('checked', false);
+                        $('#checkAll').prop('checked', false);
+
+                        // ซ่อน inputs ทั้งหมด
+                        $('input[name="selected_ids[]"]').each(function () {
+                            $('#input_' + $(this).val()).hide();
+                        });
+
+                        // ล้างค่าใน localStorage
+                        localStorage.removeItem("selectedProducts");
+
+                        // ปิด modal
                         $('#previewModal').modal('hide');
-                        // Optionally, reload the page or update the table
-                        location.reload();
+
+                        if (typeStatus == '1' || typeStatus == '3') {
+                            // เปลี่ยนจาก location.reload() เป็นการ redirect ไปยัง currently_samt.php
+                            window.location.href = 'currently_samt.php';
+                        } else if (typeStatus == '2') {
+                            window.location.href = 'take_out_his.php';
+                        }
                     }
                 });
             },
@@ -243,18 +402,7 @@ $(document).ready(function () {
             }
         });
     });
-
-    // ฟังก์ชันเพื่อจัดการแสดง/ซ่อน input เมื่อ checkbox เปลี่ยนสถานะ
-    window.toggleInput = function (checkbox) {
-        const productId = $(checkbox).val(); // รับค่าจาก checkbox
-        const inputField = $('#input_' + productId); // เลือก input ที่เกี่ยวข้อง
-
-        if (checkbox.checked) {
-            inputField.show(); // แสดง input ถ้า checkbox ถูกเลือก
-        } else {
-            inputField.hide(); // ซ่อน input ถ้า checkbox ไม่ถูกเลือก
-        }
-    };
+    /* ****************************************************************************************** */
     // เมื่อคลิกปุ่ม Preview
     $('.preview-btn-stockOut').click(function () {
         previewProduct(1)
@@ -366,7 +514,7 @@ $(document).ready(function () {
                                             <td class='text-end'>${formatPrice(detail.p_sale_price)}</td> <!-- Display price in formatted way -->
                                             <td class='text-end'>${formatPrice(totalSaleVat)}</td> <!-- Display price in formatted way -->
                                             <td class='text-end ${colorText}'>
-                                                <input class="form-control qty-input" min="1" type="number" value="${detail.qty}" data-product-id="${detail.p_product_id}" readonly>
+                                                <input style="width:80px" class="form-control qty-input" min="1" type="number" value="${detail.qty}" data-product-id="${detail.p_product_id}" readonly>
                                             </td> <!-- Display qty value -->
                                             <td class='text-end ${colorText}' data-product-id="${detail.p_product_id}">${formatPrice(totalPrice)}</td> <!-- Display total price -->
                                         </tr>
@@ -468,46 +616,77 @@ $(document).ready(function () {
 
     }
 
-    // Add event listener for Enter key on search input
-    document.getElementById("searchInput").addEventListener("keydown", function (event) {
-        if (event.key === "Enter") {
-            searchTable();
-        }
+    /* --------------------------------------------------------------- */
+    //ดู substock store อื่นๆ
+    $(document).on('click', '.info-icon', function (e) {
+        e.preventDefault(); // ป้องกัน default link behavior
+
+        var productId = $(this).data('product-id'); // ดึงค่า Product ID
+
+        // ส่ง AJAX เพื่อดึงข้อมูลรายละเอียดสินค้า
+        $.ajax({
+            url: 'ajax_GET/get_sub_stock_details.php',
+            type: 'POST',
+            data: { p_product_id: productId },
+            success: function (data) {
+                var details = JSON.parse(data);
+                if (details.length === 0) {
+                    alert("No stock details available.");
+                    return;
+                }
+
+                // สร้างชื่อสินค้าใน Modal
+                $('#previewProductLabel').html(`
+                    <b>${details[0].p_product_code}</b> - 
+                    ${details[0].p_product_name} 
+                    ${details[0].p_hands}  
+                    ${details[0].p_color} 
+                    ${details[0].p_size}
+                `);
+
+
+
+                // สร้างตารางข้อมูล
+                let rows = `
+                <tr class="text-center table-info">
+                   <th>No.</th>
+                   <th>Location</th>
+                   <th>QTY</th>
+                </tr>
+            `;
+
+                var total = 0;
+                var numRow = 1;
+                $.each(details, function (index, item) {
+                    rows += `
+                <tr>
+                   <td class="text-primary">${numRow}</td>
+                    <td class="text-primary">${item.sub_name}</td>
+                    <td class="text-end">${item.sub_qty}</td>
+                </tr>`;
+                    total += parseInt(item.sub_qty);
+                    numRow++;
+                });
+
+                // แสดงยอดรวมสินค้า
+                rows += `
+                <tr>
+                    <td colspan="2"><strong>Total:</strong></td>
+                    <td class="text-end"><strong>${total}</strong></td>
+                </tr>
+            `;
+
+                // อัปเดตข้อมูลลงใน Modal
+                $('#stockModal tbody').html(rows);
+
+                // เปิด Modal
+                $('#previewStockModal').modal('show');
+            },
+            error: function () {
+                alert('Error loading sub stock details.');
+            }
+        });
     });
 
-    function searchTable() {
-        // Get the value from the search input
-        const input = document.getElementById("searchInput").value.toLowerCase();
 
-        // Get the table and rows
-        const table = document.getElementById("productTable");
-        const rows = table.getElementsByTagName("tr");
-
-        // Loop through all rows (except the header) and hide those that don't match the search query
-        for (let i = 1; i < rows.length; i++) {
-            const cells = rows[i].getElementsByTagName("td");
-            let rowContainsSearchTerm = false;
-
-            // Loop through each cell in the row
-            for (let j = 0; j < cells.length; j++) {
-                // Remove any previous highlight
-                const cellText = cells[j].innerText;
-                cells[j].innerHTML = cellText;
-
-                if (cellText.toLowerCase().includes(input)) {
-                    rowContainsSearchTerm = true;
-                    // Highlight the matching term
-                    const regex = new RegExp(`(${input})`, 'gi');
-                    cells[j].innerHTML = cellText.replace(regex, "<span class='highlight'>$1</span>");
-                }
-            }
-
-            // Show or hide the row based on the search
-            if (rowContainsSearchTerm) {
-                rows[i].style.display = "";
-            } else {
-                rows[i].style.display = "none";
-            }
-        }
-    }
 });

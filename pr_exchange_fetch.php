@@ -129,7 +129,6 @@ if (isset($_POST['store'])) {
         } else {
            // Output the table rows
            foreach ($products as $index => $product) {
-            $data_reasons = explode(",", $product['o_reasons']);
 
              //เช็คสถานะว่ามีการเปลี่ยน ให้ข้อมูลเก่าโดนซ่อน
         if ($product['pr_exchange'] == null) {
@@ -160,7 +159,7 @@ if (isset($_POST['store'])) {
             //วันที่ขายออก หรือ สร้าง stock out
             echo '<td>' . $product['o_out_date'] . '</td>';
             //ชื่อลูกค้า
-            echo '<td>' . $data_reasons[2] . '</td>';
+            echo '<td>' . ($product['o_customer'] ) . '</td>';
             //ช่องทางการชำระเงิน
             echo "<td class='text-center'>";
 
@@ -169,7 +168,7 @@ if (isset($_POST['store'])) {
                 2 => ['class' => 'primary', 'text' => 'QR'],
                 3 => ['class' => 'warning', 'text' => 'shopify'],
             ];
-            $badge = $badgeMap[$data_reasons[1]] ?? ['class' => 'danger', 'text' => 'sale sample'];
+            $badge = $badgeMap[($product['o_payment_option'])] ?? ['class' => 'danger', 'text' => 'sale sample'];
 
             echo "<span class='badge badge-{$badge['class']} rounded-pill d-inline'>{$badge['text']}</span>";
             echo "</td>";
@@ -177,7 +176,7 @@ if (isset($_POST['store'])) {
             //เช็ค payment       
             echo '<td class="text-center">';
 
-            if (!($data_reasons[0] == 'out to' || $product['pr_mg_code'] == null)) {
+            if (!($product['o_reasons']  == 'out to' || $product['pr_mg_code'] == null)) {
                 $btnClass = $product['o_payment'] == 1 ? 'btn-success' : 'btn-outline-warning';
                 $icon = $product['o_payment'] == 1 ? 'fa-check' : 'fa-hourglass-half';
                 echo '<a class="btn ' . $btnClass . ' btn-sm btn-floating update-payment" onclick="updatePayment(\'' . $product['o_mg_code'] . '\', ' . $product['o_payment'] . ')"><i class="fa-solid ' . $icon . '"></i></a>';

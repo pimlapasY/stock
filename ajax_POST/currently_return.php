@@ -106,7 +106,7 @@ try {
     $pdo->commit();
     echo json_encode([
         'status' => 'success',
-        'message' => "บันทึกข้อมูลสำเร็จ จำนวน $insertedRows รายการ"
+        'message' => "Successfully inserted  $insertedRows rows"
     ]);
 
 } catch (Exception $e) {

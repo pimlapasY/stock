@@ -1,7 +1,17 @@
 
 var previewData = []; // Array to store preview data
 const now = new Date(); // Get the current date
-
+// เรียก Swal สำหรับแสดง Loading
+function showLoading() {
+    Swal.fire({
+        title: 'กำลังโหลด...',
+        html: 'กรุณารอสักครู่',
+        allowOutsideClick: false, // ป้องกันการคลิกนอกกล่องเพื่อปิด
+        didOpen: () => {
+            Swal.showLoading(); // แสดง Animation Loading
+        }
+    });
+}
 function exportToCSV() {
     // Get the current date and time formatted as YYYY-MM-DD_HH-MM-SS
     const now = new Date();
@@ -9,26 +19,29 @@ function exportToCSV() {
 
     // CSV headers
     let csvContent =
-        "No,ID Code,Product ID,Collection,Name,Hands,Color,Size,Cost Price,Sale Price,All Qty, Stock In(+), Take Out(-)\n";
+        "No,ID Code(for import),Product Code,Collection,Name,Option1,Option2,Option3,Cost Price,Sale Price,All Qty, Stock In(+), Take Out(-)\n";
 
-    // Get all rows from the table body
+
+    // ดึงข้อมูลทุกแถวจาก <tbody> ในตาราง
     const rows = document.querySelectorAll("table tbody tr");
     rows.forEach(function (row, index) {
         const cells = row.querySelectorAll("td");
         const rowData = [
-            index + 1, // No
-            row.getAttribute('data-id') || '', // ID Code (from data-id attribute of <tr>)
-            cells[1].innerText, // Product ID
-            cells[2].innerText, // Collection
-            cells[3].innerText, // Name
-            cells[4].innerText || '', // Hands
-            cells[5].innerText || '', // Color
-            cells[6].innerText || '', // Size
-            cells[7].innerText.replace(/,/g, ''), // Cost Price
-            cells[8].innerText.replace(/,/g, ''), // Sale Price
-            cells[10].innerText, // All Qty
+            index + 1, // ลำดับที่ (No)
+            row.getAttribute('data-id') || '', // ID Code (คอลัมน์อ่านอย่างเดียว)
+            cells[2]?.innerText || '', // Product Code (แก้ไขได้)
+            cells[3]?.innerText || '', // Collection (แก้ไขได้)
+            cells[4]?.innerText || '', // Name (แก้ไขได้)
+            cells[5]?.innerText || '', // Option1 (แก้ไขได้)
+            cells[6]?.innerText || '', // Option2 (แก้ไขได้)
+            cells[7]?.innerText || '', // Option3 (แก้ไขได้)
+            cells[8]?.innerText.replace(/,/g, '') || '', // Cost Price (แก้ไขได้)
+            cells[9]?.innerText.replace(/,/g, '') || '', // Sale Price (แก้ไขได้)
+            cells[11]?.innerText || '', // All Qty (แก้ไขได้)
         ];
-        csvContent += rowData.join(",") + "\n"; // Add row to CSV content
+
+        // ทำให้ `ID Code` เป็น read-only (ค่าถูกดึงจาก attribute แต่ไม่อนุญาตให้เปลี่ยน)
+        csvContent += rowData.join(",") + "\n"; // เพิ่มแถวลงใน CSV
     });
 
     // Create a blob and trigger download with UTF-8 encoding
@@ -182,6 +195,7 @@ function openPreviewModal(status) {
     $('#statusType').val(status);
     // Handle based on status
     if (status == 1) {
+        $('#checkRadio').removeClass('d-none');
         $('#confirmPRButton').prop('hidden', true); // To show the button
         $('#confirmStockInButton').prop('hidden', false); // To show the button
         $('#modal-title').html('<i class="fa-solid fa-inbox fa-lg"></i> Preview Stock In');
@@ -189,6 +203,7 @@ function openPreviewModal(status) {
         // Recalculate total rows after update
         totalRows = previewData.length;
     } else if (status == 2) {
+        $('#checkRadio').addClass('d-none');
         $('#confirmStockInButton').prop('hidden', true); // To show the button
         $('#confirmPRButton').prop('hidden', false); // To show the button
         $('#modal-title').html('<i class="fa-solid fa-inbox fa-lg"></i> Preview PR');
@@ -249,13 +264,11 @@ function confirmButton(status) {
                     // Show success message
                     Swal.fire({
                         title: 'Updated!',
-                        text: 'Stock has been updated successfully.',
+                        text: 'Success',
                         icon: 'success',
-                        showCancelButton: true,
-                        confirmButtonText: '<i class="fa-solid fa-folder-plus"></i> on this page',
-                        cancelButtonText: '<i class="fa-solid fa-arrow-right-to-bracket"></i> History StockIn',
-                        confirmButtonColor: '#28a745', // Custom color for confirm button
-                        cancelButtonColor: 'orange' // Custom color for cancel button
+                        showCancelButton: false,
+                        confirmButtonText: 'OK',
+                        confirmButtonColor: '', // Custom color for confirm button
                     }).then((result) => {
                         // Redirect or reload based on the user's choice
                         if (!result.isConfirmed) {

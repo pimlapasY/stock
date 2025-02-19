@@ -27,7 +27,8 @@ if (isset($_POST['store'])) {
         // Set the PDO error mode to exception
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-        if ($currentDay == 20) {
+        //อัพเดท auto ให้ทำการยกยอด
+        /*  if ($currentDay == 20) {
             // Prepare the update statement
             $stmt = $pdo->prepare("UPDATE pr
                                     LEFT JOIN stockout o ON o.o_mg_code = pr.pr_mg_code
@@ -39,7 +40,7 @@ if (isset($_POST['store'])) {
 
             // Execute the update
             $stmt->execute();
-        }
+        } */
 
         $sql = "SELECT o.*, p.*, pr.*, store.*
                 FROM pr
@@ -103,7 +104,7 @@ if (isset($_POST['store'])) {
         }
 
         // Adding the order by clause
-        $sql .= " ORDER BY  pr.pr_id DESC, pr.pr_code DESC, pr.pr_date_update, pr.pr_date_add DESC";
+        $sql .= " ORDER BY   pr.pr_code DESC, pr.pr_date_add DESC";
 
         $stmt = $pdo->prepare($sql);
 
@@ -128,27 +129,25 @@ if (isset($_POST['store'])) {
         } else {
             // Output the table rows
             foreach ($products as $index => $product) {
-                $data_reasons = explode(",", $product['o_reasons']);
 
-                 //เช็คสถานะว่ามีการเปลี่ยน ให้ข้อมูลเก่าโดนซ่อน
-            if ($product['pr_exchange'] == null) {
-                echo '<tr>';
-                echo '<td class="text-center"><input class="select-checkbox form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['pr_id'] . '"></td>';
-            } else {
-                echo '<tr class="table-secondary" id="exchangeID' . $product['pr_code'] . '" hidden>';
-                echo  '<td></td>';
-            }
+                //เช็คสถานะว่ามีการเปลี่ยน ให้ข้อมูลเก่าโดนซ่อน
+                if ($product['pr_exchange'] == null) {
+                    echo '<tr>';
+                    echo '<td class="text-center"><input class="select-checkbox form-check-input" type="checkbox" name="selected_ids[]" value="' . $product['pr_id'] . '"></td>';
+                } else {
+                    echo '<tr class="table-secondary" id="exchangeID' . $product['pr_code'] . '" hidden>';
+                    echo  '<td></td>';
+                }
 
-            $classColor = ($product['pr_status'] == '1' && $product['pr_exchange'] == null) ? 'success' :
-              (($product['pr_status'] == '2' && $product['pr_exchange'] == null) ? 'warning' :
-              'secondary');
+                $classColor = ($product['pr_status'] == '1' && $product['pr_exchange'] == null) ? 'success' : (($product['pr_status'] == '2' && $product['pr_exchange'] == null) ? 'warning' :
+                    'secondary');
 
 
-            echo '<td> <a class="btn btn-outline-'.$classColor.' btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_id'] . '\')">'
-                            . $product['pr_code'] .
-                            '</a></td>';
+                echo '<td> <a class="btn btn-outline-' . $classColor . ' btn-rounded edit-button" id="showExchange" onclick="openEditModal(\'' . $product['pr_id'] . '\')">'
+                    . $product['pr_code'] .
+                    '</a></td>';
 
-               
+
 
                 echo '<td>' . $product['st_name']  . '</td>';
                 echo '<td>' . $product['pr_mg_code'] . '</td>';
@@ -160,7 +159,7 @@ if (isset($_POST['store'])) {
                 //วันที่ขายออก หรือ สร้าง stock out
                 echo '<td>' . $product['o_out_date'] . '</td>';
                 //ชื่อลูกค้า
-                echo '<td>' . $data_reasons[2] . '</td>';
+                echo '<td>' . $product['o_customer'] . '</td>';
                 //ช่องทางการชำระเงิน
                 echo "<td class='text-center'>";
 
@@ -169,7 +168,7 @@ if (isset($_POST['store'])) {
                     2 => ['class' => 'primary', 'text' => 'QR'],
                     3 => ['class' => 'warning', 'text' => 'shopify'],
                 ];
-                $badge = $badgeMap[$data_reasons[1]] ?? ['class' => 'danger', 'text' => 'sale sample'];
+                $badge = $badgeMap[$product['o_payment_option']] ?? ['class' => 'danger', 'text' => 'sale sample'];
 
                 echo "<span class='badge badge-{$badge['class']} rounded-pill d-inline'>{$badge['text']}</span>";
                 echo "</td>";
@@ -177,37 +176,37 @@ if (isset($_POST['store'])) {
                 //เช็ค payment       
                 echo '<td class="text-center">';
 
-                if (!($data_reasons[0] == 'out to' || $product['pr_mg_code'] == null)) {
+                if (!($product['o_reasons']  == 'out to' || $product['pr_mg_code'] == null)) {
                     $btnClass = $product['o_payment'] == 1 ? 'btn-success' : 'btn-outline-warning';
                     $icon = $product['o_payment'] == 1 ? 'fa-check' : 'fa-hourglass-half';
                     echo '<a class="btn ' . $btnClass . ' btn-sm btn-floating update-payment" onclick="updatePayment(\'' . $product['o_mg_code'] . '\', ' . $product['o_payment'] . ')"><i class="fa-solid ' . $icon . '"></i></a>';
                 }
 
                 echo '</td>';
-                
+
 
                 echo "<td class='text-center'>";
 
                 $status = $product['pr_status'];
                 $pr_date = $product['pr_date_add'] ? (new DateTime($product['pr_date_add']))->format('m-Y') : '';
-                
+
                 if ($status == '1') {
                     echo "<span class='badge badge-success'>success $pr_date</span>";
                 } elseif ($status == '2') {
                     echo "<span class='badge badge-warning'>*delivered*</span>";
                 } elseif ($status == '3') {
                     echo "<span class='badge badge-info'>stock in</span>";
-                }else {
+                } else {
                     echo "<span class='badge badge-secondary'>PR pending</span>";
                 }
-                
+
                 echo "</td>";
 
 
                 if ($product['pr_memo'] === 'Exchange' && $product['pr_exchange'] == null) {
                     echo '<td class="text-center">
                     <a class="btn btn-light btn-rounded edit-button" id="showExchange" onclick="openExchange(\'' . $product['pr_code'] . '\')"> <i class="fa-solid fa-square-minus"></i> '
-                    . $product['pr_memo'] . '</a></td>';
+                        . $product['pr_memo'] . '</a></td>';
                 } else {
                     echo '<td class="text-center"> ' . $product['pr_memo'] . '</a></td>';
                 }
@@ -223,4 +222,3 @@ if (isset($_POST['store'])) {
     // Close the connection
     $pdo = null;
 }
-?>
